@@ -327,6 +327,10 @@ st.markdown("""
         color: #000; font-size: 36px; font-weight: 900;
         line-height: 1; margin: 4px 0 12px 0;
         font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+        white-space: nowrap;
+        display: flex;
+        align-items: center;
+        gap: 6px;
     }
     .kpi-unit {
         font-size: 13px; color: #FFD700; margin-left: 6px;
