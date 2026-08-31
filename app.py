@@ -46,8 +46,11 @@ def check_password():
         .login-form { position: relative; z-index: 1; }
         </style>
         <div class="login-wrap">
-            <div class="login-icon">⚡</div>
-            <div class="login-title">TEST QA DASHBOARD</div>
+            <div style="margin-bottom:16px;">
+                <img src="{LOGO_URL}" style="width:120px;height:auto;border-radius:12px;
+                                            box-shadow:0 4px 12px rgba(255,215,0,0.3);">
+            </div>
+            <div class="login-title">3K BATTERY QA</div>
             <div class="login-sub">Defect Monitoring System v2.0</div>
         </div>
         """, unsafe_allow_html=True)
@@ -85,32 +88,57 @@ st.set_page_config(
 # ============================================================
 # GLOBAL CSS - PROFESSIONAL DESIGN
 # ============================================================
-st.markdown("""
+LOGO_URL = "https://cdn.jsdelivr.net/gh/panuchuwong-cyber/qa-defects-dashboard@main/assets/3k_logo.jpg"
+
+st.markdown(f"""
 <style>
     /* === GLOBAL === */
-    .stApp { background: linear-gradient(135deg, #fafafa 0%, #f5f5f5 100%); }
-    [data-testid="stSidebarNav"] { display: none; }
-    footer { visibility: hidden; }
-    header[data-testid="stHeader"] { background: transparent; }
+    .stApp {{ background: linear-gradient(135deg, #fafafa 0%, #f5f5f5 100%); }}
+    [data-testid="stSidebarNav"] {{ display: none; }}
+    footer {{ visibility: hidden; }}
+    header[data-testid="stHeader"] {{ background: transparent; }}
 
     /* === SIDEBAR === */
-    [data-testid="stSidebar"] {
+    [data-testid="stSidebar"] {{
         background: linear-gradient(180deg, #000000 0%, #1a1a1a 100%);
         border-right: 2px solid #FFD700;
-    }
-    [data-testid="stSidebar"] * { color: #ffffff !important; }
-    [data-testid="stSidebar"] .stRadio label {
+    }}
+    [data-testid="stSidebar"] * {{ color: #ffffff !important; }}
+    [data-testid="stSidebar"] .stRadio label {{
         background: rgba(255,215,0,0.1); padding: 10px 14px;
         border-radius: 8px; border: 1px solid rgba(255,215,0,0.3);
         margin-bottom: 6px; transition: all 0.2s;
-    }
-    [data-testid="stSidebar"] .stRadio label:hover {
+    }}
+    [data-testid="stSidebar"] .stRadio label:hover {{
         background: rgba(255,215,0,0.2); border-color: #FFD700;
-    }
-    [data-testid="stSidebar"] .stSelectbox label {
+    }}
+    [data-testid="stSidebar"] .stSelectbox label {{
         color: #FFD700 !important; font-weight: 700;
         font-size: 11px; letter-spacing: 1px; text-transform: uppercase;
-    }
+    }}
+
+    /* === SIDEBAR LOGO === */
+    .sidebar-logo-wrap {{
+        background: linear-gradient(135deg, #FFD700 0%, #FFA500 100%);
+        padding: 16px 12px; border-radius: 12px;
+        text-align: center; margin-bottom: 20px;
+        box-shadow: 0 4px 16px rgba(255,215,0,0.4);
+    }}
+    .sidebar-logo-img {{
+        width: 100%; max-width: 180px; height: auto;
+        margin: 0 auto 8px auto; display: block;
+        border-radius: 8px;
+    }}
+
+    /* === MAIN HEADER LOGO === */
+    .header-logo-wrap {{
+        display: flex; align-items: center; gap: 16px;
+        padding: 4px 0;
+    }}
+    .header-logo-img {{
+        width: 64px; height: 64px; border-radius: 12px;
+        box-shadow: 0 4px 12px rgba(255,215,0,0.3);
+    }}
 
     /* === MAIN HEADER === */
     .dashboard-header {
@@ -246,21 +274,19 @@ df = load_data()
 # SIDEBAR
 # ============================================================
 with st.sidebar:
-    st.markdown("""
-    <div style="background: linear-gradient(135deg, #FFD700 0%, #FFA500 100%);
-                padding: 20px; border-radius: 12px; text-align: center;
-                margin-bottom: 20px; box-shadow: 0 4px 12px rgba(255,215,0,0.3);">
-        <div style="font-size: 36px;">⚡</div>
-        <div style="color: #000; font-size: 20px; font-weight: 900;
-                    letter-spacing: 2px; margin-top: 4px;">TEST</div>
-        <div style="color: #000; font-size: 9px; font-weight: 700;
+    st.markdown(f"""
+    <div class="sidebar-logo-wrap">
+        <img src="{LOGO_URL}" class="sidebar-logo-img" alt="3K Battery Logo">
+        <div style="color: #000; font-size: 18px; font-weight: 900;
+                    letter-spacing: 3px; margin-top: 4px;">� 3K BATTERY</div>
+        <div style="color: #000; font-size: 10px; font-weight: 700;
                     letter-spacing: 2px; margin-top: 2px;">QA DEFECTS DASHBOARD</div>
     </div>
     """, unsafe_allow_html=True)
 
     page = st.radio("📌 NAVIGATION", [
-        "📊 14 Days Monitoring",
-        "� Searching Supplier Information"
+        "� 14 Days Monitoring",
+        "🔍 Searching Supplier Information"
     ], label_visibility="collapsed")
 
     st.markdown("<br>", unsafe_allow_html=True)
@@ -312,9 +338,14 @@ hdr1, hdr2 = st.columns([3, 1])
 with hdr1:
     st.markdown(f"""
     <div class="dashboard-header">
-        <h1>⚡ {title_text}</h1>
-        <div class="subtitle">{subtitle}</div>
-        <div class="badge">🏭 THAI ENERGY STORAGE TECHNOLOGY</div>
+        <div class="header-logo-wrap">
+            <img src="{LOGO_URL}" class="header-logo-img" alt="3K Battery Logo">
+            <div>
+                <h1 style="margin:0;">⚡ {title_text}</h1>
+                <div class="subtitle">{subtitle}</div>
+                <div class="badge">🏭 3K BATTERY CO., LTD.</div>
+            </div>
+        </div>
     </div>
     """, unsafe_allow_html=True)
 with hdr2:
@@ -817,7 +848,7 @@ else:
 # ============================================================
 st.markdown(f"""
 <div class="dashboard-footer">
-    � TEST Energy Storage Technology | QA Defects Dashboard v2.0 Professional<br>
+    � 3K Battery Co., Ltd. | QA Defects Dashboard v2.0 Professional<br>
     <span style="color:#FFD700;">Built with ❤️ by Kanom AI for K-Kream</span>
 </div>
 """, unsafe_allow_html=True)
