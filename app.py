@@ -1220,8 +1220,14 @@ elif "Data Entry" in page:
 
                             # Try Telegram bot
                             try:
-                                bot_token = st.secrets.get("telegram_bot_token")
-                                kanom_chat_id = st.secrets.get("telegram_kanom_chat_id")
+                                try:
+                                    bot_token = st.secrets["telegram_bot_token"]
+                                except (KeyError, FileNotFoundError):
+                                    bot_token = None
+                                try:
+                                    kanom_chat_id = st.secrets["telegram_kanom_chat_id"]
+                                except (KeyError, FileNotFoundError):
+                                    kanom_chat_id = None
 
                                 if bot_token and kanom_chat_id:
                                     import requests
@@ -1249,7 +1255,9 @@ elif "Data Entry" in page:
                                     st.info(
                                         "ℹ️ **Telegram bot not configured yet.**\n\n"
                                         "📥 Click **DOWNLOAD CSV** above → send file to Kanom via Telegram chat.\n\n"
-                                        "💡 To enable 1-click sync, see `TELEGRAM_BOT_SETUP.md`"
+                                        f"🔍 Debug: bot_token={'SET' if bot_token else 'MISSING'}, "
+                                        f"chat_id={'SET' if kanom_chat_id else 'MISSING'}\n\n"
+                                        "💡 To enable 1-click sync, add secrets in Streamlit Cloud dashboard."
                                     )
                             except Exception as e:
                                 st.error(f"❌ Sync failed: {str(e)}\n\n📥 Use download button as fallback.")
