@@ -501,81 +501,84 @@ if "14 Days" in page:
 
     all_groups = sorted(df["Group Part"].unique().tolist())
     group_meta = {
-        "ELECTRIC & ELEC.": {"icon": "⚡", "color": "#FFD700", "bg": "linear-gradient(135deg, #FFD700 0%, #FFA000 100%)"},
-        "PACKING": {"icon": "�", "color": "#8D6E63", "bg": "linear-gradient(135deg, #A1887F 0%, #6D4C41 100%)"},
-        "PIPING": {"icon": "🔧", "color": "#FFA000", "bg": "linear-gradient(135deg, #FFCA28 0%, #FF8F00 100%)"},
-        "PLASTIC": {"icon": "🧊", "color": "#29B6F6", "bg": "linear-gradient(135deg, #4FC3F7 0%, #0288D1 100%)"},
-        "PRINTING": {"icon": "�️", "color": "#AB47BC", "bg": "linear-gradient(135deg, #BA68C8 0%, #7B1FA2 100%)"},
-        "RAW MATERIAL": {"icon": "⛰️", "color": "#66BB6A", "bg": "linear-gradient(135deg, #81C784 0%, #388E3C 100%)"},
-        "RUBBER": {"icon": "⚫", "color": "#424242", "bg": "linear-gradient(135deg, #616161 0%, #212121 100%)"},
-        "SEALING": {"icon": "⭕", "color": "#EF5350", "bg": "linear-gradient(135deg, #EF5350 0%, #C62828 100%)"},
-        "SHEET METAL": {"icon": "�", "color": "#90A4AE", "bg": "linear-gradient(135deg, #B0BEC5 0%, #546E7A 100%)"},
-        "FOAM": {"icon": "🧽", "color": "#FFEE58", "bg": "linear-gradient(135deg, #FFF176 0%, #F9A825 100%)"},
-        "OTHERS": {"icon": "📦", "color": "#90A4AE", "bg": "linear-gradient(135deg, #CFD8DC 0%, #455A64 100%)"},
+        "ELECTRIC & ELEC.": ("⚡", "linear-gradient(135deg, #FFD700 0%, #FFA000 100%)"),
+        "PACKING": ("📦", "linear-gradient(135deg, #A1887F 0%, #6D4C41 100%)"),
+        "PIPING": ("🔧", "linear-gradient(135deg, #FFCA28 0%, #FF8F00 100%)"),
+        "PLASTIC": ("🧊", "linear-gradient(135deg, #4FC3F7 0%, #0288D1 100%)"),
+        "PRINTING": ("🖨", "linear-gradient(135deg, #BA68C8 0%, #7B1FA2 100%)"),
+        "RAW MATERIAL": ("⛰", "linear-gradient(135deg, #81C784 0%, #388E3C 100%)"),
+        "RUBBER": ("⚫", "linear-gradient(135deg, #616161 0%, #212121 100%)"),
+        "SEALING": ("⭕", "linear-gradient(135deg, #EF5350 0%, #C62828 100%)"),
+        "SHEET METAL": ("🔩", "linear-gradient(135deg, #B0BEC5 0%, #546E7A 100%)"),
+        "FOAM": ("🧽", "linear-gradient(135deg, #FFF176 0%, #F9A825 100%)"),
+        "OTHERS": ("📦", "linear-gradient(135deg, #CFD8DC 0%, #455A64 100%)"),
     }
 
+    # Show selected indicator
     if st.session_state.selected_group:
         sel = st.session_state.selected_group
-        sel_meta = group_meta.get(sel, {"icon": "�", "color": "#FFD700"})
-        st.markdown(f"""
-        <div style="background: #000; color: #FFD700; padding: 14px 22px; border-radius: 12px;
-                    margin-bottom: 18px; font-weight: 700; font-size: 15px;
-                    border-left: 6px solid #FFD700;
-                    display: flex; align-items: center; gap: 12px;
-                    box-shadow: 0 4px 12px rgba(0,0,0,0.2);">
-            <span style="font-size: 22px;">{sel_meta['icon']}</span>
-            <span>Currently filtering by: <b>{sel}</b></span>
-            <span style="margin-left: auto; font-size: 11px; color: #999;">Click again to clear</span>
-        </div>
-        """, unsafe_allow_html=True)
+        sel_icon = group_meta.get(sel, ("📦", "#FFD700"))[0]
+        st.markdown(
+            '<div style="background:#000;color:#FFD700;padding:14px 22px;border-radius:12px;'
+            'margin-bottom:18px;font-weight:700;font-size:15px;border-left:6px solid #FFD700;'
+            'display:flex;align-items:center;gap:12px;box-shadow:0 4px 12px rgba(0,0,0,0.2);">'
+            f'<span style="font-size:22px;">{sel_icon}</span>'
+            f'<span>Currently filtering by: <b>{sel}</b></span>'
+            '<span style="margin-left:auto;font-size:11px;color:#999;">Click again to clear</span>'
+            '</div>',
+            unsafe_allow_html=True
+        )
 
-    # Render group cards in HTML grid + invisible buttons overlay
+    # Render visual cards via st.markdown (safe HTML)
     n_cols = 6
-    grid_html = '<div style="display:grid; grid-template-columns: repeat(6, 1fr); gap: 14px; margin-bottom: 8px;">'
-    for i, g in enumerate(all_groups):
-        meta = group_meta.get(g, {"icon": "📦", "color": "#FFD700", "bg": "linear-gradient(135deg, #FFD700 0%, #FFA000 100%)"})
+    cards_html = '<div style="display:grid;grid-template-columns:repeat(6,1fr);gap:14px;margin-bottom:8px;">'
+    for g in all_groups:
+        icon, bg = group_meta.get(g, ("📦", "linear-gradient(135deg,#FFD700,#FFA000)"))
         count = int(df[df["Group Part"] == g]["Qty"].sum())
-        is_selected = (st.session_state.selected_group == g)
+        is_sel = (st.session_state.selected_group == g)
 
-        if is_selected:
+        if is_sel:
             border = "3px solid #FFD700"
             shadow = "0 8px 24px rgba(255,215,0,0.5)"
-            badge = '<div style="position:absolute; top:-8px; right:-8px; background:#FFD700; color:#000; border-radius:50%; width:24px; height:24px; display:flex; align-items:center; justify-content:center; font-size:12px; font-weight:900; box-shadow:0 2px 6px rgba(0,0,0,0.3);">✓</div>'
+            badge_html = (
+                '<div style="position:absolute;top:-8px;right:-8px;background:#FFD700;color:#000;'
+                'border-radius:50%;width:24px;height:24px;display:flex;align-items:center;'
+                'justify-content:center;font-size:12px;font-weight:900;'
+                'box-shadow:0 2px 6px rgba(0,0,0,0.3);">✓</div>'
+            )
         else:
             border = "2px solid rgba(0,0,0,0.1)"
             shadow = "0 2px 8px rgba(0,0,0,0.08)"
-            badge = ""
+            badge_html = ""
 
-        # Build card
-        card_html = f"""
-        <div style="background: {meta['bg']}; border: {border}; border-radius: 14px;
-                    padding: 18px 12px; text-align: center; position: relative;
-                    box-shadow: {shadow}; height: 130px;
-                    display: flex; flex-direction: column; justify-content: center;
-                    transition: transform 0.2s;">
-            {badge}
-            <div style="font-size: 32px; margin-bottom: 6px; filter: drop-shadow(0 2px 4px rgba(0,0,0,0.3));">{meta['icon']}</div>
-            <div style="color: #000; font-size: 10px; font-weight: 900;
-                        letter-spacing: 1px; text-transform: uppercase; line-height: 1.2;">{g}</div>
-            <div style="color: #000; font-size: 20px; font-weight: 900; margin-top: 4px;
-                        text-shadow: 0 1px 2px rgba(255,255,255,0.3);">{count} <span style="font-size:11px;">QTY</span></div>
-        </div>
-        """
-        grid_html += f'<div>{card_html}</div>'
+        card = (
+            f'<div style="background:{bg};border:{border};border-radius:14px;'
+            f'padding:18px 12px;text-align:center;position:relative;'
+            f'box-shadow:{shadow};height:130px;'
+            f'display:flex;flex-direction:column;justify-content:center;">'
+            f'{badge_html}'
+            f'<div style="font-size:32px;margin-bottom:6px;'
+            f'filter:drop-shadow(0 2px 4px rgba(0,0,0,0.3));">{icon}</div>'
+            f'<div style="color:#000;font-size:10px;font-weight:900;'
+            f'letter-spacing:1px;text-transform:uppercase;line-height:1.2;">{g}</div>'
+            f'<div style="color:#000;font-size:20px;font-weight:900;margin-top:4px;">'
+            f'{count} <span style="font-size:11px;">QTY</span></div>'
+            f'</div>'
+        )
+        cards_html += f'<div>{card}</div>'
+    cards_html += '</div>'
 
-    grid_html += '</div>'
-    st.markdown(grid_html, unsafe_allow_html=True)
+    st.markdown(cards_html, unsafe_allow_html=True)
 
-    # Invisible button grid for clicking
-    n_cols = 6
+    # Clickable buttons (separate row, hidden behind cards)
     for i in range(0, len(all_groups), n_cols):
         row_groups = all_groups[i:i + n_cols]
         cols = st.columns(n_cols)
         for j, g in enumerate(row_groups):
             with cols[j]:
-                meta = group_meta.get(g, {"icon": "📦"})
+                icon = group_meta.get(g, ("�",))[0]
                 count = int(df[df["Group Part"] == g]["Qty"].sum())
-                btn_label = f"{meta['icon']} {g}\n{count} QTY"
+                btn_label = f"{icon} {g} - {count}"
                 btn_type = "primary" if st.session_state.selected_group == g else "secondary"
                 if st.button(btn_label, key=f"grp_{g}",
                             use_container_width=True, type=btn_type):
@@ -586,7 +589,7 @@ if "14 Days" in page:
                     st.rerun()
 
     if st.session_state.selected_group:
-        col_a, col_b, col_c = st.columns([2, 2, 1])
+        _, _, col_c = st.columns([2, 2, 1])
         with col_c:
             if st.button("❌ CLEAR", use_container_width=True, type="secondary"):
                 st.session_state.selected_group = None
