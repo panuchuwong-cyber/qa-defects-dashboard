@@ -14,13 +14,20 @@
 set -e  # Exit on any error
 
 REPO_DIR="$HOME/Desktop/Kanom/QA_Defects_Dashboard"
-EXCEL_FILE="$REPO_DIR/data/QA_Defects_Data.xlsx"
+EXCEL_FILE="$REPO_DIR/QA_Defects_Data.xlsx"
 
-# Colors for terminal output
-YELLOW='\033[1;33m'
-GREEN='\033[0;32m'
-RED='\033[0;31m'
-NC='\033[0m' # No Color
+# Colors for terminal output (only if terminal supports them)
+if [ -t 1 ] && [ -n "$TERM" ] && [ "$TERM" != "dumb" ]; then
+    YELLOW='\033[1;33m'
+    GREEN='\033[0;32m'
+    RED='\033[0;31m'
+    NC='\033[0m'
+else
+    YELLOW=''
+    GREEN=''
+    RED=''
+    NC=''
+fi
 
 echo ""
 echo "${YELLOW}⚡ 3K BATTERY — QA Defects Dashboard Sync${NC}"
@@ -69,7 +76,7 @@ fi
 # Step 4: Git commit + push
 echo ""
 echo "📤 Committing to Git..."
-git add data/QA_Defects_Data.xlsx
+git add QA_Defects_Data.xlsx
 
 # Check if there are changes to commit
 if git diff --cached --quiet; then
