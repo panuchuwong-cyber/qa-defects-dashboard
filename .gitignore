@@ -5,3 +5,5 @@ dashboard.html
 build_dashboard.py
 generate_sample_data.py
 .streamlit/secrets.toml
+secrets.toml
+*.secrets.toml
