@@ -235,79 +235,101 @@ if "14 Days" in page:
     kpi1, kpi2 = st.columns(2)
     with kpi1:
         qty_html = f"""
-        <div style="background:#fff; border:2px solid #000; border-left:6px solid #FFD700;
-                    border-radius:8px; padding:14px; margin-bottom:8px;">
-            <div style="color:#555; font-size:11px; font-weight:800; letter-spacing:2px;">📦 Q'TY</div>
-            <div style="color:#000; font-size:32px; font-weight:900; line-height:1;">{total_qty:,}<span style="font-size:14px; color:#FFD700; margin-left:4px;">PCS</span></div>
-        </div>
-        <div style="width:100%; height:220px; background:#fff; border:1px solid #ddd; border-radius:8px; padding:12px;">
-            <canvas id="kpiQtyChart"></canvas>
+        <div style="width:100%; background:#fff; border:1px solid #ddd; border-radius:8px; padding:12px;">
+            <div style="color:#555; font-size:11px; font-weight:800; letter-spacing:2px; margin-bottom:4px;">📦 Q'TY</div>
+            <div style="color:#000; font-size:28px; font-weight:900; line-height:1; margin-bottom:8px;">{total_qty:,}<span style="font-size:13px; color:#FFD700; margin-left:4px;">PCS</span></div>
+            <div style="width:100%; height:200px;">
+                <canvas id="kpiQtyChart"></canvas>
+            </div>
         </div>
         <script src="{CHARTJS_CDN}"></script>
         <script>
-        new Chart(document.getElementById('kpiQtyChart'), {{
-            type: 'line',
-            data: {{
-                labels: {labels},
-                datasets: [{{
-                    data: {qty_data},
-                    borderColor: '#000000',
-                    backgroundColor: 'rgba(255,215,0,0.3)',
-                    borderWidth: 2, tension: 0.3, fill: true,
-                    pointRadius: 4, pointBackgroundColor: '#FFD700',
-                    pointBorderColor: '#000000', pointBorderWidth: 1
-                }}]
-            }},
-            options: {{
-                responsive: true, maintainAspectRatio: false, animation: false,
-                plugins: {{ legend: {{ display: false }} }},
-                scales: {{
-                    y: {{ beginAtZero: true, ticks: {{ font: {{ size: 10 }}, stepSize: 1 }}, title: {{ display: true, text: 'QTY', font: {{ size: 10 }} }} }},
-                    x: {{ ticks: {{ font: {{ size: 9 }}, maxRotation: 0, autoSkip: true, maxTicksLimit: 7 }} }}
-                }}
+        (function() {{
+            const canvas = document.getElementById('kpiQtyChart');
+            const labels = {labels};
+            const data = {qty_data};
+            function makeChart() {{
+                const parent = canvas.parentElement;
+                canvas.width = parent.clientWidth - 4;
+                canvas.height = 200;
+                return new Chart(canvas, {{
+                    type: 'line',
+                    data: {{
+                        labels: labels,
+                        datasets: [{{
+                            data: data,
+                            borderColor: '#000000',
+                            backgroundColor: 'rgba(255,215,0,0.3)',
+                            borderWidth: 2, tension: 0.3, fill: true,
+                            pointRadius: 4, pointBackgroundColor: '#FFD700',
+                            pointBorderColor: '#000000', pointBorderWidth: 1
+                        }}]
+                    }},
+                    options: {{
+                        responsive: false, maintainAspectRatio: false, animation: false,
+                        plugins: {{ legend: {{ display: false }} }},
+                        scales: {{
+                            y: {{ beginAtZero: true, ticks: {{ font: {{ size: 10 }}, stepSize: 1 }}, title: {{ display: true, text: 'QTY', font: {{ size: 10 }} }}, grid: {{ color: '#eee' }} }},
+                            x: {{ ticks: {{ font: {{ size: 9 }}, maxRotation: 0, autoSkip: true, maxTicksLimit: 7 }}, grid: {{ display: false }} }}
+                        }}
+                    }}
+                }});
             }}
-        }});
+            const chart = makeChart();
+            window.addEventListener('resize', () => {{ chart.resize(); }});
+        }})();
         </script>
         """
-        st.components.v1.html(qty_html, height=270)
+        st.components.v1.html(qty_html, height=320)
 
     with kpi2:
         case_html = f"""
-        <div style="background:#fff; border:2px solid #000; border-left:6px solid #000;
-                    border-radius:8px; padding:14px; margin-bottom:8px;">
-            <div style="color:#555; font-size:11px; font-weight:800; letter-spacing:2px;">📋 CASE</div>
-            <div style="color:#000; font-size:32px; font-weight:900; line-height:1;">{total_case:,}<span style="font-size:14px; color:#FFD700; margin-left:4px;">CASE</span></div>
-        </div>
-        <div style="width:100%; height:220px; background:#fff; border:1px solid #ddd; border-radius:8px; padding:12px;">
-            <canvas id="kpiCaseChart"></canvas>
+        <div style="width:100%; background:#fff; border:1px solid #ddd; border-radius:8px; padding:12px;">
+            <div style="color:#555; font-size:11px; font-weight:800; letter-spacing:2px; margin-bottom:4px;">📋 CASE</div>
+            <div style="color:#000; font-size:28px; font-weight:900; line-height:1; margin-bottom:8px;">{total_case:,}<span style="font-size:13px; color:#FFD700; margin-left:4px;">CASE</span></div>
+            <div style="width:100%; height:200px;">
+                <canvas id="kpiCaseChart"></canvas>
+            </div>
         </div>
         <script src="{CHARTJS_CDN}"></script>
         <script>
-        new Chart(document.getElementById('kpiCaseChart'), {{
-            type: 'line',
-            data: {{
-                labels: {labels},
-                datasets: [{{
-                    data: {case_data},
-                    borderColor: '#FFD700',
-                    backgroundColor: 'rgba(0,0,0,0.1)',
-                    borderWidth: 2, tension: 0.3, fill: true,
-                    pointRadius: 4, pointBackgroundColor: '#000',
-                    pointBorderColor: '#FFD700', pointBorderWidth: 1
-                }}]
-            }},
-            options: {{
-                responsive: true, maintainAspectRatio: false, animation: false,
-                plugins: {{ legend: {{ display: false }} }},
-                scales: {{
-                    y: {{ beginAtZero: true, ticks: {{ font: {{ size: 10 }}, stepSize: 1 }}, title: {{ display: true, text: 'CASE', font: {{ size: 10 }} }} }},
-                    x: {{ ticks: {{ font: {{ size: 9 }}, maxRotation: 0, autoSkip: true, maxTicksLimit: 7 }} }}
-                }}
+        (function() {{
+            const canvas = document.getElementById('kpiCaseChart');
+            const labels = {labels};
+            const data = {case_data};
+            function makeChart() {{
+                const parent = canvas.parentElement;
+                canvas.width = parent.clientWidth - 4;
+                canvas.height = 200;
+                return new Chart(canvas, {{
+                    type: 'line',
+                    data: {{
+                        labels: labels,
+                        datasets: [{{
+                            data: data,
+                            borderColor: '#FFD700',
+                            backgroundColor: 'rgba(0,0,0,0.1)',
+                            borderWidth: 2, tension: 0.3, fill: true,
+                            pointRadius: 4, pointBackgroundColor: '#000',
+                            pointBorderColor: '#FFD700', pointBorderWidth: 1
+                        }}]
+                    }},
+                    options: {{
+                        responsive: false, maintainAspectRatio: false, animation: false,
+                        plugins: {{ legend: {{ display: false }} }},
+                        scales: {{
+                            y: {{ beginAtZero: true, ticks: {{ font: {{ size: 10 }}, stepSize: 1 }}, title: {{ display: true, text: 'CASE', font: {{ size: 10 }} }}, grid: {{ color: '#eee' }} }},
+                            x: {{ ticks: {{ font: {{ size: 9 }}, maxRotation: 0, autoSkip: true, maxTicksLimit: 7 }}, grid: {{ display: false }} }}
+                        }}
+                    }}
+                }});
             }}
-        }});
+            const chart = makeChart();
+            window.addEventListener('resize', () => {{ chart.resize(); }});
+        }})();
         </script>
         """
-        st.components.v1.html(case_html, height=270)
+        st.components.v1.html(case_html, height=320)
 
     # --- Problem Mode ---
     st.markdown('<div class="section-header">⚠️ PROBLEM MODE</div>', unsafe_allow_html=True)
