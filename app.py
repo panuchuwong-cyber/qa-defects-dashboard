@@ -1165,7 +1165,7 @@ elif "Data Entry" in page:
                             unsafe_allow_html=True
                         )
 
-                        # CSV download
+                        # CSV download + Telegram sync
                         csv_data = preview_df.to_csv(index=False).encode('utf-8')
                         col_dl1, col_dl2 = st.columns(2)
                         with col_dl1:
@@ -1185,6 +1185,74 @@ elif "Data Entry" in page:
                                 height=80,
                                 help="Copy and paste to Telegram"
                             )
+
+                        # === TELEGRAM DIRECT SYNC ===
+                        st.markdown("<br>", unsafe_allow_html=True)
+                        st.markdown(
+                            '<div style="background: linear-gradient(135deg, #FFD700 0%, #FFC107 100%);'
+                            'color: #000; padding: 16px; border-radius: 10px; margin-bottom: 12px;'
+                            'border: 2px solid #000;">'
+                            '<b style="font-size: 14px;">⚡ FASTEST: Send directly to Kanom</b><br>'
+                            '<span style="color: #333; font-size: 12px;">'
+                            'Click button below → message sent to Kanom via Telegram → dashboard refreshes in 1 min'
+                            '</span></div>',
+                            unsafe_allow_html=True
+                        )
+
+                        if st.button(
+                            "📤 SYNC TO KANOM (1-CLICK)",
+                            use_container_width=True,
+                            type="primary",
+                            key="sync_telegram_btn",
+                            help="Send data directly to Kanom via Telegram bot"
+                        ):
+                            # Build message
+                            msg_text = (
+                                f"🔔 QA DEFECTS SYNC\n"
+                                f"📅 {datetime.now().strftime('%Y-%m-%d %H:%M')}\n"
+                                f"📊 {len(valid_records)} valid records\n"
+                                f"📦 Total: {preview_df['Qty'].sum()} PCS / {len(preview_df)} CASE\n"
+                                f"🏭 {preview_df['Supplier'].nunique()} suppliers\n\n"
+                                f"```csv\n"
+                                f"{preview_df.to_csv(index=False)}\n"
+                                f"```"
+                            )
+
+                            # Try Telegram bot
+                            try:
+                                bot_token = st.secrets.get("telegram_bot_token")
+                                kanom_chat_id = st.secrets.get("telegram_kanom_chat_id")
+
+                                if bot_token and kanom_chat_id:
+                                    import requests
+                                    url = f"https://api.telegram.org/bot{bot_token}/sendMessage"
+                                    payload = {
+                                        "chat_id": kanom_chat_id,
+                                        "text": msg_text[:4000],  # Telegram limit
+                                        "parse_mode": "Markdown"
+                                    }
+                                    response = requests.post(url, json=payload, timeout=10)
+
+                                    if response.status_code == 200:
+                                        st.success(
+                                            "✅ **Sent to Kanom via Telegram!**\n\n"
+                                            "📊 Dashboard will refresh in 1-2 minutes.\n"
+                                            "💬 Kanom will reply when sync is complete."
+                                        )
+                                        st.balloons()
+                                    else:
+                                        st.warning(
+                                            f"⚠️ Telegram API error ({response.status_code}).\n\n"
+                                            f"**Use download button instead** and send CSV to Kanom via Telegram chat."
+                                        )
+                                else:
+                                    st.info(
+                                        "ℹ️ **Telegram bot not configured yet.**\n\n"
+                                        "📥 Click **DOWNLOAD CSV** above → send file to Kanom via Telegram chat.\n\n"
+                                        "💡 To enable 1-click sync, see `TELEGRAM_BOT_SETUP.md`"
+                                    )
+                            except Exception as e:
+                                st.error(f"❌ Sync failed: {str(e)}\n\n📥 Use download button as fallback.")
 
                     # Show invalid records
                     if invalid_records:
