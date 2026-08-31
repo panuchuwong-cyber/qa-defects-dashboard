@@ -18,7 +18,7 @@ def check_password():
     if "authenticated" not in st.session_state:
         st.session_state.authenticated = False
     if not st.session_state.authenticated:
-        st.markdown("""
+        logo_html = """
         <style>
         body { background: #0a0a0a; }
         .login-wrap {
@@ -109,13 +109,14 @@ def check_password():
         </style>
         <div class="login-wrap">
             <div style="margin-bottom:20px;">
-                <img src="{LOGO_URL}" width="140"
+                <img src="__LOGO_URL__" width="140"
                      style="border-radius:14px;box-shadow:0 6px 20px rgba(255,215,0,0.4);">
             </div>
             <div class="login-title">3K BATTERY QA</div>
             <div class="login-sub">Defect Monitoring System v2.0</div>
         </div>
-        """, unsafe_allow_html=True)
+        """.replace("__LOGO_URL__", LOGO_URL)
+        st.markdown(logo_html, unsafe_allow_html=True)
         col = st.columns([1, 2, 1])
         with col[1]:
             st.markdown('<div class="login-form">', unsafe_allow_html=True)
