@@ -1008,242 +1008,449 @@ elif "Data Entry" in page:
     if "form_reset_counter" not in st.session_state:
         st.session_state.form_reset_counter = 0
 
-    # === INFO BOX ===
-    st.markdown("""
-    <div style="background: linear-gradient(135deg, #000 0%, #1a1a1a 100%);
-                color: #FFD700; padding: 16px 20px; border-radius: 12px;
-                border: 1px solid #FFD700; margin-bottom: 20px;
-                box-shadow: 0 4px 16px rgba(0,0,0,0.15);">
-        <b style="font-size: 14px;">💡 HOW IT WORKS</b><br>
-        <span style="color: #ccc; font-size: 12px;">
-            1. Fill the form below<br>
-            2. Click <b>"✅ ADD RECORD"</b> — data appears in table below<br>
-            3. Copy the table data and send to Kanom via Telegram<br>
-            4. Kanom will save to GitHub → Dashboard refreshes for everyone
-        </span>
-    </div>
-    """, unsafe_allow_html=True)
+    if "uploaded_data" not in st.session_state:
+        st.session_state.uploaded_data = None
 
-    # === FORM ===
-    col_form, col_preview = st.columns([3, 2])
+    # === MODE SELECTOR ===
+    entry_mode = st.radio(
+        "📋 Choose how you want to add data:",
+        ["📤 Upload Excel File", "✏️ Manual Form"],
+        horizontal=True,
+        key="entry_mode_selector"
+    )
 
-    with col_form:
+    st.markdown("<br>", unsafe_allow_html=True)
+
+    # ============================================================
+    # MODE 1: UPLOAD EXCEL FILE
+    # ============================================================
+    if entry_mode == "📤 Upload Excel File":
         st.markdown(
-            '<div style="background:white; padding:24px; border-radius:14px; '
-            'border:2px solid #000; box-shadow:0 4px 16px rgba(0,0,0,0.08);">'
-            '<div style="color:#000; font-weight:900; font-size:14px; '
-            'letter-spacing:2px; margin-bottom:16px; '
-            'border-bottom:3px solid #FFD700; padding-bottom:8px;">'
-            '📋 NEW DEFECT RECORD</div>',
+            '<div style="background: linear-gradient(135deg, #FFD700 0%, #FFC107 100%);'
+            'color: #000; padding: 20px; border-radius: 12px; margin-bottom: 16px;'
+            'border: 2px solid #000; box-shadow: 0 4px 16px rgba(255,215,0,0.3);">'
+            '<b style="font-size: 15px;">📤 UPLOAD EXCEL — Fastest way to add multiple records</b><br>'
+            '<span style="color: #333; font-size: 12px;">'
+            'Drag & drop your edited Excel file (.xlsx) → preview → sync to dashboard'
+            '</span></div>',
             unsafe_allow_html=True
         )
 
-        # Form fields with key based on reset counter to force clear after save
-        rc = st.session_state.form_reset_counter
-        c1, c2 = st.columns(2)
-        with c1:
-            entry_date = st.date_input(
-                "📅 Date",
-                value=datetime.now().date(),
-                key=f"date_{rc}"
-            )
-            entry_supplier = st.selectbox(
-                "🏭 Supplier",
-                ["-- Select Supplier --"] + sorted(df["Supplier"].unique().tolist()) + ["➕ Add new..."],
-                key=f"supplier_{rc}"
-            )
-            if entry_supplier == "➕ Add new...":
-                entry_supplier = st.text_input(
-                    "✏️ New supplier name", key=f"new_supplier_{rc}"
-                )
-            entry_group = st.selectbox(
-                "📦 Group Part",
-                ["-- Select Group --",
-                 "ELECTRIC & ELEC.", "PACKING", "PIPING", "PLASTIC",
-                 "PRINTING", "RAW MATERIAL", "RUBBER", "SHEET METAL",
-                 "FOAM", "SEALING", "OTHERS"],
-                key=f"group_{rc}"
-            )
-            entry_mode = st.selectbox(
-                "⚠️ Problem Mode",
-                ["-- Select Mode --",
-                 "APPEARANCE NG", "PART MISTAKE", "DIMENSION NG",
-                 "FUNCTION NG", "LEAK"],
-                key=f"mode_{rc}"
-            )
+        uploaded_file = st.file_uploader(
+            "📁 Choose Excel file (.xlsx)",
+            type=["xlsx"],
+            help="Upload the QA_Defects_Template.xlsx file after editing",
+            key="excel_uploader"
+        )
 
-        with c2:
-            entry_part_name = st.text_input(
-                "⚙️ Part Name",
-                placeholder="e.g., ELBOW PIPE 1/2",
-                key=f"partname_{rc}"
-            )
-            entry_part_no = st.text_input(
-                "🔧 Part No.",
-                placeholder="e.g., 1P095004-1 K",
-                key=f"partno_{rc}"
-            )
-            entry_qty = st.number_input(
-                "📦 Quantity (PCS)",
-                min_value=1,
-                value=1,
-                step=1,
-                key=f"qty_{rc}"
-            )
-            entry_comment = st.text_area(
-                "💬 Comment",
-                placeholder="Describe the defect...",
-                height=80,
-                key=f"comment_{rc}"
-            )
+        if uploaded_file is not None:
+            try:
+                # Try to read Excel (try multiple sheet names)
+                df_uploaded = None
+                sheet_used = None
+                for sheet_name in ["Defects Data", "Sheet1", 0]:
+                    try:
+                        df_uploaded = pd.read_excel(uploaded_file, sheet_name=sheet_name, header=3)
+                        sheet_used = sheet_name
+                        break
+                    except Exception:
+                        continue
 
-        # Action buttons
+                if df_uploaded is None or df_uploaded.empty:
+                    st.error("❌ Could not read Excel file. Make sure it has data.")
+                else:
+                    # Validate required columns
+                    required_cols = ["Date", "Supplier", "Group Part", "Problem Mode", "Part No", "Qty"]
+                    missing_cols = [c for c in required_cols if c not in df_uploaded.columns]
+                    extra_cols = [c for c in df_uploaded.columns if c not in required_cols + ["Part Name", "Comment"]]
+
+                    # === VALIDATION REPORT ===
+                    valid_records = []
+                    invalid_records = []
+
+                    for idx, row in df_uploaded.iterrows():
+                        record = {}
+                        record["Date"] = str(row.get("Date", ""))
+                        record["Supplier"] = str(row.get("Supplier", ""))
+                        record["Group Part"] = str(row.get("Group Part", ""))
+                        record["Problem Mode"] = str(row.get("Problem Mode", ""))
+                        record["Part Name"] = str(row.get("Part Name", "") or "—")
+                        record["Part No"] = str(row.get("Part No", ""))
+                        try:
+                            record["Qty"] = int(row.get("Qty", 0))
+                        except (ValueError, TypeError):
+                            record["Qty"] = 0
+                        record["Comment"] = str(row.get("Comment", "") or "—")
+
+                        # Check if row is empty
+                        if all(v in ["", "nan", "—", None, 0] for v in [record["Date"], record["Supplier"], record["Part No"]]):
+                            continue
+
+                        # Validate required fields
+                        row_errors = []
+                        if not record["Date"] or record["Date"] == "nan":
+                            row_errors.append("Date missing")
+                        if not record["Supplier"] or record["Supplier"] == "nan":
+                            row_errors.append("Supplier missing")
+                        if not record["Part No"] or record["Part No"] == "nan":
+                            row_errors.append("Part No missing")
+                        if record["Qty"] <= 0:
+                            row_errors.append("Qty must be > 0")
+
+                        if row_errors:
+                            invalid_records.append({"row": idx + 5, "data": record, "errors": row_errors})
+                        else:
+                            valid_records.append(record)
+
+                    # Show validation results
+                    col_v1, col_v2, col_v3 = st.columns(3)
+                    with col_v1:
+                        st.markdown(
+                            f'<div style="background:#000; color:#FFD700; padding:14px; '
+                            f'border-radius:10px; text-align:center;">'
+                            f'<div style="font-size:11px; opacity:0.8;">TOTAL ROWS</div>'
+                            f'<div style="font-size:28px; font-weight:900;">{len(df_uploaded)}</div>'
+                            f'</div>',
+                            unsafe_allow_html=True
+                        )
+                    with col_v2:
+                        st.markdown(
+                            f'<div style="background:#4CAF50; color:white; padding:14px; '
+                            f'border-radius:10px; text-align:center;">'
+                            f'<div style="font-size:11px; opacity:0.9;">VALID ✓</div>'
+                            f'<div style="font-size:28px; font-weight:900;">{len(valid_records)}</div>'
+                            f'</div>',
+                            unsafe_allow_html=True
+                        )
+                    with col_v3:
+                        st.markdown(
+                            f'<div style="background:#F44336; color:white; padding:14px; '
+                            f'border-radius:10px; text-align:center;">'
+                            f'<div style="font-size:11px; opacity:0.9;">INVALID ✗</div>'
+                            f'<div style="font-size:28px; font-weight:900;">{len(invalid_records)}</div>'
+                            f'</div>',
+                            unsafe_allow_html=True
+                        )
+
+                    # Show column warnings
+                    if missing_cols:
+                        st.warning(f"⚠️ Missing columns: {', '.join(missing_cols)}")
+                    if extra_cols:
+                        st.info(f"�️ Extra columns ignored: {', '.join(extra_cols)}")
+
+                    # Preview table
+                    st.markdown("<br>", unsafe_allow_html=True)
+                    st.markdown("##### 📋 Preview (Valid Records)")
+
+                    if valid_records:
+                        preview_df = pd.DataFrame(valid_records)
+                        st.dataframe(
+                            preview_df[["Date", "Supplier", "Group Part", "Problem Mode", "Part No", "Qty"]],
+                            use_container_width=True, hide_index=True,
+                            height=300
+                        )
+                        st.session_state.uploaded_data = valid_records
+
+                        # === SEND TO KANOM ===
+                        st.markdown("<br>", unsafe_allow_html=True)
+                        st.markdown(
+                            '<div style="background: #000; color: #FFD700; padding: 16px 20px; '
+                            'border-radius: 12px; margin-bottom: 16px; '
+                            'border: 2px solid #FFD700;">'
+                            '<b style="font-size: 14px;">📤 READY TO SYNC!</b><br>'
+                            '<span style="color: #ccc; font-size: 12px;">'
+                            f'{len(valid_records)} valid records detected. Download CSV and send to Kanom via Telegram. '
+                            'Dashboard will refresh in 1-2 minutes.'
+                            '</span></div>',
+                            unsafe_allow_html=True
+                        )
+
+                        # CSV download
+                        csv_data = preview_df.to_csv(index=False).encode('utf-8')
+                        col_dl1, col_dl2 = st.columns(2)
+                        with col_dl1:
+                            st.download_button(
+                                "📥 DOWNLOAD CSV",
+                                csv_data,
+                                f"defects_upload_{datetime.now().strftime('%Y%m%d_%H%M%S')}.csv",
+                                "text/csv",
+                                use_container_width=True,
+                                type="primary"
+                            )
+                        with col_dl2:
+                            # Copy to clipboard text area
+                            st.text_area(
+                                "📋 Or copy CSV text:",
+                                preview_df.to_csv(index=False),
+                                height=80,
+                                help="Copy and paste to Telegram"
+                            )
+
+                    # Show invalid records
+                    if invalid_records:
+                        st.markdown("<br>", unsafe_allow_html=True)
+                        with st.expander(f"⚠️ {len(invalid_records)} Invalid Records (click to view)"):
+                            for inv in invalid_records:
+                                st.error(
+                                    f"**Row {inv['row']}:** {', '.join(inv['errors'])}\n\n"
+                                    f"`{inv['data']}`"
+                                )
+
+            except Exception as e:
+                st.error(f"❌ Error reading file: {str(e)}")
+                st.info("� Make sure you're uploading the QA_Defects_Template.xlsx file")
+
+        # Footer for upload mode
         st.markdown("<br>", unsafe_allow_html=True)
-        btn_c1, btn_c2 = st.columns(2)
-        with btn_c1:
-            add_clicked = st.button(
-                "✅ ADD RECORD",
-                use_container_width=True,
-                type="primary"
-            )
-        with btn_c2:
-            clear_clicked = st.button(
-                "�️ CLEAR FORM",
-                use_container_width=True,
-                type="secondary"
-            )
-
-        st.markdown('</div>', unsafe_allow_html=True)
-
-        # Handle ADD
-        if add_clicked:
-            # Validate required fields
-            errors = []
-            if entry_supplier in ["-- Select Supplier --", None, ""]:
-                errors.append("Supplier")
-            if entry_group in ["-- Select Group --", None, ""]:
-                errors.append("Group Part")
-            if entry_mode in ["-- Select Mode --", None, ""]:
-                errors.append("Problem Mode")
-            if not entry_part_no.strip():
-                errors.append("Part No.")
-
-            if errors:
-                st.error(f"❌ Please fill required fields: {', '.join(errors)}")
-            else:
-                new_record = {
-                    "Date": entry_date.strftime("%Y-%m-%d"),
-                    "Supplier": entry_supplier,
-                    "Group Part": entry_group,
-                    "Problem Mode": entry_mode,
-                    "Part Name": entry_part_name.strip() or "—",
-                    "Part No": entry_part_no.strip(),
-                    "Qty": int(entry_qty),
-                    "Comment": entry_comment.strip() or "—"
-                }
-                st.session_state.new_entries.append(new_record)
-                st.session_state.form_reset_counter += 1
-                st.success(f"✅ Record #{len(st.session_state.new_entries)} added!")
-                st.rerun()
-
-        # Handle CLEAR form
-        if clear_clicked:
-            st.session_state.form_reset_counter += 1
-            st.rerun()
-
-    # === PREVIEW / PENDING RECORDS ===
-    with col_preview:
         st.markdown(
-            '<div style="background:white; padding:20px; border-radius:14px; '
-            'border:2px solid #FFD700; box-shadow:0 4px 16px rgba(255,215,0,0.2);">'
-            '<div style="color:#000; font-weight:900; font-size:14px; '
-            'letter-spacing:2px; margin-bottom:12px; '
-            'border-bottom:3px solid #000; padding-bottom:8px;">'
-            f'📦 PENDING ({len(st.session_state.new_entries)} records)</div>',
-            unsafe_allow_html=True
-        )
-
-        if st.session_state.new_entries:
-            pending_df = pd.DataFrame(st.session_state.new_entries)
-            st.dataframe(
-                pending_df[["Date", "Supplier", "Group Part", "Qty"]],
-                use_container_width=True, hide_index=True,
-                height=300
-            )
-
-            # Total summary
-            total_pending_qty = pending_df["Qty"].sum()
-            st.markdown(
-                f'<div style="background:#FFD700; color:#000; padding:10px; '
-                f'border-radius:8px; margin-top:8px; text-align:center; '
-                f'font-weight:900;">'
-                f'TOTAL: {total_pending_qty} PCS / {len(pending_df)} CASE'
-                f'</div>',
-                unsafe_allow_html=True
-            )
-
-            # Export buttons
-            st.markdown("<br>", unsafe_allow_html=True)
-            csv_data = pending_df.to_csv(index=False).encode('utf-8')
-            st.download_button(
-                "📥 DOWNLOAD CSV",
-                csv_data,
-                "defects_pending.csv",
-                "text/csv",
-                use_container_width=True,
-                type="secondary"
-            )
-
-            if st.button("🗑️ CLEAR ALL PENDING", use_container_width=True):
-                st.session_state.new_entries = []
-                st.rerun()
-        else:
-            st.markdown(
-                '<div style="color:#999; font-size:13px; text-align:center; '
-                'padding:30px 10px;">'
-                '📋 No pending records yet.<br>'
-                'Add records using the form →'
-                '</div>',
-                unsafe_allow_html=True
-            )
-
-        st.markdown('</div>', unsafe_allow_html=True)
-
-    # === SEND TO KANOM INSTRUCTIONS ===
-    if st.session_state.new_entries:
-        st.markdown(
-            '<div class="section-header">'
-            '<div class="section-icon">📤</div>'
-            'SEND TO KANOM TO PUBLISH'
+            '<div style="background: #FFF8DC; padding: 16px; border-radius: 10px; '
+            'border: 1px solid #FFD700; font-size: 12px; color: #333;">'
+            '<b>💡 TIP:</b> Use the QA_Defects_Template.xlsx for consistent format. '
+            'The template has dropdowns for Group Part and Problem Mode to prevent typos.'
             '</div>',
             unsafe_allow_html=True
         )
 
+    # ============================================================
+    # MODE 2: MANUAL FORM (existing logic)
+    # ============================================================
+    else:
+        # === INFO BOX ===
         st.markdown("""
-        <div style="background: #FFF8DC; padding: 20px; border-radius: 12px;
-                    border: 2px solid #FFD700; margin-bottom: 16px;">
-            <b style="color: #000; font-size: 14px;">📌 3 WAYS TO SEND:</b>
-            <ol style="color: #333; font-size: 13px; line-height: 1.8; margin-top: 8px;">
-                <li><b>Screenshot</b> the table below → send via Telegram</li>
-                <li><b>Copy-paste</b> the CSV text below → paste in Telegram chat</li>
-                <li><b>Download</b> CSV file → send file via Telegram</li>
-            </ol>
-            <div style="background: #000; color: #FFD700; padding: 10px 14px;
-                        border-radius: 8px; margin-top: 12px; font-size: 12px;">
-                ⏱️ <b>Kanom will publish within 30 seconds!</b><br>
-                📊 Dashboard refreshes → everyone sees new data
-            </div>
+        <div style="background: linear-gradient(135deg, #000 0%, #1a1a1a 100%);
+                    color: #FFD700; padding: 16px 20px; border-radius: 12px;
+                    border: 1px solid #FFD700; margin-bottom: 20px;
+                    box-shadow: 0 4px 16px rgba(0,0,0,0.15);">
+            <b style="font-size: 14px;">💡 HOW IT WORKS</b><br>
+            <span style="color: #ccc; font-size: 12px;">
+                1. Fill the form below<br>
+                2. Click <b>"✅ ADD RECORD"</b> — data appears in table below<br>
+                3. Copy the table data and send to Kanom via Telegram<br>
+                4. Kanom will save to GitHub → Dashboard refreshes for everyone
+            </span>
         </div>
         """, unsafe_allow_html=True)
 
-        # Show CSV text for easy copy
-        csv_text = pending_df.to_csv(index=False)
-        st.text_area(
-            "📋 Copy this CSV:",
-            csv_text,
-            height=200,
-            help="Copy this text and paste in Telegram to Kanom"
-        )
+        # === FORM ===
+        col_form, col_preview = st.columns([3, 2])
+
+        with col_form:
+            st.markdown(
+                '<div style="background:white; padding:24px; border-radius:14px; '
+                'border:2px solid #000; box-shadow:0 4px 16px rgba(0,0,0,0.08);">'
+                '<div style="color:#000; font-weight:900; font-size:14px; '
+                'letter-spacing:2px; margin-bottom:16px; '
+                'border-bottom:3px solid #FFD700; padding-bottom:8px;">'
+                '📋 NEW DEFECT RECORD</div>',
+                unsafe_allow_html=True
+            )
+
+            # Form fields with key based on reset counter to force clear after save
+            rc = st.session_state.form_reset_counter
+            c1, c2 = st.columns(2)
+            with c1:
+                entry_date = st.date_input(
+                    "📅 Date",
+                    value=datetime.now().date(),
+                    key=f"date_{rc}"
+                )
+                entry_supplier = st.selectbox(
+                    "🏭 Supplier",
+                    ["-- Select Supplier --"] + sorted(df["Supplier"].unique().tolist()) + ["� Add new..."],
+                    key=f"supplier_{rc}"
+                )
+                if entry_supplier == "➕ Add new...":
+                    entry_supplier = st.text_input(
+                        "✏️ New supplier name", key=f"new_supplier_{rc}"
+                    )
+                entry_group = st.selectbox(
+                    "📦 Group Part",
+                    ["-- Select Group --",
+                     "ELECTRIC & ELEC.", "PACKING", "PIPING", "PLASTIC",
+                     "PRINTING", "RAW MATERIAL", "RUBBER", "SHEET METAL",
+                     "FOAM", "SEALING", "OTHERS"],
+                    key=f"group_{rc}"
+                )
+                entry_mode = st.selectbox(
+                    "⚠️ Problem Mode",
+                    ["-- Select Mode --",
+                     "APPEARANCE NG", "PART MISTAKE", "DIMENSION NG",
+                     "FUNCTION NG", "LEAK"],
+                    key=f"mode_{rc}"
+                )
+
+            with c2:
+                entry_part_name = st.text_input(
+                    "⚙️ Part Name",
+                    placeholder="e.g., ELBOW PIPE 1/2",
+                    key=f"partname_{rc}"
+                )
+                entry_part_no = st.text_input(
+                    "🔧 Part No.",
+                    placeholder="e.g., 1P095004-1 K",
+                    key=f"partno_{rc}"
+                )
+                entry_qty = st.number_input(
+                    "📦 Quantity (PCS)",
+                    min_value=1,
+                    value=1,
+                    step=1,
+                    key=f"qty_{rc}"
+                )
+                entry_comment = st.text_area(
+                    "💬 Comment",
+                    placeholder="Describe the defect...",
+                    height=80,
+                    key=f"comment_{rc}"
+                )
+
+            # Action buttons
+            st.markdown("<br>", unsafe_allow_html=True)
+            btn_c1, btn_c2 = st.columns(2)
+            with btn_c1:
+                add_clicked = st.button(
+                    "✅ ADD RECORD",
+                    use_container_width=True,
+                    type="primary"
+                )
+            with btn_c2:
+                clear_clicked = st.button(
+                    "🗑️ CLEAR FORM",
+                    use_container_width=True,
+                    type="secondary"
+                )
+
+            st.markdown('</div>', unsafe_allow_html=True)
+
+            # Handle ADD
+            if add_clicked:
+                # Validate required fields
+                errors = []
+                if entry_supplier in ["-- Select Supplier --", None, ""]:
+                    errors.append("Supplier")
+                if entry_group in ["-- Select Group --", None, ""]:
+                    errors.append("Group Part")
+                if entry_mode in ["-- Select Mode --", None, ""]:
+                    errors.append("Problem Mode")
+                if not entry_part_no.strip():
+                    errors.append("Part No.")
+
+                if errors:
+                    st.error(f"❌ Please fill required fields: {', '.join(errors)}")
+                else:
+                    new_record = {
+                        "Date": entry_date.strftime("%Y-%m-%d"),
+                        "Supplier": entry_supplier,
+                        "Group Part": entry_group,
+                        "Problem Mode": entry_mode,
+                        "Part Name": entry_part_name.strip() or "—",
+                        "Part No": entry_part_no.strip(),
+                        "Qty": int(entry_qty),
+                        "Comment": entry_comment.strip() or "—"
+                    }
+                    st.session_state.new_entries.append(new_record)
+                    st.session_state.form_reset_counter += 1
+                    st.success(f"✅ Record #{len(st.session_state.new_entries)} added!")
+                    st.rerun()
+
+            # Handle CLEAR form
+            if clear_clicked:
+                st.session_state.form_reset_counter += 1
+                st.rerun()
+
+        # === PREVIEW / PENDING RECORDS ===
+        with col_preview:
+            st.markdown(
+                '<div style="background:white; padding:20px; border-radius:14px; '
+                'border:2px solid #FFD700; box-shadow:0 4px 16px rgba(255,215,0,0.2);">'
+                '<div style="color:#000; font-weight:900; font-size:14px; '
+                'letter-spacing:2px; margin-bottom:12px; '
+                'border-bottom:3px solid #000; padding-bottom:8px;">'
+                f'📦 PENDING ({len(st.session_state.new_entries)} records)</div>',
+                unsafe_allow_html=True
+            )
+
+            if st.session_state.new_entries:
+                pending_df = pd.DataFrame(st.session_state.new_entries)
+                st.dataframe(
+                    pending_df[["Date", "Supplier", "Group Part", "Qty"]],
+                    use_container_width=True, hide_index=True,
+                    height=300
+                )
+
+                # Total summary
+                total_pending_qty = pending_df["Qty"].sum()
+                st.markdown(
+                    f'<div style="background:#FFD700; color:#000; padding:10px; '
+                    f'border-radius:8px; margin-top:8px; text-align:center; '
+                    f'font-weight:900;">'
+                    f'TOTAL: {total_pending_qty} PCS / {len(pending_df)} CASE'
+                    f'</div>',
+                    unsafe_allow_html=True
+                )
+
+                # Export buttons
+                st.markdown("<br>", unsafe_allow_html=True)
+                csv_data = pending_df.to_csv(index=False).encode('utf-8')
+                st.download_button(
+                    "📥 DOWNLOAD CSV",
+                    csv_data,
+                    "defects_pending.csv",
+                    "text/csv",
+                    use_container_width=True,
+                    type="secondary"
+                )
+
+                if st.button("🗑️ CLEAR ALL PENDING", use_container_width=True):
+                    st.session_state.new_entries = []
+                    st.rerun()
+            else:
+                st.markdown(
+                    '<div style="color:#999; font-size:13px; text-align:center; '
+                    'padding:30px 10px;">'
+                    '📋 No pending records yet.<br>'
+                    'Add records using the form →'
+                    '</div>',
+                    unsafe_allow_html=True
+                )
+
+            st.markdown('</div>', unsafe_allow_html=True)
+
+        # === SEND TO KANOM INSTRUCTIONS ===
+        if st.session_state.new_entries:
+            st.markdown(
+                '<div class="section-header">'
+                '<div class="section-icon">📤</div>'
+                'SEND TO KANOM TO PUBLISH'
+                '</div>',
+                unsafe_allow_html=True
+            )
+
+            st.markdown("""
+            <div style="background: #FFF8DC; padding: 20px; border-radius: 12px;
+                        border: 2px solid #FFD700; margin-bottom: 16px;">
+                <b style="color: #000; font-size: 14px;">📌 3 WAYS TO SEND:</b>
+                <ol style="color: #333; font-size: 13px; line-height: 1.8; margin-top: 8px;">
+                    <li><b>Screenshot</b> the table below → send via Telegram</li>
+                    <li><b>Copy-paste</b> the CSV text below → paste in Telegram chat</li>
+                    <li><b>Download</b> CSV file → send file via Telegram</li>
+                </ol>
+                <div style="background: #000; color: #FFD700; padding: 10px 14px;
+                            border-radius: 8px; margin-top: 12px; font-size: 12px;">
+                    ⏱️ <b>Kanom will publish within 30 seconds!</b><br>
+                    📊 Dashboard refreshes → everyone sees new data
+                </div>
+            </div>
+            """, unsafe_allow_html=True)
+
+            # Show CSV text for easy copy
+            csv_text = pending_df.to_csv(index=False)
+            st.text_area(
+                "📋 Copy this CSV:",
+                csv_text,
+                height=200,
+                help="Copy this text and paste in Telegram to Kanom"
+            )
 
 
 # ============================================================
