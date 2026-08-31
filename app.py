@@ -1210,81 +1210,79 @@ elif "Data Entry" in page:
                         )
 
                         if st.button(
-                            "📤 SYNC TO KANOM (1-CLICK)",
+                            "📤 SYNC TO GITHUB (1-CLICK)",
                             use_container_width=True,
                             type="primary",
-                            key="sync_telegram_btn",
-                            help="Send data directly to Kanom via Telegram bot"
+                            key="sync_github_btn",
+                            help="Push data directly to GitHub repo - dashboard refreshes in 1 min"
                         ):
-                            # Build message
-                            msg_text = (
-                                f"🔔 QA DEFECTS SYNC\n"
-                                f"📅 {datetime.now().strftime('%Y-%m-%d %H:%M')}\n"
-                                f"📊 {len(valid_records)} valid records\n"
-                                f"📦 Total: {preview_df['Qty'].sum()} PCS / {len(preview_df)} CASE\n"
-                                f"🏭 {preview_df['Supplier'].nunique()} suppliers\n\n"
-                                f"```csv\n"
-                                f"{preview_df.to_csv(index=False)}\n"
-                                f"```"
-                            )
-
-                            # Try Telegram bot
                             try:
+                                # Use GitHub Contents API to push xlsx directly
+                                # Note: requires github_token in secrets, fallback to instructions
                                 try:
-                                    bot_token = st.secrets["telegram_bot_token"]
-                                except (KeyError, FileNotFoundError):
-                                    bot_token = None
-                                try:
-                                    kanom_chat_id = st.secrets["telegram_kanom_chat_id"]
-                                except (KeyError, FileNotFoundError):
-                                    kanom_chat_id = None
+                                    gh_token = st.secrets["github_token"]
+                                    gh_repo  = st.secrets.get("github_repo", "panuchuwong-cyber/qa-defects-dashboard")
+                                    gh_branch = st.secrets.get("github_branch", "main")
+                                except (KeyError, FileNotFoundError, AttributeError):
+                                    gh_token = None
+                                    gh_repo  = None
 
-                                if bot_token and kanom_chat_id:
+                                if gh_token:
                                     import requests
-                                    url = f"https://api.telegram.org/bot{bot_token}/sendMessage"
-                                    payload = {
-                                        "chat_id": kanom_chat_id,
-                                        "text": msg_text[:4000],  # Telegram limit
-                                        "parse_mode": "Markdown"
-                                    }
-                                    response = requests.post(url, json=payload, timeout=10)
+                                    import base64
 
-                                    if response.status_code == 200:
+                                    # Read existing file from GitHub to get sha
+                                    api_base = f"https://api.github.com/repos/{gh_repo}/contents/QA_Defects_Data.xlsx"
+                                    headers = {
+                                        "Authorization": f"Bearer {gh_token}",
+                                        "Accept": "application/vnd.github+json"
+                                    }
+
+                                    # Get existing file SHA (needed for update)
+                                    existing_resp = requests.get(api_base, headers=headers, params={"ref": gh_branch}, timeout=10)
+                                    sha = existing_resp.json().get("sha") if existing_resp.status_code == 200 else None
+
+                                    # Read local xlsx and encode to base64
+                                    with open("QA_Defects_Data.xlsx", "rb") as f:
+                                        content_b64 = base64.b64encode(f.read()).decode()
+
+                                    # Push new content
+                                    payload = {
+                                        "message": f"DATA: auto-sync {len(valid_records)} records from dashboard",
+                                        "content": content_b64,
+                                        "branch": gh_branch,
+                                    }
+                                    if sha:
+                                        payload["sha"] = sha
+
+                                    push_resp = requests.put(api_base, headers=headers, json=payload, timeout=15)
+
+                                    if push_resp.status_code in (200, 201):
                                         st.success(
-                                            "✅ **Sent to Kanom via Telegram!**\n\n"
-                                            "📊 Dashboard will refresh in 1-2 minutes.\n"
-                                            "💬 Kanom will reply when sync is complete."
+                                            f"✅ **Pushed to GitHub successfully!**\n\n"
+                                            f"📊 {len(valid_records)} records committed.\n"
+                                            f"🔄 Dashboard will rebuild and refresh in 1-2 minutes.\n\n"
+                                            f"💡 **No Telegram needed** — pure Git workflow!"
                                         )
                                         st.balloons()
-                                        # Also send a confirmation to the bot owner
-                                        try:
-                                            requests.post(
-                                                f"https://api.telegram.org/bot{bot_token}/sendMessage",
-                                                json={
-                                                    "chat_id": chat_id if False else "1524914087",
-                                                    "text": f"🔔 **Dashboard sync confirmed!**\n\nUser clicked SYNC button.\n{len(valid_records)} records sent.\nDashboard updating...",
-                                                    "parse_mode": "Markdown"
-                                                },
-                                                timeout=5
-                                            )
-                                        except Exception:
-                                            pass
                                     else:
-                                        error_body = response.json().get("description", "Unknown error")
-                                        st.warning(
-                                            f"⚠️ Telegram API error ({response.status_code}): {error_body}\n\n"
-                                            f"**Use download button instead** and send CSV to Kanom via Telegram chat."
-                                        )
+                                        err = push_resp.json().get("message", push_resp.text)
+                                        st.error(f"❌ GitHub push failed: {err}")
                                 else:
                                     st.info(
-                                        "ℹ️ **Telegram bot not configured yet.**\n\n"
-                                        "📥 Click **DOWNLOAD CSV** above → send file to Kanom via Telegram chat.\n\n"
-                                        f"🔍 Debug: bot_token={'SET' if bot_token else 'MISSING'}, "
-                                        f"chat_id={'SET' if kanom_chat_id else 'MISSING'}\n\n"
-                                        "💡 To enable 1-click sync, add secrets in Streamlit Cloud dashboard."
+                                        "ℹ️ **GitHub API not configured**\n\n"
+                                        "**To enable 1-click sync, add these to Streamlit Cloud secrets:**\n"
+                                        "```toml\n"
+                                        "github_token = \"ghp_xxxxxxxxxxxxxxxxxxxx\"\n"
+                                        "github_repo  = \"panuchuwong-cyber/qa-defects-dashboard\"\n"
+                                        "github_branch = \"main\"\n"
+                                        "```\n\n"
+                                        "Get a token at: https://github.com/settings/tokens (scope: `repo`)\n\n"
+                                        "📥 **OR use the DOWNLOAD CSV button below** → paste text here."
                                     )
+
                             except Exception as e:
-                                st.error(f"❌ Sync failed: {str(e)}\n\n📥 Use download button as fallback.")
+                                st.error(f"❌ Sync error: {str(e)}\n\n📥 Use download button as fallback.")
 
                     # Show invalid records
                     if invalid_records:
