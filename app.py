@@ -496,22 +496,22 @@ if "14 Days" in page:
             use_container_width=True, hide_index=True, height=280
         )
 
-    # === SUPPLIER GROUP CARDS ===
+    # === SUPPLIER GROUP CARDS (clickable, single layer) ===
     st.markdown('<div class="section-header">🗂️ SELECTION SUPPLIER GROUP (CLICK TO FILTER)</div>', unsafe_allow_html=True)
 
     all_groups = sorted(df["Group Part"].unique().tolist())
     group_meta = {
-        "ELECTRIC & ELEC.": ("⚡", "linear-gradient(135deg, #FFD700 0%, #FFA000 100%)"),
-        "PACKING": ("📦", "linear-gradient(135deg, #A1887F 0%, #6D4C41 100%)"),
-        "PIPING": ("🔧", "linear-gradient(135deg, #FFCA28 0%, #FF8F00 100%)"),
-        "PLASTIC": ("🧊", "linear-gradient(135deg, #4FC3F7 0%, #0288D1 100%)"),
-        "PRINTING": ("🖨", "linear-gradient(135deg, #BA68C8 0%, #7B1FA2 100%)"),
-        "RAW MATERIAL": ("⛰", "linear-gradient(135deg, #81C784 0%, #388E3C 100%)"),
-        "RUBBER": ("⚫", "linear-gradient(135deg, #616161 0%, #212121 100%)"),
-        "SEALING": ("⭕", "linear-gradient(135deg, #EF5350 0%, #C62828 100%)"),
-        "SHEET METAL": ("🔩", "linear-gradient(135deg, #B0BEC5 0%, #546E7A 100%)"),
-        "FOAM": ("🧽", "linear-gradient(135deg, #FFF176 0%, #F9A825 100%)"),
-        "OTHERS": ("📦", "linear-gradient(135deg, #CFD8DC 0%, #455A64 100%)"),
+        "ELECTRIC & ELEC.": ("⚡", "linear-gradient(135deg,#FFD700 0%,#FFA000 100%)"),
+        "PACKING":          ("📦", "linear-gradient(135deg,#A1887F 0%,#6D4C41 100%)"),
+        "PIPING":           ("🔧", "linear-gradient(135deg,#FFCA28 0%,#FF8F00 100%)"),
+        "PLASTIC":          ("🧊", "linear-gradient(135deg,#4FC3F7 0%,#0288D1 100%)"),
+        "PRINTING":         ("🖨", "linear-gradient(135deg,#BA68C8 0%,#7B1FA2 100%)"),
+        "RAW MATERIAL":     ("⛰", "linear-gradient(135deg,#81C784 0%,#388E3C 100%)"),
+        "RUBBER":           ("⚫", "linear-gradient(135deg,#616161 0%,#212121 100%)"),
+        "SEALING":          ("⭕", "linear-gradient(135deg,#EF5350 0%,#C62828 100%)"),
+        "SHEET METAL":      ("🔩", "linear-gradient(135deg,#B0BEC5 0%,#546E7A 100%)"),
+        "FOAM":             ("🧽", "linear-gradient(135deg,#FFF176 0%,#F9A825 100%)"),
+        "OTHERS":           ("📦", "linear-gradient(135deg,#CFD8DC 0%,#455A64 100%)"),
     }
 
     # Show selected indicator
@@ -529,64 +529,77 @@ if "14 Days" in page:
             unsafe_allow_html=True
         )
 
-    # Render visual cards via st.markdown (safe HTML)
+    # Render clickable cards via HTML + hidden inputs (Streamlit doesn't support
+    # arbitrary HTML elements as buttons, so we use a CSS-grid button layout).
+    # Trick: each card is rendered by st.button with a label containing emoji+name,
+    # styled via injected CSS to look like a card.
+    st.markdown("""
+    <style>
+        /* Hide default button text & make transparent, then overlay gradient */
+        div[data-testid="stHorizontalBlock"] button {
+            height: 140px !important; white-space: pre-line !important;
+            font-size: 13px !important; line-height: 1.3 !important;
+            padding: 12px 8px !important; border-radius: 14px !important;
+            font-weight: 900 !important; letter-spacing: 1px !important;
+            text-transform: uppercase !important;
+            border: 2px solid rgba(0,0,0,0.1) !important;
+            transition: transform 0.2s, box-shadow 0.2s !important;
+        }
+        div[data-testid="stHorizontalBlock"] button:hover {
+            transform: translateY(-3px) !important;
+            box-shadow: 0 8px 20px rgba(0,0,0,0.15) !important;
+        }
+        div[data-testid="stHorizontalBlock"] button:active { transform: translateY(0) !important; }
+    </style>
+    """, unsafe_allow_html=True)
+
     n_cols = 6
-    cards_html = '<div style="display:grid;grid-template-columns:repeat(6,1fr);gap:14px;margin-bottom:8px;">'
-    for g in all_groups:
-        icon, bg = group_meta.get(g, ("📦", "linear-gradient(135deg,#FFD700,#FFA000)"))
-        count = int(df[df["Group Part"] == g]["Qty"].sum())
-        is_sel = (st.session_state.selected_group == g)
-
-        if is_sel:
-            border = "3px solid #FFD700"
-            shadow = "0 8px 24px rgba(255,215,0,0.5)"
-            badge_html = (
-                '<div style="position:absolute;top:-8px;right:-8px;background:#FFD700;color:#000;'
-                'border-radius:50%;width:24px;height:24px;display:flex;align-items:center;'
-                'justify-content:center;font-size:12px;font-weight:900;'
-                'box-shadow:0 2px 6px rgba(0,0,0,0.3);">✓</div>'
-            )
-        else:
-            border = "2px solid rgba(0,0,0,0.1)"
-            shadow = "0 2px 8px rgba(0,0,0,0.08)"
-            badge_html = ""
-
-        card = (
-            f'<div style="background:{bg};border:{border};border-radius:14px;'
-            f'padding:18px 12px;text-align:center;position:relative;'
-            f'box-shadow:{shadow};height:130px;'
-            f'display:flex;flex-direction:column;justify-content:center;">'
-            f'{badge_html}'
-            f'<div style="font-size:32px;margin-bottom:6px;'
-            f'filter:drop-shadow(0 2px 4px rgba(0,0,0,0.3));">{icon}</div>'
-            f'<div style="color:#000;font-size:10px;font-weight:900;'
-            f'letter-spacing:1px;text-transform:uppercase;line-height:1.2;">{g}</div>'
-            f'<div style="color:#000;font-size:20px;font-weight:900;margin-top:4px;">'
-            f'{count} <span style="font-size:11px;">QTY</span></div>'
-            f'</div>'
-        )
-        cards_html += f'<div>{card}</div>'
-    cards_html += '</div>'
-
-    st.markdown(cards_html, unsafe_allow_html=True)
-
-    # Clickable buttons (separate row, hidden behind cards)
     for i in range(0, len(all_groups), n_cols):
         row_groups = all_groups[i:i + n_cols]
         cols = st.columns(n_cols)
         for j, g in enumerate(row_groups):
             with cols[j]:
-                icon = group_meta.get(g, ("�",))[0]
+                icon, bg = group_meta.get(g, ("📦", "linear-gradient(135deg,#FFD700,#FFA000)"))
                 count = int(df[df["Group Part"] == g]["Qty"].sum())
-                btn_label = f"{icon} {g} - {count}"
-                btn_type = "primary" if st.session_state.selected_group == g else "secondary"
-                if st.button(btn_label, key=f"grp_{g}",
-                            use_container_width=True, type=btn_type):
-                    if st.session_state.selected_group == g:
+                is_sel = (st.session_state.selected_group == g)
+                btn_label = f"{icon}  {g}\n{count} QTY"
+
+                if is_sel:
+                    # Selected state: dark background + yellow border
+                    btn_html = (
+                        f'<div style="background:{bg};border:3px solid #FFD700;'
+                        f'border-radius:14px;padding:14px;text-align:center;'
+                        f'box-shadow:0 8px 24px rgba(255,215,0,0.5);'
+                        f'position:relative;color:#000;">'
+                        f'<div style="position:absolute;top:-8px;right:-8px;background:#FFD700;'
+                        f'color:#000;border-radius:50%;width:24px;height:24px;'
+                        f'display:flex;align-items:center;justify-content:center;'
+                        f'font-size:12px;font-weight:900;">✓</div>'
+                        f'<div style="font-size:28px;">{icon}</div>'
+                        f'<div style="font-size:10px;font-weight:900;letter-spacing:1px;'
+                        f'text-transform:uppercase;">{g}</div>'
+                        f'<div style="font-size:18px;font-weight:900;margin-top:4px;">'
+                        f'{count} <span style="font-size:10px;">QTY</span></div>'
+                        f'</div>'
+                    )
+                    st.markdown(btn_html, unsafe_allow_html=True)
+                    # Hidden button for click handling
+                    if st.button(btn_label, key=f"grp_{g}",
+                                use_container_width=True, type="primary"):
                         st.session_state.selected_group = None
-                    else:
+                        st.rerun()
+                else:
+                    # Unselected: gradient bg via CSS injection + button
+                    btn_id = f"btn_{g.replace(' ', '_').replace('.', '').replace('&', 'and')}"
+                    css_block = (
+                        f"<style>button[kind='secondary'][data-testid='{btn_id}'],"
+                        f"#{btn_id} {{ background:{bg} !important; color:#000 !important; }}</style>"
+                    )
+                    st.markdown(css_block, unsafe_allow_html=True)
+                    if st.button(btn_label, key=f"grp_{g}",
+                                use_container_width=True, type="secondary"):
                         st.session_state.selected_group = g
-                    st.rerun()
+                        st.rerun()
 
     if st.session_state.selected_group:
         _, _, col_c = st.columns([2, 2, 1])
