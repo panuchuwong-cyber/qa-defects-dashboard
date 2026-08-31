@@ -100,71 +100,114 @@ st.markdown("""
 
     /* === SIDEBAR === */
     [data-testid="stSidebar"] {
-        background: linear-gradient(180deg, #000000 0%, #1a1a1a 100%);
+        background: linear-gradient(180deg, #0a0a0a 0%, #1a1a1a 50%, #0a0a0a 100%);
         border-right: 2px solid #FFD700;
+        box-shadow: 4px 0 20px rgba(0,0,0,0.3);
     }
     [data-testid="stSidebar"] * { color: #ffffff !important; }
     [data-testid="stSidebar"] .stRadio label {
-        background: rgba(255,215,0,0.1); padding: 10px 14px;
-        border-radius: 8px; border: 1px solid rgba(255,215,0,0.3);
-        margin-bottom: 6px; transition: all 0.2s;
+        background: rgba(255,215,0,0.08); padding: 12px 16px;
+        border-radius: 10px; border: 1px solid rgba(255,215,0,0.25);
+        margin-bottom: 8px; transition: all 0.3s; font-weight: 700;
+        letter-spacing: 1px;
     }
     [data-testid="stSidebar"] .stRadio label:hover {
         background: rgba(255,215,0,0.2); border-color: #FFD700;
+        transform: translateX(4px);
     }
     [data-testid="stSidebar"] .stSelectbox label {
-        color: #FFD700 !important; font-weight: 700;
-        font-size: 11px; letter-spacing: 1px; text-transform: uppercase;
+        color: #FFD700 !important; font-weight: 800;
+        font-size: 11px; letter-spacing: 2px; text-transform: uppercase;
+        margin-bottom: 6px;
+    }
+    [data-testid="stSidebar"] .stSelectbox > div > div {
+        background: rgba(255,255,255,0.05) !important;
+        border: 1px solid rgba(255,215,0,0.3) !important;
+        border-radius: 8px !important;
+        color: #fff !important;
+    }
+    [data-testid="stSidebar"] button {
+        background: linear-gradient(135deg, #FFD700 0%, #FFA500 100%) !important;
+        color: #000 !important;
+        border: none !important; font-weight: 800 !important;
+        letter-spacing: 1px !important;
+        border-radius: 8px !important;
     }
 
     /* === SIDEBAR LOGO === */
     .sidebar-logo-wrap {
-        background: #FFD700;  /* Pure yellow, no gradient */
-        padding: 16px 12px; border-radius: 12px;
-        text-align: center; margin-bottom: 20px;
-        box-shadow: 0 4px 16px rgba(255,215,0,0.4);
+        background: linear-gradient(135deg, #1a1a1a 0%, #2a2a2a 100%);
+        padding: 20px 12px; border-radius: 14px;
+        text-align: center; margin-bottom: 24px;
+        border: 2px solid #FFD700;
+        box-shadow: 0 6px 24px rgba(255,215,0,0.25);
+        position: relative;
+        overflow: hidden;
+    }
+    .sidebar-logo-wrap::before {
+        content: ""; position: absolute; top: -50%; left: -50%;
+        width: 200%; height: 200%;
+        background: radial-gradient(circle, rgba(255,215,0,0.08) 0%, transparent 60%);
     }
     .sidebar-logo-img {
-        width: 100%; max-width: 180px; height: auto;
-        margin: 0 auto 8px auto; display: block;
-        border-radius: 8px;
+        width: 100%; max-width: 200px; height: auto;
+        margin: 0 auto 10px auto; display: block;
+        border-radius: 10px;
+        position: relative; z-index: 1;
+    }
+    .sidebar-divider {
+        height: 1px; background: linear-gradient(90deg,
+            transparent 0%, rgba(255,215,0,0.5) 50%, transparent 100%);
+        margin: 16px 0;
     }
 
     /* === MAIN HEADER LOGO === */
     .header-logo-wrap {
-        display: flex; align-items: center; gap: 16px;
-        padding: 4px 0;
+        display: flex; align-items: center; gap: 18px;
+        padding: 4px 0; position: relative; z-index: 1;
     }
     .header-logo-img {
-        width: 64px; height: 64px; border-radius: 12px;
-        box-shadow: 0 4px 12px rgba(255,215,0,0.3);
+        width: 72px; height: 72px; border-radius: 14px;
+        box-shadow: 0 4px 16px rgba(255,215,0,0.4);
+        background: #FFD700;
     }
 
     /* === MAIN HEADER === */
     .dashboard-header {
-        background: linear-gradient(135deg, #000000 0%, #1f1f1f 50%, #000000 100%);
-        padding: 28px 32px; border-radius: 16px; margin-bottom: 28px;
+        background:
+            linear-gradient(135deg, #000000 0%, #1f1f1f 50%, #000000 100%),
+            radial-gradient(circle at top right, rgba(255,215,0,0.15) 0%, transparent 50%);
+        padding: 28px 36px; border-radius: 18px; margin-bottom: 28px;
         border: 2px solid #FFD700; position: relative; overflow: hidden;
-        box-shadow: 0 8px 32px rgba(0,0,0,0.15);
+        box-shadow: 0 12px 40px rgba(0,0,0,0.2);
     }
     .dashboard-header::before {
-        content: ""; position: absolute; top: 0; right: 0;
-        width: 200px; height: 100%;
-        background: radial-gradient(circle at top right, rgba(255,215,0,0.15) 0%, transparent 70%);
+        content: ""; position: absolute; top: -100%; right: -10%;
+        width: 400px; height: 400px;
+        background: radial-gradient(circle, rgba(255,215,0,0.15) 0%, transparent 60%);
+        animation: pulse 4s ease-in-out infinite;
+    }
+    @keyframes pulse {
+        0%, 100% { transform: scale(1); opacity: 0.6; }
+        50% { transform: scale(1.2); opacity: 0.9; }
     }
     .dashboard-header h1 {
-        color: #FFD700; font-size: 28px; font-weight: 900;
+        color: #FFD700; font-size: 30px; font-weight: 900;
         margin: 0; letter-spacing: 3px;
-        text-shadow: 0 2px 12px rgba(255,215,0,0.3);
+        text-shadow: 0 2px 16px rgba(255,215,0,0.4);
+        position: relative; z-index: 1;
     }
     .dashboard-header .subtitle {
         color: #cccccc; font-size: 12px; margin-top: 6px;
         letter-spacing: 2px; text-transform: uppercase;
+        position: relative; z-index: 1;
     }
     .dashboard-header .badge {
         display: inline-block; background: #FFD700; color: #000;
-        padding: 4px 12px; border-radius: 12px; font-size: 10px;
-        font-weight: 900; letter-spacing: 1px; margin-top: 8px;
+        padding: 5px 14px; border-radius: 14px; font-size: 10px;
+        font-weight: 900; letter-spacing: 1.5px; margin-top: 10px;
+        box-shadow: 0 4px 12px rgba(255,215,0,0.3);
+        position: relative; z-index: 1;
     }
 
     /* === DATE RANGE CHIP === */
@@ -177,40 +220,67 @@ st.markdown("""
 
     /* === KPI CARD === */
     .kpi-container {
-        background: white; padding: 20px; border-radius: 14px;
+        background: white; padding: 22px 20px; border-radius: 16px;
         border: 2px solid #000; position: relative; overflow: hidden;
-        box-shadow: 0 4px 16px rgba(0,0,0,0.08);
+        box-shadow: 0 6px 20px rgba(0,0,0,0.08);
         margin-bottom: 12px;
+        transition: transform 0.3s, box-shadow 0.3s;
+        cursor: default;
+    }
+    .kpi-container:hover {
+        transform: translateY(-4px);
+        box-shadow: 0 12px 32px rgba(0,0,0,0.15);
     }
     .kpi-container::before {
         content: ""; position: absolute; top: 0; left: 0;
-        width: 6px; height: 100%;
+        width: 100%; height: 4px;
     }
-    .kpi-yellow::before { background: linear-gradient(180deg, #FFD700, #FFA500); }
-    .kpi-black::before { background: linear-gradient(180deg, #000000, #333333); }
+    .kpi-yellow::before { background: linear-gradient(90deg, #FFD700, #FFA500); }
+    .kpi-black::before { background: linear-gradient(90deg, #000000, #333333); }
+    .kpi-icon {
+        position: absolute; top: 14px; right: 16px;
+        font-size: 32px; opacity: 0.15;
+    }
     .kpi-label {
         color: #666; font-size: 10px; font-weight: 800;
         letter-spacing: 3px; text-transform: uppercase; margin-bottom: 8px;
     }
     .kpi-value {
-        color: #000; font-size: 36px; font-weight: 900; line-height: 1;
+        color: #000; font-size: 38px; font-weight: 900; line-height: 1;
+        font-family: -apple-system, BlinkMacSystemFont, sans-serif;
     }
-    .kpi-unit { font-size: 14px; color: #FFD700; margin-left: 6px; font-weight: 700; }
+    .kpi-unit { font-size: 14px; color: #FFD700; margin-left: 6px; font-weight: 700;
+                text-shadow: 0 1px 2px rgba(255,215,0,0.3); }
     .kpi-trend {
-        font-size: 11px; margin-top: 8px; font-weight: 700;
+        font-size: 11px; margin-top: 10px; font-weight: 700;
+        padding: 4px 10px; border-radius: 12px;
+        display: inline-block;
     }
-    .trend-up { color: #d32f2f; }
-    .trend-down { color: #388e3c; }
+    .trend-up { color: #B71C1C; background: rgba(255,107,107,0.12); }
+    .trend-down { color: #1B5E20; background: rgba(76,175,80,0.12); }
 
     /* === SECTION HEADER === */
     .section-header {
-        background: linear-gradient(90deg, #FFD700 0%, #FFC107 100%);
-        color: #000; padding: 12px 20px; border-radius: 10px;
-        font-weight: 900; font-size: 15px; letter-spacing: 2px;
-        margin: 24px 0 14px 0; text-transform: uppercase;
+        background: linear-gradient(90deg, #FFD700 0%, #FFC107 50%, #FFD700 100%);
+        background-size: 200% 100%;
+        color: #000; padding: 14px 22px; border-radius: 12px;
+        font-weight: 900; font-size: 16px; letter-spacing: 2px;
+        margin: 28px 0 16px 0; text-transform: uppercase;
         border-left: 6px solid #000;
-        box-shadow: 0 3px 8px rgba(255,215,0,0.2);
-        display: flex; align-items: center; gap: 10px;
+        box-shadow: 0 6px 16px rgba(255,215,0,0.25);
+        display: flex; align-items: center; gap: 12px;
+        animation: shimmer 3s linear infinite;
+    }
+    @keyframes shimmer {
+        0% { background-position: 0% 50%; }
+        100% { background-position: 200% 50%; }
+    }
+    .section-header .section-icon {
+        font-size: 22px;
+        background: #000; color: #FFD700;
+        width: 36px; height: 36px;
+        border-radius: 50%; display: flex;
+        align-items: center; justify-content: center;
     }
 
     /* === FILTER BAR === */
@@ -404,15 +474,17 @@ if "14 Days" in page:
         unique_suppliers = filtered["Supplier"].nunique()
         st.markdown(f"""
         <div class="kpi-container kpi-yellow">
+            <div class="kpi-icon">📦</div>
             <div class="kpi-label">📦 TOTAL Q'TY</div>
             <div class="kpi-value">{total_qty:,}<span class="kpi-unit">PCS</span></div>
-            <div class="kpi-trend trend-up">⬆ {unique_suppliers} suppliers</div>
+            <div class="kpi-trend trend-up">� {unique_suppliers} suppliers</div>
         </div>
         """, unsafe_allow_html=True)
 
     with kpi2:
         st.markdown(f"""
         <div class="kpi-container kpi-black">
+            <div class="kpi-icon">📋</div>
             <div class="kpi-label">📋 TOTAL CASE</div>
             <div class="kpi-value">{total_case:,}<span class="kpi-unit">CASE</span></div>
             <div class="kpi-trend trend-down">⬇ Last 14 days</div>
@@ -423,6 +495,7 @@ if "14 Days" in page:
         avg_qty = round(total_qty / max(total_case, 1), 1)
         st.markdown(f"""
         <div class="kpi-container kpi-yellow">
+            <div class="kpi-icon">📊</div>
             <div class="kpi-label">📊 AVG / CASE</div>
             <div class="kpi-value">{avg_qty}<span class="kpi-unit">PCS</span></div>
             <div class="kpi-trend">⌀ Average per case</div>
@@ -433,14 +506,21 @@ if "14 Days" in page:
         unique_parts = filtered["Part No"].nunique()
         st.markdown(f"""
         <div class="kpi-container kpi-black">
-            <div class="kpi-label">🔧 UNIQUE PARTS</div>
+            <div class="kpi-icon">⚙</div>
+            <div class="kpi-label">⚙ UNIQUE PARTS</div>
             <div class="kpi-value">{unique_parts}<span class="kpi-unit">PN</span></div>
-            <div class="kpi-trend">⚙ Affected parts</div>
+            <div class="kpi-trend">� Affected parts</div>
         </div>
         """, unsafe_allow_html=True)
 
     # === TREND CHARTS ===
-    st.markdown('<div class="section-header">📈 DAILY TREND ANALYSIS</div>', unsafe_allow_html=True)
+    st.markdown(
+        '<div class="section-header">'
+        '<div class="section-icon">📈</div>'
+        'DAILY TREND ANALYSIS'
+        '</div>',
+        unsafe_allow_html=True
+    )
 
     trend_html = f"""
     <div style="display:grid; grid-template-columns: 1fr 1fr; gap: 16px;">
