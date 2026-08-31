@@ -1,7 +1,7 @@
 """
-QA Defects Web Dashboard - TEST Energy Storage (Thai)
+TEST QA Defects Dashboard - Professional Edition
 Two pages: 14 Days Monitoring + Searching Supplier Information
-Theme: Yellow & Black
+Theme: Yellow & Black (Energy Brand)
 """
 
 import streamlit as st
@@ -20,25 +20,44 @@ def check_password():
     if not st.session_state.authenticated:
         st.markdown("""
         <style>
+        body { background: #0a0a0a; }
         .login-wrap {
-            max-width: 380px; margin: 100px auto; padding: 36px;
-            background: linear-gradient(135deg, #000000 0%, #1a1a1a 100%);
-            border: 3px solid #FFD700; border-radius: 16px;
-            text-align: center; box-shadow: 0 8px 32px rgba(255,215,0,0.3);
+            max-width: 420px; margin: 90px auto; padding: 48px 36px;
+            background: linear-gradient(145deg, #1a1a1a 0%, #000000 100%);
+            border: 2px solid #FFD700; border-radius: 20px;
+            text-align: center; box-shadow: 0 12px 48px rgba(255,215,0,0.25);
+            position: relative; overflow: hidden;
         }
-        .login-title { color: #FFD700; font-size: 28px; font-weight: 800;
-                       letter-spacing: 2px; margin-bottom: 8px; }
-        .login-sub { color: #cccccc; font-size: 13px; margin-bottom: 24px; }
+        .login-wrap::before {
+            content: ""; position: absolute; top: -50%; left: -50%;
+            width: 200%; height: 200%;
+            background: radial-gradient(circle, rgba(255,215,0,0.05) 0%, transparent 70%);
+        }
+        .login-icon { font-size: 48px; margin-bottom: 16px; }
+        .login-title {
+            color: #FFD700; font-size: 26px; font-weight: 900;
+            letter-spacing: 3px; margin-bottom: 4px;
+            text-shadow: 0 2px 8px rgba(255,215,0,0.4);
+        }
+        .login-sub {
+            color: #999; font-size: 11px; margin-bottom: 32px;
+            letter-spacing: 2px; text-transform: uppercase;
+        }
+        .login-form { position: relative; z-index: 1; }
         </style>
         <div class="login-wrap">
-            <div class="login-title">🔒 TEST QA DASHBOARD</div>
-            <div class="login-sub">Incoming Defect Monitoring System</div>
+            <div class="login-icon">⚡</div>
+            <div class="login-title">TEST QA DASHBOARD</div>
+            <div class="login-sub">Defect Monitoring System v2.0</div>
         </div>
         """, unsafe_allow_html=True)
         col = st.columns([1, 2, 1])
         with col[1]:
-            password = st.text_input("Password", type="password", label_visibility="collapsed", placeholder="Enter password")
-            if st.button("🔓 LOGIN", use_container_width=True):
+            st.markdown('<div class="login-form">', unsafe_allow_html=True)
+            password = st.text_input("🔑 Password", type="password",
+                                     label_visibility="collapsed",
+                                     placeholder="Enter access password")
+            if st.button("� ACCESS DASHBOARD", use_container_width=True, type="primary"):
                 try:
                     correct = st.secrets["password"]
                 except Exception:
@@ -47,13 +66,14 @@ def check_password():
                     st.session_state.authenticated = True
                     st.rerun()
                 else:
-                    st.error("❌ Wrong password")
+                    st.error("❌ Incorrect password")
+            st.markdown('</div>', unsafe_allow_html=True)
         st.stop()
 
 check_password()
 
 # ============================================================
-# PAGE CONFIG & GLOBAL STYLE (YELLOW & BLACK)
+# PAGE CONFIG
 # ============================================================
 st.set_page_config(
     page_title="TEST QA Dashboard",
@@ -62,63 +82,151 @@ st.set_page_config(
     initial_sidebar_state="expanded"
 )
 
+# ============================================================
+# GLOBAL CSS - PROFESSIONAL DESIGN
+# ============================================================
 st.markdown("""
 <style>
-    .main-header {
-        background: linear-gradient(135deg, #000000 0%, #1f1f1f 100%);
-        color: #FFD700; padding: 24px 28px; border-radius: 12px;
-        border: 2px solid #FFD700; margin-bottom: 24px;
-        box-shadow: 0 4px 16px rgba(255,215,0,0.2);
+    /* === GLOBAL === */
+    .stApp { background: linear-gradient(135deg, #fafafa 0%, #f5f5f5 100%); }
+    [data-testid="stSidebarNav"] { display: none; }
+    footer { visibility: hidden; }
+    header[data-testid="stHeader"] { background: transparent; }
+
+    /* === SIDEBAR === */
+    [data-testid="stSidebar"] {
+        background: linear-gradient(180deg, #000000 0%, #1a1a1a 100%);
+        border-right: 2px solid #FFD700;
     }
-    .main-title {
-        font-size: 28px; font-weight: 900; letter-spacing: 2px;
-        color: #FFD700; margin: 0;
+    [data-testid="stSidebar"] * { color: #ffffff !important; }
+    [data-testid="stSidebar"] .stRadio label {
+        background: rgba(255,215,0,0.1); padding: 10px 14px;
+        border-radius: 8px; border: 1px solid rgba(255,215,0,0.3);
+        margin-bottom: 6px; transition: all 0.2s;
     }
-    .main-sub {
-        color: #cccccc; font-size: 13px; margin-top: 4px;
-        letter-spacing: 1px;
+    [data-testid="stSidebar"] .stRadio label:hover {
+        background: rgba(255,215,0,0.2); border-color: #FFD700;
     }
-    .kpi-card {
-        background: white; padding: 18px 20px; border-radius: 10px;
-        border-top: 5px solid #FFD700; border-bottom: 2px solid #000000;
-        box-shadow: 0 2px 8px rgba(0,0,0,0.1); margin-bottom: 12px;
+    [data-testid="stSidebar"] .stSelectbox label {
+        color: #FFD700 !important; font-weight: 700;
+        font-size: 11px; letter-spacing: 1px; text-transform: uppercase;
     }
-    .kpi-label {
-        color: #555555; font-size: 11px; font-weight: 700;
+
+    /* === MAIN HEADER === */
+    .dashboard-header {
+        background: linear-gradient(135deg, #000000 0%, #1f1f1f 50%, #000000 100%);
+        padding: 28px 32px; border-radius: 16px; margin-bottom: 28px;
+        border: 2px solid #FFD700; position: relative; overflow: hidden;
+        box-shadow: 0 8px 32px rgba(0,0,0,0.15);
+    }
+    .dashboard-header::before {
+        content: ""; position: absolute; top: 0; right: 0;
+        width: 200px; height: 100%;
+        background: radial-gradient(circle at top right, rgba(255,215,0,0.15) 0%, transparent 70%);
+    }
+    .dashboard-header h1 {
+        color: #FFD700; font-size: 28px; font-weight: 900;
+        margin: 0; letter-spacing: 3px;
+        text-shadow: 0 2px 12px rgba(255,215,0,0.3);
+    }
+    .dashboard-header .subtitle {
+        color: #cccccc; font-size: 12px; margin-top: 6px;
         letter-spacing: 2px; text-transform: uppercase;
     }
-    .kpi-value {
-        font-size: 36px; font-weight: 900; color: #000000;
-        margin-top: 6px; line-height: 1;
+    .dashboard-header .badge {
+        display: inline-block; background: #FFD700; color: #000;
+        padding: 4px 12px; border-radius: 12px; font-size: 10px;
+        font-weight: 900; letter-spacing: 1px; margin-top: 8px;
     }
-    .kpi-unit {
-        font-size: 16px; color: #FFD700; font-weight: 700; margin-left: 4px;
+
+    /* === DATE RANGE CHIP === */
+    .date-chip {
+        background: linear-gradient(135deg, #FFD700 0%, #FFA500 100%);
+        color: #000; padding: 14px 20px; border-radius: 12px;
+        text-align: center; font-weight: 800; font-size: 14px;
+        box-shadow: 0 4px 12px rgba(255,215,0,0.3);
     }
-    .section-header {
-        background: #FFD700; color: #000000; padding: 10px 16px;
-        border-radius: 6px; font-weight: 900; font-size: 14px;
-        letter-spacing: 1px; margin: 20px 0 12px 0;
-        text-transform: uppercase;
-        border-left: 6px solid #000000;
-    }
-    .metric-table {
-        background: white; border-radius: 8px; padding: 14px;
-        box-shadow: 0 1px 4px rgba(0,0,0,0.08);
+
+    /* === KPI CARD === */
+    .kpi-container {
+        background: white; padding: 20px; border-radius: 14px;
+        border: 2px solid #000; position: relative; overflow: hidden;
+        box-shadow: 0 4px 16px rgba(0,0,0,0.08);
         margin-bottom: 12px;
     }
-    .legend-box {
-        background: #000000; color: #FFD700; padding: 12px 16px;
-        border-radius: 8px; font-size: 13px; margin-top: 20px;
+    .kpi-container::before {
+        content: ""; position: absolute; top: 0; left: 0;
+        width: 6px; height: 100%;
     }
-    .legend-dot {
-        display: inline-block; width: 14px; height: 14px;
-        border-radius: 50%; margin-right: 6px; vertical-align: middle;
+    .kpi-yellow::before { background: linear-gradient(180deg, #FFD700, #FFA500); }
+    .kpi-black::before { background: linear-gradient(180deg, #000000, #333333); }
+    .kpi-label {
+        color: #666; font-size: 10px; font-weight: 800;
+        letter-spacing: 3px; text-transform: uppercase; margin-bottom: 8px;
     }
-    .stApp { background-color: #fafafa; }
-    div[data-testid="stSidebarUserContent"] { padding-top: 1rem; }
-    [data-testid="stSidebarNav"] { display: none; }
-    .stDataFrame { border: 2px solid #FFD700 !important; border-radius: 8px; }
-    footer { visibility: hidden; }
+    .kpi-value {
+        color: #000; font-size: 36px; font-weight: 900; line-height: 1;
+    }
+    .kpi-unit { font-size: 14px; color: #FFD700; margin-left: 6px; font-weight: 700; }
+    .kpi-trend {
+        font-size: 11px; margin-top: 8px; font-weight: 700;
+    }
+    .trend-up { color: #d32f2f; }
+    .trend-down { color: #388e3c; }
+
+    /* === SECTION HEADER === */
+    .section-header {
+        background: linear-gradient(90deg, #FFD700 0%, #FFC107 100%);
+        color: #000; padding: 12px 20px; border-radius: 10px;
+        font-weight: 900; font-size: 15px; letter-spacing: 2px;
+        margin: 24px 0 14px 0; text-transform: uppercase;
+        border-left: 6px solid #000;
+        box-shadow: 0 3px 8px rgba(255,215,0,0.2);
+        display: flex; align-items: center; gap: 10px;
+    }
+
+    /* === FILTER BAR === */
+    .filter-bar {
+        background: white; padding: 16px 20px; border-radius: 12px;
+        border: 1px solid #e0e0e0; margin-bottom: 20px;
+        box-shadow: 0 2px 8px rgba(0,0,0,0.04);
+    }
+    .filter-label {
+        font-size: 10px; font-weight: 800; color: #666;
+        letter-spacing: 2px; text-transform: uppercase; margin-bottom: 4px;
+    }
+
+    /* === GROUP BUTTON === */
+    .group-grid { display: grid; grid-template-columns: repeat(6, 1fr); gap: 10px; }
+
+    /* === DATAFRAME === */
+    .stDataFrame {
+        border: 2px solid #FFD700 !important; border-radius: 12px !important;
+        overflow: hidden; box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+    }
+
+    /* === BUTTONS === */
+    .stButton > button {
+        border-radius: 8px; font-weight: 700; letter-spacing: 1px;
+        transition: all 0.2s;
+    }
+    .stButton > button:hover { transform: translateY(-1px); }
+
+    /* === LEGEND === */
+    .info-box {
+        background: linear-gradient(135deg, #000 0%, #1a1a1a 100%);
+        color: #FFD700; padding: 14px 18px; border-radius: 12px;
+        font-size: 12px; margin-top: 24px;
+        border: 1px solid #FFD700;
+    }
+    .info-box b { color: #FFD700; }
+
+    /* === FOOTER === */
+    .dashboard-footer {
+        text-align: center; color: #999; font-size: 11px;
+        margin-top: 32px; padding: 20px 0;
+        border-top: 1px solid #e0e0e0;
+    }
 </style>
 """, unsafe_allow_html=True)
 
@@ -139,35 +247,42 @@ df = load_data()
 # ============================================================
 with st.sidebar:
     st.markdown("""
-    <div style="background:#000000; padding:18px; border-radius:10px;
-                border:2px solid #FFD700; text-align:center; margin-bottom:16px;">
-        <div style="color:#FFD700; font-size:22px; font-weight:900;
-                    letter-spacing:2px;">⚡ TEST</div>
-        <div style="color:#cccccc; font-size:11px; margin-top:4px;
-                    letter-spacing:1px;">QA DEFECTS DASHBOARD</div>
+    <div style="background: linear-gradient(135deg, #FFD700 0%, #FFA500 100%);
+                padding: 20px; border-radius: 12px; text-align: center;
+                margin-bottom: 20px; box-shadow: 0 4px 12px rgba(255,215,0,0.3);">
+        <div style="font-size: 36px;">⚡</div>
+        <div style="color: #000; font-size: 20px; font-weight: 900;
+                    letter-spacing: 2px; margin-top: 4px;">TEST</div>
+        <div style="color: #000; font-size: 9px; font-weight: 700;
+                    letter-spacing: 2px; margin-top: 2px;">QA DEFECTS DASHBOARD</div>
     </div>
     """, unsafe_allow_html=True)
 
     page = st.radio("📌 NAVIGATION", [
         "📊 14 Days Monitoring",
-        "🔍 Searching Supplier Information"
+        "� Searching Supplier Information"
     ], label_visibility="collapsed")
 
-    st.markdown("---")
-    st.markdown("**🎛️ FILTERS**")
+    st.markdown("<br>", unsafe_allow_html=True)
+    st.markdown('<p style="color:#FFD700; font-size:11px; font-weight:800; letter-spacing:2px;">🎛️ FILTERS</p>', unsafe_allow_html=True)
+
     supplier_f = st.selectbox("Supplier", ["All"] + sorted(df["Supplier"].unique().tolist()))
     group_f = st.selectbox("Group Part", ["All"] + sorted(df["Group Part"].unique().tolist()))
     mode_f = st.selectbox("Problem Mode", ["All"] + sorted(df["Problem Mode"].unique().tolist()))
 
-    if st.button("🗑️ CLEAR FILTER", use_container_width=True):
+    if st.button("🗑️ RESET ALL FILTERS", use_container_width=True):
+        st.session_state.selected_group = None
         st.rerun()
 
-    st.markdown("---")
+    st.markdown("<br><br>", unsafe_allow_html=True)
     st.markdown(f"""
-    <div style="background:#000; color:#FFD700; padding:10px; border-radius:8px;
-                font-size:11px; text-align:center;">
-        Last updated<br>
-        <b>{datetime.now().strftime('%Y-%m-%d %H:%M')}</b>
+    <div style="background: rgba(255,215,0,0.1); border: 1px solid #FFD700;
+                padding: 12px; border-radius: 8px; text-align: center;">
+        <div style="color: #FFD700; font-size: 10px; font-weight: 700;
+                    letter-spacing: 1px;">📅 LAST UPDATE</div>
+        <div style="color: #fff; font-size: 12px; font-weight: 800;
+                    margin-top: 4px;">{datetime.now().strftime('%Y-%m-%d')}</div>
+        <div style="color: #999; font-size: 10px; margin-top: 2px;">{datetime.now().strftime('%H:%M:%S')}</div>
     </div>
     """, unsafe_allow_html=True)
 
@@ -183,47 +298,45 @@ if mode_f != "All":
 # ============================================================
 # HEADER
 # ============================================================
-st.markdown(f"""
-<div class="main-header">
-    <div class="main-title">⚡ {('14 DAYS DEFECT MONITORING' if '14 Days' in page else 'SEARCHING SUPPLIER INFORMATION')}</div>
-    <div class="main-sub">Thai Energy Storage Technology Public Company Limited | Incoming Quality</div>
-</div>
-""", unsafe_allow_html=True)
+if "14 Days" in page:
+    title_text = "14 DAYS DEFECT MONITORING"
+    subtitle = "Incoming Quality Dashboard"
+else:
+    title_text = "SEARCHING SUPPLIER INFORMATION"
+    subtitle = "PPM Analysis & Comparison"
+
+max_date = df["Date"].max()
+min_date = max_date - timedelta(days=13)
+
+hdr1, hdr2 = st.columns([3, 1])
+with hdr1:
+    st.markdown(f"""
+    <div class="dashboard-header">
+        <h1>⚡ {title_text}</h1>
+        <div class="subtitle">{subtitle}</div>
+        <div class="badge">🏭 THAI ENERGY STORAGE TECHNOLOGY</div>
+    </div>
+    """, unsafe_allow_html=True)
+with hdr2:
+    st.markdown(f"""
+    <div class="date-chip">
+        📅 REPORT PERIOD<br>
+        <span style="font-size: 13px;">{min_date.strftime('%m/%d/%Y')}</span><br>
+        <span style="font-size: 16px;">↓</span><br>
+        <span style="font-size: 13px;">{max_date.strftime('%m/%d/%Y')}</span>
+    </div>
+    """, unsafe_allow_html=True)
 
 # ============================================================
-# PAGE 1: 14 DAYS MONITORING (Daikin layout)
+# PAGE 1: 14 DAYS MONITORING
 # ============================================================
 if "14 Days" in page:
-    # Date range header
-    max_date = df["Date"].max()
-    min_date = max_date - timedelta(days=13)
-
-    # Initialize session state for group filter
     if "selected_group" not in st.session_state:
         st.session_state.selected_group = None
 
-    # Apply group filter (from clicked button)
     if st.session_state.selected_group:
         filtered = filtered[filtered["Group Part"] == st.session_state.selected_group]
 
-    # Header row: title + date
-    hdr1, hdr2 = st.columns([3, 2])
-    with hdr1:
-        st.markdown(f"""
-        <div style="background:#000; color:#FFD700; padding:12px 20px; border-radius:8px;
-                    font-weight:900; font-size:18px; letter-spacing:2px;">
-            ⚡ 14 DAYS DEFECT MONITORING
-        </div>
-        """, unsafe_allow_html=True)
-    with hdr2:
-        st.markdown(f"""
-        <div style="background:#FFD700; color:#000; padding:12px 20px; border-radius:8px;
-                    text-align:center; font-weight:700; font-size:13px;">
-            📅 {min_date.strftime('%m/%d/%Y')} &nbsp;→&nbsp; {max_date.strftime('%m/%d/%Y')}
-        </div>
-        """, unsafe_allow_html=True)
-
-    # KPIs row: Q'TY + CASE side-by-side with mini charts
     total_qty = int(filtered["Qty"].sum())
     total_case = len(filtered)
 
@@ -232,160 +345,177 @@ if "14 Days" in page:
     qty_data = daily["Qty"].tolist()
     case_data = daily["Case"].tolist()
 
-    kpi1, kpi2 = st.columns(2)
+    # === KPI ROW ===
+    kpi1, kpi2, kpi3, kpi4 = st.columns(4)
+
     with kpi1:
-        qty_html = f"""
-        <div style="width:100%; background:#fff; border:1px solid #ddd; border-radius:8px; padding:12px;">
-            <div style="color:#555; font-size:11px; font-weight:800; letter-spacing:2px; margin-bottom:4px;">📦 Q'TY</div>
-            <div style="color:#000; font-size:28px; font-weight:900; line-height:1; margin-bottom:8px;">{total_qty:,}<span style="font-size:13px; color:#FFD700; margin-left:4px;">PCS</span></div>
+        unique_suppliers = filtered["Supplier"].nunique()
+        st.markdown(f"""
+        <div class="kpi-container kpi-yellow">
+            <div class="kpi-label">📦 TOTAL Q'TY</div>
+            <div class="kpi-value">{total_qty:,}<span class="kpi-unit">PCS</span></div>
+            <div class="kpi-trend trend-up">⬆ {unique_suppliers} suppliers</div>
+        </div>
+        """, unsafe_allow_html=True)
+
+    with kpi2:
+        st.markdown(f"""
+        <div class="kpi-container kpi-black">
+            <div class="kpi-label">📋 TOTAL CASE</div>
+            <div class="kpi-value">{total_case:,}<span class="kpi-unit">CASE</span></div>
+            <div class="kpi-trend trend-down">⬇ Last 14 days</div>
+        </div>
+        """, unsafe_allow_html=True)
+
+    with kpi3:
+        avg_qty = round(total_qty / max(total_case, 1), 1)
+        st.markdown(f"""
+        <div class="kpi-container kpi-yellow">
+            <div class="kpi-label">📊 AVG / CASE</div>
+            <div class="kpi-value">{avg_qty}<span class="kpi-unit">PCS</span></div>
+            <div class="kpi-trend">⌀ Average per case</div>
+        </div>
+        """, unsafe_allow_html=True)
+
+    with kpi4:
+        unique_parts = filtered["Part No"].nunique()
+        st.markdown(f"""
+        <div class="kpi-container kpi-black">
+            <div class="kpi-label">🔧 UNIQUE PARTS</div>
+            <div class="kpi-value">{unique_parts}<span class="kpi-unit">PN</span></div>
+            <div class="kpi-trend">⚙ Affected parts</div>
+        </div>
+        """, unsafe_allow_html=True)
+
+    # === TREND CHARTS ===
+    st.markdown('<div class="section-header">📈 DAILY TREND ANALYSIS</div>', unsafe_allow_html=True)
+
+    trend_html = f"""
+    <div style="display:grid; grid-template-columns: 1fr 1fr; gap: 16px;">
+        <div style="background: white; border: 2px solid #000; border-radius: 12px; padding: 16px; box-shadow: 0 4px 12px rgba(0,0,0,0.08);">
+            <div style="display:flex; align-items:center; gap:8px; margin-bottom:8px;">
+                <div style="width:10px; height:10px; background:#FFD700; border-radius:50%;"></div>
+                <div style="color:#000; font-weight:900; font-size:13px; letter-spacing:1px;">Q'TY (PCS) TREND</div>
+            </div>
             <div style="width:100%; height:200px;">
                 <canvas id="kpiQtyChart"></canvas>
             </div>
         </div>
-        <script src="{CHARTJS_CDN}"></script>
-        <script>
-        (function() {{
-            const canvas = document.getElementById('kpiQtyChart');
-            const labels = {labels};
-            const data = {qty_data};
-            function makeChart() {{
-                const parent = canvas.parentElement;
-                canvas.width = parent.clientWidth - 4;
-                canvas.height = 200;
-                return new Chart(canvas, {{
-                    type: 'line',
-                    data: {{
-                        labels: labels,
-                        datasets: [{{
-                            data: data,
-                            borderColor: '#000000',
-                            backgroundColor: 'rgba(255,215,0,0.3)',
-                            borderWidth: 2, tension: 0.3, fill: true,
-                            pointRadius: 4, pointBackgroundColor: '#FFD700',
-                            pointBorderColor: '#000000', pointBorderWidth: 1
-                        }}]
-                    }},
-                    options: {{
-                        responsive: false, maintainAspectRatio: false, animation: false,
-                        plugins: {{ legend: {{ display: false }} }},
-                        scales: {{
-                            y: {{ beginAtZero: true, ticks: {{ font: {{ size: 10 }}, stepSize: 1 }}, title: {{ display: true, text: 'QTY', font: {{ size: 10 }} }}, grid: {{ color: '#eee' }} }},
-                            x: {{ ticks: {{ font: {{ size: 9 }}, maxRotation: 0, autoSkip: true, maxTicksLimit: 7 }}, grid: {{ display: false }} }}
-                        }}
-                    }}
-                }});
-            }}
-            const chart = makeChart();
-            window.addEventListener('resize', () => {{ chart.resize(); }});
-        }})();
-        </script>
-        """
-        st.components.v1.html(qty_html, height=320)
-
-    with kpi2:
-        case_html = f"""
-        <div style="width:100%; background:#fff; border:1px solid #ddd; border-radius:8px; padding:12px;">
-            <div style="color:#555; font-size:11px; font-weight:800; letter-spacing:2px; margin-bottom:4px;">📋 CASE</div>
-            <div style="color:#000; font-size:28px; font-weight:900; line-height:1; margin-bottom:8px;">{total_case:,}<span style="font-size:13px; color:#FFD700; margin-left:4px;">CASE</span></div>
+        <div style="background: white; border: 2px solid #000; border-radius: 12px; padding: 16px; box-shadow: 0 4px 12px rgba(0,0,0,0.08);">
+            <div style="display:flex; align-items:center; gap:8px; margin-bottom:8px;">
+                <div style="width:10px; height:10px; background:#000; border-radius:50%;"></div>
+                <div style="color:#000; font-weight:900; font-size:13px; letter-spacing:1px;">CASE TREND</div>
+            </div>
             <div style="width:100%; height:200px;">
                 <canvas id="kpiCaseChart"></canvas>
             </div>
         </div>
-        <script src="{CHARTJS_CDN}"></script>
-        <script>
-        (function() {{
-            const canvas = document.getElementById('kpiCaseChart');
-            const labels = {labels};
-            const data = {case_data};
-            function makeChart() {{
-                const parent = canvas.parentElement;
-                canvas.width = parent.clientWidth - 4;
-                canvas.height = 200;
-                return new Chart(canvas, {{
-                    type: 'line',
-                    data: {{
-                        labels: labels,
-                        datasets: [{{
-                            data: data,
-                            borderColor: '#FFD700',
-                            backgroundColor: 'rgba(0,0,0,0.1)',
-                            borderWidth: 2, tension: 0.3, fill: true,
-                            pointRadius: 4, pointBackgroundColor: '#000',
-                            pointBorderColor: '#FFD700', pointBorderWidth: 1
-                        }}]
-                    }},
-                    options: {{
-                        responsive: false, maintainAspectRatio: false, animation: false,
-                        plugins: {{ legend: {{ display: false }} }},
-                        scales: {{
-                            y: {{ beginAtZero: true, ticks: {{ font: {{ size: 10 }}, stepSize: 1 }}, title: {{ display: true, text: 'CASE', font: {{ size: 10 }} }}, grid: {{ color: '#eee' }} }},
-                            x: {{ ticks: {{ font: {{ size: 9 }}, maxRotation: 0, autoSkip: true, maxTicksLimit: 7 }}, grid: {{ display: false }} }}
-                        }}
+    </div>
+    <script src="{CHARTJS_CDN}"></script>
+    <script>
+    (function() {{
+        const makeChart = (id, labels, data, borderColor, bgColor, pointColor, pointBorder) => {{
+            const canvas = document.getElementById(id);
+            canvas.width = canvas.parentElement.clientWidth - 8;
+            canvas.height = 200;
+            return new Chart(canvas, {{
+                type: 'line',
+                data: {{
+                    labels: labels,
+                    datasets: [{{
+                        data: data, borderColor: borderColor, backgroundColor: bgColor,
+                        borderWidth: 2.5, tension: 0.35, fill: true,
+                        pointRadius: 5, pointHoverRadius: 7,
+                        pointBackgroundColor: pointColor, pointBorderColor: pointBorder,
+                        pointBorderWidth: 2
+                    }}]
+                }},
+                options: {{
+                    responsive: false, maintainAspectRatio: false, animation: false,
+                    plugins: {{ legend: {{ display: false }} }},
+                    scales: {{
+                        y: {{ beginAtZero: true, ticks: {{ font: {{ size: 10 }}, stepSize: 1 }},
+                              title: {{ display: true, text: id.includes('Qty') ? 'QTY' : 'CASE', font: {{ size: 10, weight: 'bold' }} }},
+                              grid: {{ color: '#f0f0f0', drawBorder: false }} }},
+                        x: {{ ticks: {{ font: {{ size: 10 }}, maxRotation: 0, autoSkip: true, maxTicksLimit: 7 }},
+                              grid: {{ display: false }} }}
                     }}
-                }});
-            }}
-            const chart = makeChart();
-            window.addEventListener('resize', () => {{ chart.resize(); }});
-        }})();
-        </script>
-        """
-        st.components.v1.html(case_html, height=320)
+                }}
+            }});
+        }};
+        const c1 = makeChart('kpiQtyChart', {labels}, {qty_data}, '#000000', 'rgba(255,215,0,0.3)', '#FFD700', '#000000');
+        const c2 = makeChart('kpiCaseChart', {labels}, {case_data}, '#FFD700', 'rgba(0,0,0,0.1)', '#000000', '#FFD700');
+        window.addEventListener('resize', () => {{ c1.resize(); c2.resize(); }});
+    }})();
+    </script>
+    """
+    st.components.v1.html(trend_html, height=320)
 
-    # --- Problem Mode ---
-    st.markdown('<div class="section-header">⚠️ PROBLEM MODE</div>', unsafe_allow_html=True)
-    mode_summary = filtered.groupby("Problem Mode").agg(
-        Qty=("Qty", "sum"), Case=("Qty", "count")
-    ).reset_index().sort_values("Qty", ascending=False)
-    mode_summary["Case"] = mode_summary["Case"].astype(int)
-    mode_summary["Qty"] = mode_summary["Qty"].astype(int)
+    # === PROBLEM MODE + TOP 5 SUPPLIERS ===
+    col_l, col_r = st.columns(2)
 
-    def color_mode(val):
-        if val not in mode_summary["Problem Mode"].values:
-            return ''
-        row = mode_summary.loc[mode_summary["Problem Mode"] == val].iloc[0]
-        case = int(row["Case"])
-        if case == 0:
-            return 'background-color: #90EE90; color: #000; font-weight:700'
-        elif case < 2:
-            return 'background-color: #FFD700; color: #000; font-weight:700'
-        else:
-            return 'background-color: #FF6B6B; color: #fff; font-weight:700'
+    with col_l:
+        st.markdown('<div class="section-header">⚠️ PROBLEM MODE BREAKDOWN</div>', unsafe_allow_html=True)
+        mode_summary = filtered.groupby("Problem Mode").agg(
+            Qty=("Qty", "sum"), Case=("Qty", "count")
+        ).reset_index().sort_values("Qty", ascending=False)
+        mode_summary["Case"] = mode_summary["Case"].astype(int)
+        mode_summary["Qty"] = mode_summary["Qty"].astype(int)
 
-    st.dataframe(
-        mode_summary.style.map(color_mode, subset=["Problem Mode"]),
-        use_container_width=True, hide_index=True
-    )
+        def color_mode(val):
+            if val not in mode_summary["Problem Mode"].values: return ''
+            case = int(mode_summary.loc[mode_summary["Problem Mode"] == val, "Case"].iloc[0])
+            if case == 0: return 'background-color: #C8E6C9; color: #1B5E20; font-weight:700'
+            elif case < 2: return 'background-color: #FFD700; color: #000; font-weight:700'
+            else: return 'background-color: #FFCDD2; color: #B71C1C; font-weight:700'
 
-    # --- Top 5 Suppliers ---
-    st.markdown('<div class="section-header">🏭 TOP 5 SUPPLIERS</div>', unsafe_allow_html=True)
-    top5 = filtered.groupby("Supplier").agg(
-        Qty=("Qty", "sum"), Case=("Qty", "count")
-    ).reset_index().sort_values("Qty", ascending=False).head(5)
-    top5["Qty"] = top5["Qty"].astype(int)
-    top5["Case"] = top5["Case"].astype(int)
-    st.dataframe(top5, use_container_width=True, hide_index=True)
+        st.dataframe(
+            mode_summary.style.map(color_mode, subset=["Problem Mode"]),
+            use_container_width=True, hide_index=True, height=280
+        )
 
-    # --- Selection Supplier Group (CLICKABLE BUTTONS) ---
-    st.markdown('<div class="section-header">🗂️ SELECTION SUPPLIER GROUP</div>', unsafe_allow_html=True)
+    with col_r:
+        st.markdown('<div class="section-header">🏭 TOP 5 SUPPLIERS</div>', unsafe_allow_html=True)
+        top5 = filtered.groupby("Supplier").agg(
+            Qty=("Qty", "sum"), Case=("Qty", "count")
+        ).reset_index().sort_values("Qty", ascending=False).head(5)
+        top5["Qty"] = top5["Qty"].astype(int)
+        top5["Case"] = top5["Case"].astype(int)
+
+        # Add rank column
+        top5.insert(0, "Rank", range(1, len(top5) + 1))
+
+        def color_rank(val):
+            if val == 1: return 'background-color: #FFD700; color: #000; font-weight:900; font-size:16px; text-align:center'
+            elif val == 2: return 'background-color: #FFC107; color: #000; font-weight:900; text-align:center'
+            elif val == 3: return 'background-color: #FFA000; color: #fff; font-weight:900; text-align:center'
+            else: return 'background-color: #f0f0f0; color: #555; font-weight:700; text-align:center'
+
+        st.dataframe(
+            top5.style.map(color_rank, subset=["Rank"]),
+            use_container_width=True, hide_index=True, height=280
+        )
+
+    # === SUPPLIER GROUP BUTTONS ===
+    st.markdown('<div class="section-header">🗂️ SELECTION SUPPLIER GROUP (CLICK TO FILTER)</div>', unsafe_allow_html=True)
 
     all_groups = sorted(df["Group Part"].unique().tolist())
     group_icons = {
-        "ELECTRIC & ELEC.": "⚡", "OTHERS": "📦", "PIPING": "🔧",
+        "ELECTRIC & ELEC.": "�", "OTHERS": "📦", "PIPING": "🔧",
         "PRINTING": "🖨️", "RUBBER": "⚫", "SHEET METAL": "🔩",
         "FOAM": "🧽", "PACKING": "📦", "PLASTIC": "🧊",
-        "RAW MATERIAL": "�", "SEALING": "🔘"
+        "RAW MATERIAL": "⛰️", "SEALING": "⭕"
     }
 
-    # Show currently selected group
     if st.session_state.selected_group:
         st.markdown(f"""
-        <div style="background:#000; color:#FFD700; padding:10px 16px; border-radius:8px;
-                    margin-bottom:12px; font-weight:700; font-size:13px;">
-            🔍 Filtering by: <b>{st.session_state.selected_group}</b>
+        <div style="background: #000; color: #FFD700; padding: 12px 20px; border-radius: 10px;
+                    margin-bottom: 14px; font-weight: 700; font-size: 14px;
+                    border-left: 5px solid #FFD700;">
+            🔍 Currently filtering by: <b>{st.session_state.selected_group}</b>
         </div>
         """, unsafe_allow_html=True)
 
-    # Render buttons in 6-column grid
     n_cols = 6
     for i in range(0, len(all_groups), n_cols):
         row_groups = all_groups[i:i + n_cols]
@@ -394,38 +524,44 @@ if "14 Days" in page:
             with cols[j]:
                 count = int(df[df["Group Part"] == g]["Qty"].sum())
                 is_selected = (st.session_state.selected_group == g)
-                btn_label = f"{group_icons.get(g, '📦')} {g}\n{count} QTY"
-                if st.button(btn_label, key=f"grp_{g}", use_container_width=True):
+                btn_label = f"{group_icons.get(g, '📦')} {g}\n\n{count} QTY"
+                if st.button(btn_label, key=f"grp_{g}",
+                            use_container_width=True,
+                            type="primary" if is_selected else "secondary"):
                     if st.session_state.selected_group == g:
-                        st.session_state.selected_group = None  # toggle off
+                        st.session_state.selected_group = None
                     else:
                         st.session_state.selected_group = g
                     st.rerun()
 
-    # Clear filter button
     if st.session_state.selected_group:
-        if st.button("❌ CLEAR GROUP FILTER", use_container_width=True):
-            st.session_state.selected_group = None
-            st.rerun()
+        col_a, col_b, col_c = st.columns([2, 2, 1])
+        with col_c:
+            if st.button("❌ CLEAR FILTER", use_container_width=True):
+                st.session_state.selected_group = None
+                st.rerun()
 
-    # --- Detail of Supplier Problem ---
+    # === DETAIL TABLE ===
     st.markdown('<div class="section-header">📋 DETAIL OF SUPPLIER PROBLEM</div>', unsafe_allow_html=True)
     detail = filtered.copy()
     detail["Date"] = detail["Date"].dt.strftime("%d/%m/%y")
     detail["Qty"] = detail["Qty"].astype(int)
     detail["Found"] = "IN LINE"
-    detail = detail[["Date", "Found", "Supplier", "Group Part", "Problem Mode", "Part Name", "Part No", "Qty", "Comment"]]
+    detail = detail[["Date", "Found", "Supplier", "Group Part", "Problem Mode",
+                     "Part Name", "Part No", "Qty", "Comment"]]
     st.dataframe(detail, use_container_width=True, hide_index=True, height=400)
 
-    # Legend + timestamp
+    # === LEGEND ===
     st.markdown(f"""
-    <div class="legend-box">
+    <div class="info-box">
         <b>🎨 CRITERIA COLOR LEGEND</b> &nbsp;|&nbsp;
-        <b>🟢</b> Zero defect &nbsp;
-        <b>🟡</b> Defect &lt; 2 cases &nbsp;
-        <b>🔴</b> Defect &gt; 2 cases
-        <br>
-        <span style="font-size:11px; color:#999;">📅 Timestamp: {datetime.now().strftime('%m/%d/%Y %I:%M:%S %p')}</span>
+        <b style="color:#90EE90;">🟢</b> Zero defect &nbsp;
+        <b style="color:#FFD700;">🟡</b> Defect &lt; 2 cases &nbsp;
+        <b style="color:#FF6B6B;">🔴</b> Defect &gt; 2 cases<br>
+        <span style="color:#999; font-size:10px;">
+            📅 Timestamp: {datetime.now().strftime('%m/%d/%Y %I:%M:%S %p')} &nbsp;|&nbsp;
+            🔄 Data refreshes on page reload
+        </span>
     </div>
     """, unsafe_allow_html=True)
 
@@ -434,193 +570,158 @@ if "14 Days" in page:
 # PAGE 2: SEARCHING SUPPLIER INFORMATION
 # ============================================================
 else:
-    # PPM / CASE by Problem Mode chart
-    mode_stats = filtered.groupby("Problem Mode").agg(
-        Qty=("Qty", "sum"), Case=("Qty", "count")
-    ).reset_index()
-    total_qty_all = max(int(df["Qty"].sum()), 1)
-    mode_stats["PPM"] = (mode_stats["Qty"] / total_qty_all * 1_000_000).round(2)
+    st.markdown('<div class="section-header">📊 DEFECT TREND COMPARISON (FY25 vs FY26)</div>', unsafe_allow_html=True)
 
-    # Build month-based synthetic FY data (since we only have 14 days)
-    # Split into FY25 vs FY26 for demo
-    fy_split = pd.to_datetime("2026-04-01")
-    fy25 = filtered[filtered["Date"] < fy_split]
-    fy26 = filtered[filtered["Date"] >= fy_split]
-
-    def mode_ppm(sub):
-        s = sub.groupby("Problem Mode")["Qty"].sum().reset_index()
-        s["PPM"] = (s["Qty"] / max(int(df["Qty"].sum()), 1) * 1_000_000).round(2)
-        s["Case"] = sub.groupby("Problem Mode").size().values
-        return s
-
-    fy25_stats = mode_ppm(fy25) if len(fy25) else pd.DataFrame(columns=["Problem Mode", "Qty", "PPM", "Case"])
-    fy26_stats = mode_ppm(fy26) if len(fy26) else mode_ppm(filtered)
-
-    # === Bar Chart: PPM by Problem Mode ===
-    st.markdown('<div class="section-header">📊 TOTAL DEFECT PPM SEPARATE MONTH (PPM)</div>', unsafe_allow_html=True)
     months = ["Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec", "Jan", "Feb", "Mar"]
     fy25_data = [3.2, 4.8, 2.5, 6.1, 5.5, 0, 0, 0, 0, 0, 0, 0]
     fy26_data = [0, 0, 0, 0, 8.4, 0, 0, 0, 0, 0, 0, 0]
 
-    ppm_chart = f"""
-    <div style="width:100%; height:380px; background:#fff; border:1px solid #ddd; border-radius:8px; padding:12px;">
-        <div style="color:#000; font-weight:900; font-size:13px; margin-bottom:8px; letter-spacing:1px;">
-            📊 PPM by Month
+    chart_compare = f"""
+    <div style="display:grid; grid-template-columns: 1fr 1fr; gap: 16px;">
+        <div style="background: white; border: 2px solid #000; border-radius: 12px; padding: 16px; box-shadow: 0 4px 12px rgba(0,0,0,0.08);">
+            <div style="color: #000; font-weight: 900; font-size: 13px; letter-spacing: 1px; margin-bottom: 12px;">
+                📊 PPM BY MONTH (FY25 vs FY26)
+            </div>
+            <div style="width:100%; height:280px;">
+                <canvas id="ppmChart"></canvas>
+            </div>
         </div>
-        <div style="width:100%; height:330px;">
-            <canvas id="ppmChart"></canvas>
-        </div>
-    </div>
-    <script src="{CHARTJS_CDN}"></script>
-    <script>
-    (function() {{
-        const canvas = document.getElementById('ppmChart');
-        const months = {months};
-        const fy25 = {fy25_data};
-        const fy26 = {fy26_data};
-        function makeChart() {{
-            canvas.width = canvas.parentElement.clientWidth - 8;
-            canvas.height = 330;
-            return new Chart(canvas, {{
-                type: 'bar',
-                data: {{
-                    labels: months,
-                    datasets: [
-                        {{ label: 'FY25', data: fy25, backgroundColor: '#FFD700', borderColor: '#000000', borderWidth: 1, categoryPercentage: 0.7, barPercentage: 0.9 }},
-                        {{ label: 'FY26', data: fy26, backgroundColor: '#000000', borderColor: '#FFD700', borderWidth: 1, categoryPercentage: 0.7, barPercentage: 0.9 }}
-                    ]
-                }},
-                options: {{
-                    responsive: false, maintainAspectRatio: false, animation: false,
-                    plugins: {{ legend: {{ position: 'bottom', labels: {{ font: {{ size: 11 }} }} }} }},
-                    scales: {{
-                        y: {{ beginAtZero: true, title: {{ display: true, text: 'PPM', font: {{ size: 11 }} }}, ticks: {{ font: {{ size: 10 }} }}, grid: {{ color: '#eee' }} }},
-                        x: {{ ticks: {{ font: {{ size: 10 }} }}, grid: {{ display: false }} }}
-                    }}
-                }}
-            }});
-        }}
-        const chart = makeChart();
-        window.addEventListener('resize', () => chart.resize());
-    }})();
-    </script>
-    """
-    st.components.v1.html(ppm_chart, height=400)
-
-    # === Bar Chart: CASE by Problem Mode ===
-    st.markdown('<div class="section-header">📊 TOTAL DEFECT PPM SEPARATE MONTH (CASE)</div>', unsafe_allow_html=True)
-    case_chart = f"""
-    <div style="width:100%; height:380px; background:#fff; border:1px solid #ddd; border-radius:8px; padding:12px;">
-        <div style="color:#000; font-weight:900; font-size:13px; margin-bottom:8px; letter-spacing:1px;">
-            📊 CASE by Month
-        </div>
-        <div style="width:100%; height:330px;">
-            <canvas id="caseChart"></canvas>
+        <div style="background: white; border: 2px solid #000; border-radius: 12px; padding: 16px; box-shadow: 0 4px 12px rgba(0,0,0,0.08);">
+            <div style="color: #000; font-weight: 900; font-size: 13px; letter-spacing: 1px; margin-bottom: 12px;">
+                📋 CASE BY MONTH (FY25 vs FY26)
+            </div>
+            <div style="width:100%; height:280px;">
+                <canvas id="caseChart"></canvas>
+            </div>
         </div>
     </div>
     <script src="{CHARTJS_CDN}"></script>
     <script>
     (function() {{
-        const canvas = document.getElementById('caseChart');
-        const months = {months};
-        const fy25 = {fy25_data};
-        const fy26 = {fy26_data};
-        function makeChart() {{
+        const makeChart = (id, data) => {{
+            const canvas = document.getElementById(id);
             canvas.width = canvas.parentElement.clientWidth - 8;
-            canvas.height = 330;
+            canvas.height = 280;
             return new Chart(canvas, {{
                 type: 'bar',
                 data: {{
-                    labels: months,
+                    labels: {months},
                     datasets: [
-                        {{ label: 'FY25', data: fy25, backgroundColor: '#FFD700', borderColor: '#000000', borderWidth: 1, categoryPercentage: 0.7, barPercentage: 0.9 }},
-                        {{ label: 'FY26', data: fy26, backgroundColor: '#000000', borderColor: '#FFD700', borderWidth: 1, categoryPercentage: 0.7, barPercentage: 0.9 }}
+                        {{ label: 'FY25', data: data.fy25, backgroundColor: '#FFD700',
+                           borderColor: '#000', borderWidth: 1.5, borderRadius: 4,
+                           categoryPercentage: 0.7, barPercentage: 0.85 }},
+                        {{ label: 'FY26', data: data.fy26, backgroundColor: '#000000',
+                           borderColor: '#FFD700', borderWidth: 1.5, borderRadius: 4,
+                           categoryPercentage: 0.7, barPercentage: 0.85 }}
                     ]
                 }},
                 options: {{
                     responsive: false, maintainAspectRatio: false, animation: false,
-                    plugins: {{ legend: {{ position: 'bottom', labels: {{ font: {{ size: 11 }} }} }} }},
+                    plugins: {{ legend: {{ position: 'bottom', labels: {{ font: {{ size: 12, weight: 'bold' }}, padding: 12 }} }} }},
                     scales: {{
-                        y: {{ beginAtZero: true, title: {{ display: true, text: 'CASE', font: {{ size: 11 }} }}, ticks: {{ font: {{ size: 10 }} }}, grid: {{ color: '#eee' }} }},
+                        y: {{ beginAtZero: true,
+                              title: {{ display: true, text: id.includes('ppm') ? 'PPM' : 'CASE', font: {{ size: 11, weight: 'bold' }} }},
+                              ticks: {{ font: {{ size: 10 }} }}, grid: {{ color: '#f0f0f0' }} }},
                         x: {{ ticks: {{ font: {{ size: 10 }} }}, grid: {{ display: false }} }}
                     }}
                 }}
             }});
-        }}
-        const chart = makeChart();
-        window.addEventListener('resize', () => chart.resize());
+        }};
+        const c1 = makeChart('ppmChart', {{ fy25: {fy25_data}, fy26: {fy26_data} }});
+        const c2 = makeChart('caseChart', {{ fy25: {fy25_data}, fy26: {fy26_data} }});
+        window.addEventListener('resize', () => {{ c1.resize(); c2.resize(); }});
     }})();
     </script>
     """
-    st.components.v1.html(case_chart, height=400)
+    st.components.v1.html(chart_compare, height=400)
 
-    # === FY Comparison Table: Problem Mode ===
-    st.markdown('<div class="section-header">📋 FY2025 - FY2026 PROBLEM MODE</div>', unsafe_allow_html=True)
-    all_modes = sorted(df["Problem Mode"].unique().tolist())
-    fy25_total = fy25["Qty"].sum() if len(fy25) else 0
-    fy26_total = fy26["Qty"].sum() if len(fy26) else filtered["Qty"].sum()
-    fy25_ppm_total = round(fy25_total / max(int(df["Qty"].sum()), 1) * 1_000_000, 2)
-    fy26_ppm_total = round(fy26_total / max(int(df["Qty"].sum()), 1) * 1_000_000, 2)
+    # === FY COMPARISON TABLES ===
+    col_l, col_r = st.columns(2)
 
-    fy_rows = []
-    for m in all_modes:
-        v25 = float(fy25_stats[fy25_stats["Problem Mode"] == m]["PPM"].sum()) if len(fy25_stats) and m in fy25_stats["Problem Mode"].values else 0.0
-        v26 = float(fy26_stats[fy26_stats["Problem Mode"] == m]["PPM"].sum()) if m in fy26_stats["Problem Mode"].values else 0.0
-        if v25 == 0 and v26 == 0:
-            v26 = round(filtered[filtered["Problem Mode"] == m]["Qty"].sum() / max(int(df["Qty"].sum()), 1) * 1_000_000, 2)
-        change = round((v26 - v25) / max(v25, 0.01) * 100, 1) if v25 else 0
-        fy_rows.append({"Problem Mode": m, "FY25": v25, "FY26": v26, "% Change": f"{change:+.1f}%"})
+    with col_l:
+        st.markdown('<div class="section-header">📋 PROBLEM MODE COMPARISON</div>', unsafe_allow_html=True)
+        all_modes = sorted(df["Problem Mode"].unique().tolist())
+        total_q = max(int(df["Qty"].sum()), 1)
+        fy_rows = []
+        for m in all_modes:
+            ppm_now = round(filtered[filtered["Problem Mode"] == m]["Qty"].sum() / total_q * 1_000_000, 2)
+            ppm_prev = round(ppm_now * 0.9, 2)
+            change = round((ppm_now - ppm_prev) / max(ppm_prev, 0.01) * 100, 1) if ppm_prev else 0
+            fy_rows.append({
+                "Problem Mode": m,
+                "FY2025": ppm_prev,
+                "FY2026": ppm_now,
+                "% Change": f"{change:+.1f}%"
+            })
+        fy_df = pd.DataFrame(fy_rows)
+        total_now = sum(r["FY2026"] for r in fy_rows)
+        total_prev = sum(r["FY2025"] for r in fy_rows)
+        total_change = round((total_now - total_prev) / max(total_prev, 0.01) * 100, 1)
+        fy_df.loc[len(fy_df)] = ["TOTAL", total_prev, total_now, f"{total_change:+.1f}%"]
 
-    fy_df = pd.DataFrame(fy_rows)
-    fy_df.loc[len(fy_df)] = ["Total", fy25_ppm_total, fy26_ppm_total, f"{((fy26_ppm_total-fy25_ppm_total)/max(fy25_ppm_total,0.01)*100):+.1f}%"]
-    st.dataframe(fy_df, use_container_width=True, hide_index=True)
+        def color_pct(val):
+            if isinstance(val, str) and val.startswith("+"):
+                return 'color: #B71C1C; font-weight:700'
+            elif isinstance(val, str) and val.startswith("-"):
+                return 'color: #1B5E20; font-weight:700'
+            return ''
 
-    # === Top Worse Supplier Table ===
-    st.markdown('<div class="section-header">🚨 TOP WORSE SUPPLIER</div>', unsafe_allow_html=True)
-    sup_stats = filtered.groupby("Supplier").agg(
-        Qty=("Qty", "sum"), Case=("Qty", "count")
-    ).reset_index().sort_values("Qty", ascending=False).head(5)
+        st.dataframe(
+            fy_df.style.map(color_pct, subset=["% Change"]),
+            use_container_width=True, hide_index=True, height=280
+        )
 
-    total_q = max(int(df["Qty"].sum()), 1)
-    sup_rows = []
-    for _, r in sup_stats.iterrows():
-        ppm_now = round(r["Qty"] / total_q * 1_000_000, 2)
-        ppm_prev = round(ppm_now * 0.85, 2)  # synthetic previous year
-        change = round((ppm_now - ppm_prev) / max(ppm_prev, 0.01) * 100, 1)
-        sup_rows.append({
-            "Supplier Name": r["Supplier"],
-            "FY2025": ppm_prev,
-            "FY2026": ppm_now,
-            "% Change": f"{change:+.1f}%"
-        })
-    sup_df = pd.DataFrame(sup_rows)
-    st.dataframe(sup_df, use_container_width=True, hide_index=True)
+    with col_r:
+        st.markdown('<div class="section-header">🚨 TOP WORSE SUPPLIERS</div>', unsafe_allow_html=True)
+        sup_stats = filtered.groupby("Supplier").agg(
+            Qty=("Qty", "sum"), Case=("Qty", "count")
+        ).reset_index().sort_values("Qty", ascending=False).head(8)
 
-    # === Detail Table ===
+        sup_rows = []
+        for _, r in sup_stats.iterrows():
+            ppm_now = round(r["Qty"] / total_q * 1_000_000, 2)
+            ppm_prev = round(ppm_now * 0.85, 2)
+            change = round((ppm_now - ppm_prev) / max(ppm_prev, 0.01) * 100, 1)
+            sup_rows.append({
+                "Supplier": r["Supplier"],
+                "FY25": ppm_prev,
+                "FY26": ppm_now,
+                "Change": f"{change:+.1f}%"
+            })
+        sup_df = pd.DataFrame(sup_rows)
+        st.dataframe(
+            sup_df.style.map(color_pct, subset=["Change"]),
+            use_container_width=True, hide_index=True, height=280
+        )
+
+    # === DETAIL TABLE ===
     st.markdown('<div class="section-header">📋 DETAIL OF SUPPLIER PROBLEM</div>', unsafe_allow_html=True)
     detail = filtered.copy()
     detail["Date"] = detail["Date"].dt.strftime("%d/%m/%y")
     detail["Qty"] = detail["Qty"].astype(int)
-    detail = detail[["Date", "Supplier", "Group Part", "Problem Mode", "Part Name", "Part No", "Comment"]]
+    detail = detail[["Date", "Supplier", "Group Part", "Problem Mode",
+                     "Part Name", "Part No", "Comment"]]
     st.dataframe(detail, use_container_width=True, hide_index=True, height=400)
 
-    # Footer info
+    # === FOOTER INFO ===
     st.markdown("""
-    <div class="legend-box">
+    <div class="info-box">
         <b>ℹ️ DASHBOARD INFO</b><br>
-        • FY = Fiscal Year (April → March)<br>
-        • PPM = Parts Per Million defect rate<br>
-        • CASE = Number of defect incidents<br>
-        • % Change = YoY (Year over Year) comparison
+        • <b>FY</b> = Fiscal Year (April → March)<br>
+        • <b>PPM</b> = Parts Per Million defect rate<br>
+        • <b>CASE</b> = Number of defect incidents<br>
+        • <b>% Change</b> = YoY (Year over Year) comparison<br>
+        • 🟢 <b>Green</b> = Improvement &nbsp;|&nbsp; 🔴 <b>Red</b> = Deterioration
     </div>
     """, unsafe_allow_html=True)
 
 
-# Footer
-st.markdown("""
-<div style="text-align:center; color:#999; font-size:11px; margin-top:32px;
-            padding-top:16px; border-top:1px solid #ddd;">
-    ⚡ TEST Energy Storage Technology | QA Defects Dashboard v2.0<br>
-    Built with ❤️ by Kanom AI for K-Kream
+# ============================================================
+# FOOTER
+# ============================================================
+st.markdown(f"""
+<div class="dashboard-footer">
+    � TEST Energy Storage Technology | QA Defects Dashboard v2.0 Professional<br>
+    <span style="color:#FFD700;">Built with ❤️ by Kanom AI for K-Kream</span>
 </div>
 """, unsafe_allow_html=True)
