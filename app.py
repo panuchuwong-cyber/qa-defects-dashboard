@@ -90,55 +90,55 @@ st.set_page_config(
 # ============================================================
 LOGO_URL = "https://cdn.jsdelivr.net/gh/panuchuwong-cyber/qa-defects-dashboard@main/assets/3k_logo.jpg"
 
-st.markdown(f"""
+st.markdown("""
 <style>
     /* === GLOBAL === */
-    .stApp {{ background: linear-gradient(135deg, #fafafa 0%, #f5f5f5 100%); }}
-    [data-testid="stSidebarNav"] {{ display: none; }}
-    footer {{ visibility: hidden; }}
-    header[data-testid="stHeader"] {{ background: transparent; }}
+    .stApp { background: linear-gradient(135deg, #fafafa 0%, #f5f5f5 100%); }
+    [data-testid="stSidebarNav"] { display: none; }
+    footer { visibility: hidden; }
+    header[data-testid="stHeader"] { background: transparent; }
 
     /* === SIDEBAR === */
-    [data-testid="stSidebar"] {{
+    [data-testid="stSidebar"] {
         background: linear-gradient(180deg, #000000 0%, #1a1a1a 100%);
         border-right: 2px solid #FFD700;
-    }}
-    [data-testid="stSidebar"] * {{ color: #ffffff !important; }}
-    [data-testid="stSidebar"] .stRadio label {{
+    }
+    [data-testid="stSidebar"] * { color: #ffffff !important; }
+    [data-testid="stSidebar"] .stRadio label {
         background: rgba(255,215,0,0.1); padding: 10px 14px;
         border-radius: 8px; border: 1px solid rgba(255,215,0,0.3);
         margin-bottom: 6px; transition: all 0.2s;
-    }}
-    [data-testid="stSidebar"] .stRadio label:hover {{
+    }
+    [data-testid="stSidebar"] .stRadio label:hover {
         background: rgba(255,215,0,0.2); border-color: #FFD700;
-    }}
-    [data-testid="stSidebar"] .stSelectbox label {{
+    }
+    [data-testid="stSidebar"] .stSelectbox label {
         color: #FFD700 !important; font-weight: 700;
         font-size: 11px; letter-spacing: 1px; text-transform: uppercase;
-    }}
+    }
 
     /* === SIDEBAR LOGO === */
-    .sidebar-logo-wrap {{
+    .sidebar-logo-wrap {
         background: linear-gradient(135deg, #FFD700 0%, #FFA500 100%);
         padding: 16px 12px; border-radius: 12px;
         text-align: center; margin-bottom: 20px;
         box-shadow: 0 4px 16px rgba(255,215,0,0.4);
-    }}
-    .sidebar-logo-img {{
+    }
+    .sidebar-logo-img {
         width: 100%; max-width: 180px; height: auto;
         margin: 0 auto 8px auto; display: block;
         border-radius: 8px;
-    }}
+    }
 
     /* === MAIN HEADER LOGO === */
-    .header-logo-wrap {{
+    .header-logo-wrap {
         display: flex; align-items: center; gap: 16px;
         padding: 4px 0;
-    }}
-    .header-logo-img {{
+    }
+    .header-logo-img {
         width: 64px; height: 64px; border-radius: 12px;
         box-shadow: 0 4px 12px rgba(255,215,0,0.3);
-    }}
+    }
 
     /* === MAIN HEADER === */
     .dashboard-header {
