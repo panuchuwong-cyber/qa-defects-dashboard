@@ -532,6 +532,64 @@ if "14 Days" in page:
     total_qty = int(filtered["Qty"].sum())
     total_case = len(filtered)
 
+    # === TREND CALCULATION (Last 7 days vs Previous 7 days) ===
+    if not filtered.empty:
+        max_date = filtered["Date"].max()
+        cutoff = max_date - pd.Timedelta(days=6)
+        prev_cutoff = max_date - pd.Timedelta(days=13)
+        recent_7 = filtered[filtered["Date"] >= cutoff]
+        prev_7 = filtered[(filtered["Date"] >= prev_cutoff) & (filtered["Date"] < cutoff)]
+
+        recent_qty = int(recent_7["Qty"].sum())
+        prev_qty = int(prev_7["Qty"].sum())
+        recent_case = len(recent_7)
+        prev_case = len(prev_7)
+
+        # For QTY: lower is better → up arrow = bad (red), down arrow = good (green)
+        if prev_qty > 0:
+            qty_pct = round(((recent_qty - prev_qty) / prev_qty) * 100, 1)
+        else:
+            qty_pct = 0.0 if recent_qty == 0 else 100.0
+
+        # For CASE: lower is better
+        if prev_case > 0:
+            case_pct = round(((recent_case - prev_case) / prev_case) * 100, 1)
+        else:
+            case_pct = 0.0 if recent_case == 0 else 100.0
+
+        # For AVG/CASE: lower is better
+        recent_avg = recent_qty / max(recent_case, 1)
+        prev_avg = prev_qty / max(prev_case, 1)
+        if prev_avg > 0:
+            avg_pct = round(((recent_avg - prev_avg) / prev_avg) * 100, 1)
+        else:
+            avg_pct = 0.0
+
+        # For UNIQUE PARTS: lower is better
+        recent_parts = recent_7["Part No"].nunique()
+        prev_parts = prev_7["Part No"].nunique()
+        if prev_parts > 0:
+            parts_pct = round(((recent_parts - prev_parts) / prev_parts) * 100, 1)
+        else:
+            parts_pct = 0.0 if recent_parts == 0 else 100.0
+    else:
+        qty_pct = case_pct = avg_pct = parts_pct = 0.0
+
+    def trend_arrow(value):
+        # For QA defects: lower is better
+        # value > 0 = bad (up arrow red), value < 0 = good (down arrow green)
+        if value > 0:
+            return "up"
+        elif value < 0:
+            return "down"
+        else:
+            return "neutral"
+
+    qty_arrow = trend_arrow(qty_pct)
+    case_arrow = trend_arrow(case_pct)
+    avg_arrow = trend_arrow(avg_pct)
+    parts_arrow = trend_arrow(parts_pct)
+
     daily = filtered.groupby("Date").agg(Qty=("Qty", "sum"), Case=("Qty", "count")).reset_index()
     labels = daily["Date"].dt.strftime("%m/%d").tolist()
     qty_data = daily["Qty"].tolist()
@@ -542,44 +600,48 @@ if "14 Days" in page:
 
     with kpi1:
         unique_suppliers = filtered["Supplier"].nunique()
+        arrow_icon = {"up": "▲", "down": "▼", "neutral": "—"}[qty_arrow]
         st.markdown(f"""
         <div class="kpi-container kpi-yellow">
             <div class="kpi-icon">📦</div>
             <div class="kpi-label">📦 TOTAL Q'TY</div>
             <div class="kpi-value">{total_qty:,}<span class="kpi-unit">PCS</span></div>
-            <div class="kpi-trend trend-up">� {unique_suppliers} suppliers</div>
+            <div class="kpi-trend trend-{qty_arrow}">{arrow_icon} {abs(qty_pct):.1f}% vs prev 7d</div>
         </div>
         """, unsafe_allow_html=True)
 
     with kpi2:
+        arrow_icon = {"up": "▲", "down": "▼", "neutral": "—"}[case_arrow]
         st.markdown(f"""
         <div class="kpi-container kpi-black">
             <div class="kpi-icon">📋</div>
             <div class="kpi-label">📋 TOTAL CASE</div>
             <div class="kpi-value">{total_case:,}<span class="kpi-unit">CASE</span></div>
-            <div class="kpi-trend trend-down">⬇ Last 14 days</div>
+            <div class="kpi-trend trend-{case_arrow}">{arrow_icon} {abs(case_pct):.1f}% vs prev 7d</div>
         </div>
         """, unsafe_allow_html=True)
 
     with kpi3:
         avg_qty = round(total_qty / max(total_case, 1), 1)
+        arrow_icon = {"up": "▲", "down": "▼", "neutral": "—"}[avg_arrow]
         st.markdown(f"""
         <div class="kpi-container kpi-yellow">
             <div class="kpi-icon">📊</div>
             <div class="kpi-label">📊 AVG / CASE</div>
             <div class="kpi-value">{avg_qty}<span class="kpi-unit">PCS</span></div>
-            <div class="kpi-trend trend-neutral">Avg per case</div>
+            <div class="kpi-trend trend-{avg_arrow}">{arrow_icon} {abs(avg_pct):.1f}% vs prev 7d</div>
         </div>
         """, unsafe_allow_html=True)
 
     with kpi4:
         unique_parts = filtered["Part No"].nunique()
+        arrow_icon = {"up": "▲", "down": "▼", "neutral": "—"}[parts_arrow]
         st.markdown(f"""
         <div class="kpi-container kpi-black">
             <div class="kpi-icon">⚙</div>
             <div class="kpi-label">⚙ UNIQUE PARTS</div>
             <div class="kpi-value">{unique_parts}<span class="kpi-unit">PN</span></div>
-            <div class="kpi-trend trend-neutral">Affected parts</div>
+            <div class="kpi-trend trend-{parts_arrow}">{arrow_icon} {abs(parts_pct):.1f}% vs prev 7d</div>
         </div>
         """, unsafe_allow_html=True)
 
