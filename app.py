@@ -568,7 +568,7 @@ if "14 Days" in page:
             <div class="kpi-icon">📊</div>
             <div class="kpi-label">📊 AVG / CASE</div>
             <div class="kpi-value">{avg_qty}<span class="kpi-unit">PCS</span></div>
-            <div class="kpi-trend">⌀ Average per case</div>
+            <div class="kpi-trend trend-neutral">Avg per case</div>
         </div>
         """, unsafe_allow_html=True)
 
@@ -579,7 +579,7 @@ if "14 Days" in page:
             <div class="kpi-icon">⚙</div>
             <div class="kpi-label">⚙ UNIQUE PARTS</div>
             <div class="kpi-value">{unique_parts}<span class="kpi-unit">PN</span></div>
-            <div class="kpi-trend">� Affected parts</div>
+            <div class="kpi-trend trend-neutral">Affected parts</div>
         </div>
         """, unsafe_allow_html=True)
 
