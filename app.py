@@ -282,6 +282,33 @@ st.markdown("""
         box-shadow: 0 4px 12px rgba(255,215,0,0.3);
     }
 
+    /* === INFO STACK (sidebar cards) === */
+    .info-stack {
+        margin-top: 12px;
+        background: rgba(255,255,255,0.08);
+        backdrop-filter: blur(10px);
+        border: 1px solid rgba(255,215,0,0.3);
+        border-radius: 12px;
+        padding: 14px 16px;
+        display: flex;
+        flex-direction: column;
+        gap: 10px;
+    }
+    .info-row {
+        display: flex; align-items: center; gap: 12px;
+        color: #fff; font-size: 13px; font-weight: 600;
+        padding: 6px 0;
+        border-bottom: 1px solid rgba(255,215,0,0.15);
+    }
+    .info-row:last-child { border-bottom: none; }
+    .info-row.live { color: #FFD700; font-weight: 800; }
+    .info-icon { font-size: 18px; min-width: 24px; text-align: center; }
+    .info-icon.pulse {
+        animation: pulse 1.5s ease-in-out infinite;
+        display: inline-block;
+    }
+    .info-text b { color: #FFD700; font-size: 15px; }
+
     /* === KPI CARD === */
     .kpi-container {
         background: white; padding: 24px 22px; border-radius: 16px;
@@ -591,12 +618,36 @@ with hdr1:
         unsafe_allow_html=True
     )
 with hdr2:
+    # Calculate quick stats for sidebar info
+    n_suppliers = filtered["Supplier"].nunique() if "Supplier" in filtered.columns else 0
+    n_groups    = filtered["Group Part"].nunique() if "Group Part" in filtered.columns else 0
+    n_modes     = filtered["Problem Mode"].nunique() if "Problem Mode" in filtered.columns else 0
+
     st.markdown(f"""
     <div class="date-chip">
         📅 REPORT PERIOD<br>
         <span style="font-size: 13px;">{min_date.strftime('%m/%d/%Y')}</span><br>
         <span style="font-size: 16px;">↓</span><br>
         <span style="font-size: 13px;">{max_date.strftime('%m/%d/%Y')}</span>
+    </div>
+
+    <div class="info-stack">
+        <div class="info-row">
+            <span class="info-icon">🏭</span>
+            <span class="info-text"><b>{n_suppliers}</b> Suppliers</span>
+        </div>
+        <div class="info-row">
+            <span class="info-icon">📦</span>
+            <span class="info-text"><b>{n_groups}</b> Groups</span>
+        </div>
+        <div class="info-row">
+            <span class="info-icon">⚠️</span>
+            <span class="info-text"><b>{n_modes}</b> Modes</span>
+        </div>
+        <div class="info-row live">
+            <span class="info-icon pulse">🟢</span>
+            <span class="info-text">LIVE DATA</span>
+        </div>
     </div>
     """, unsafe_allow_html=True)
 
