@@ -10,6 +10,7 @@ from pathlib import Path
 from datetime import datetime, timedelta
 
 CHARTJS_CDN = "https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"
+LOGO_URL = "https://cdn.jsdelivr.net/gh/panuchuwong-cyber/qa-defects-dashboard@main/assets/3k_logo.jpg"
 
 # ============================================================
 # PASSWORD GATE
@@ -151,7 +152,6 @@ st.set_page_config(
 # ============================================================
 # GLOBAL CSS - PROFESSIONAL DESIGN
 # ============================================================
-LOGO_URL = "https://cdn.jsdelivr.net/gh/panuchuwong-cyber/qa-defects-dashboard@main/assets/3k_logo.jpg"
 
 st.markdown("""
 <style>
