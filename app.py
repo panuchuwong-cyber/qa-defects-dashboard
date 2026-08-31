@@ -276,7 +276,10 @@ if "14 Days" in page:
     mode_summary["Qty"] = mode_summary["Qty"].astype(int)
 
     def color_mode(val):
-        case = int(mode_summary.loc[mode_summary["Problem Mode"] == val, "Case"].iloc[0]) if len(mode_summary) else 0
+        if val not in mode_summary["Problem Mode"].values:
+            return ''
+        row = mode_summary.loc[mode_summary["Problem Mode"] == val].iloc[0]
+        case = int(row["Case"])
         if case == 0:
             return 'background-color: #90EE90; color: #000; font-weight:700'
         elif case < 2:
@@ -285,7 +288,7 @@ if "14 Days" in page:
             return 'background-color: #FF6B6B; color: #fff; font-weight:700'
 
     st.dataframe(
-        mode_summary.style.applymap(color_mode, subset=["Problem Mode"]),
+        mode_summary.style.map(color_mode, subset=["Problem Mode"]),
         use_container_width=True, hide_index=True
     )
 
