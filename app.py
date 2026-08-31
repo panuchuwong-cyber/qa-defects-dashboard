@@ -223,49 +223,79 @@ if "14 Days" in page:
         </div>
         """, unsafe_allow_html=True)
 
-    # Daily trend charts
+    # Daily trend charts (SEPARATED into 2 charts)
     daily = filtered.groupby("Date").agg(Qty=("Qty", "sum"), Case=("Qty", "count")).reset_index()
     labels = daily["Date"].dt.strftime("%m/%d").tolist()
     qty_data = daily["Qty"].tolist()
     case_data = daily["Case"].tolist()
 
-    st.markdown('<div class="section-header">📈 DAILY TREND (14 DAYS)</div>', unsafe_allow_html=True)
-    chart_html = f"""
-    <canvas id="trendChart" height="120"></canvas>
+    # --- Q'TY Chart ---
+    st.markdown('<div class="section-header">📈 Q\'TY DAILY TREND (14 DAYS)</div>', unsafe_allow_html=True)
+    qty_chart_html = f"""
+    <canvas id="qtyTrendChart" height="140"></canvas>
     <script src="{CHARTJS_CDN}"></script>
     <script>
-    new Chart(document.getElementById('trendChart'), {{
+    new Chart(document.getElementById('qtyTrendChart'), {{
         type: 'line',
         data: {{
             labels: {labels},
             datasets: [
                 {{
-                    label: 'QTY',
+                    label: 'Q\'TY (PCS)',
                     data: {qty_data},
-                    borderColor: '#FFD700',
-                    backgroundColor: 'rgba(255,215,0,0.15)',
-                    borderWidth: 3, tension: 0.35, fill: true,
-                    pointBackgroundColor: '#000000', pointRadius: 5
-                }},
-                {{
-                    label: 'CASE',
-                    data: {case_data},
                     borderColor: '#000000',
-                    backgroundColor: 'rgba(0,0,0,0.05)',
-                    borderWidth: 3, tension: 0.35, borderDash: [6,4],
-                    pointBackgroundColor: '#FFD700', pointRadius: 5
+                    backgroundColor: 'rgba(255,215,0,0.25)',
+                    borderWidth: 3, tension: 0.35, fill: true,
+                    pointBackgroundColor: '#FFD700',
+                    pointBorderColor: '#000000',
+                    pointBorderWidth: 2,
+                    pointRadius: 6
                 }}
             ]
         }},
         options: {{
             responsive: true, maintainAspectRatio: false,
             plugins: {{ legend: {{ position: 'bottom' }} }},
-            scales: {{ y: {{ beginAtZero: true }} }}
+            scales: {{ y: {{ beginAtZero: true, title: {{ display: true, text: 'QTY (PCS)' }} }} }}
         }}
     }});
     </script>
     """
-    st.components.v1.html(chart_html, height=320)
+    st.components.v1.html(qty_chart_html, height=280)
+
+    # --- CASE Chart ---
+    st.markdown('<div class="section-header">📋 CASE DAILY TREND (14 DAYS)</div>', unsafe_allow_html=True)
+    case_chart_html = f"""
+    <canvas id="caseTrendChart" height="140"></canvas>
+    <script src="{CHARTJS_CDN}"></script>
+    <script>
+    new Chart(document.getElementById('caseTrendChart'), {{
+        type: 'line',
+        data: {{
+            labels: {labels},
+            datasets: [
+                {{
+                    label: 'CASE',
+                    data: {case_data},
+                    borderColor: '#FFD700',
+                    backgroundColor: 'rgba(0,0,0,0.08)',
+                    borderWidth: 3, tension: 0.35, fill: true,
+                    pointBackgroundColor: '#000000',
+                    pointBorderColor: '#FFD700',
+                    pointBorderWidth: 2,
+                    pointRadius: 6
+                }}
+            ]
+        }},
+        options: {{
+            responsive: true, maintainAspectRatio: false,
+            plugins: {{ legend: {{ position: 'bottom' }} }},
+            scales: {{ y: {{ beginAtZero: true, title: {{ display: true, text: 'CASE' }} }} }}
+        }}
+    }});
+    </script>
+    """
+    st.components.v1.html(case_chart_html, height=280)
 
     # Problem Mode breakdown
     st.markdown('<div class="section-header">⚠️ PROBLEM MODE</div>', unsafe_allow_html=True)
