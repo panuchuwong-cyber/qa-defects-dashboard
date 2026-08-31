@@ -285,15 +285,16 @@ st.markdown("""
     /* === INFO STACK (sidebar cards) === */
     .info-stack {
         margin-top: 14px;
+        margin-bottom: 18px;
         display: grid;
         grid-template-columns: repeat(3, 1fr);
-        gap: 10px;
+        gap: 12px;
     }
     .info-card {
         background: linear-gradient(135deg, #1a1a1a 0%, #2d2d2d 100%);
         border: 1.5px solid #FFD700;
         border-radius: 10px;
-        padding: 14px 8px;
+        padding: 12px 6px;
         text-align: center;
         transition: transform 0.2s ease, box-shadow 0.2s ease;
         box-shadow: 0 2px 8px rgba(0,0,0,0.3);
@@ -324,7 +325,7 @@ st.markdown("""
         opacity: 0.9;
     }
     .live-indicator {
-        margin-top: 16px;
+        margin-top: 6px;
         margin-bottom: 20px;
         background: linear-gradient(90deg, #1a1a1a 0%, #2d2d2d 100%);
         border: 1.5px solid #FFD700;
