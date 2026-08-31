@@ -1250,9 +1250,22 @@ elif "Data Entry" in page:
                                         existing_records = []
                                         headers = ["Date","Supplier","Group Part","Problem Mode","Part Name","Part No","Qty","Comment"]
 
-                                    # Merge: new records on top (don't dedupe - let dashboard show what's added)
+                                    # Merge with deduplication (key = Date + Supplier + Part No)
                                     new_records_df = pd.DataFrame(valid_records)
-                                    merged_df = pd.concat([new_records_df, pd.DataFrame(existing_records)], ignore_index=True)
+                                    existing_df = pd.DataFrame(existing_records)
+
+                                    if not existing_df.empty:
+                                        # Combine, then drop duplicates keeping the NEW record
+                                        merged_df = pd.concat([new_records_df, existing_df], ignore_index=True)
+                                        merged_df = merged_df.drop_duplicates(
+                                            subset=["Date", "Supplier", "Part No"],
+                                            keep="first"  # first = the new uploaded record
+                                        ).reset_index(drop=True)
+                                    else:
+                                        merged_df = new_records_df.reset_index(drop=True)
+
+                                    added = len(new_records_df)
+                                    total = len(merged_df)
 
                                     # Save to bytes for upload
                                     from openpyxl import Workbook
@@ -1276,7 +1289,7 @@ elif "Data Entry" in page:
 
                                     # Push merged xlsx
                                     payload = {
-                                        "message": f"DATA: sync {len(valid_records)} new records (total {len(merged_df)})",
+                                        "message": f"DATA: sync {added} new records (dedup, total {total})",
                                         "content": content_b64,
                                         "branch": gh_branch,
                                     }
