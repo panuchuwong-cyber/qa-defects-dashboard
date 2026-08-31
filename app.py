@@ -1280,7 +1280,7 @@ elif "Data Entry" in page:
                                     if sha:
                                         payload["sha"] = sha
 
-                                    push_resp = requests.put(api_base, headers=headers, json=payload, timeout=15)
+                                    push_resp = requests.put(api_base, headers=headers_auth, json=payload, timeout=15)
 
                                     if push_resp.status_code in (200, 201):
                                         st.success(
