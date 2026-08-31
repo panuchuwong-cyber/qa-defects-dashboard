@@ -240,7 +240,7 @@ if "14 Days" in page:
             <div style="color:#555; font-size:11px; font-weight:800; letter-spacing:2px;">📦 Q'TY</div>
             <div style="color:#000; font-size:32px; font-weight:900; line-height:1;">{total_qty:,}<span style="font-size:14px; color:#FFD700; margin-left:4px;">PCS</span></div>
         </div>
-        <div style="width:100%; height:180px; background:#fff; border:1px solid #ddd; border-radius:8px; padding:8px;">
+        <div style="width:100%; height:220px; background:#fff; border:1px solid #ddd; border-radius:8px; padding:12px;">
             <canvas id="kpiQtyChart"></canvas>
         </div>
         <script src="{CHARTJS_CDN}"></script>
@@ -254,18 +254,22 @@ if "14 Days" in page:
                     borderColor: '#000000',
                     backgroundColor: 'rgba(255,215,0,0.3)',
                     borderWidth: 2, tension: 0.3, fill: true,
-                    pointRadius: 3, pointBackgroundColor: '#FFD700'
+                    pointRadius: 4, pointBackgroundColor: '#FFD700',
+                    pointBorderColor: '#000000', pointBorderWidth: 1
                 }}]
             }},
             options: {{
                 responsive: true, maintainAspectRatio: false, animation: false,
                 plugins: {{ legend: {{ display: false }} }},
-                scales: {{ y: {{ beginAtZero: true, ticks: {{ font: {{ size: 9 }} }} }}, x: {{ ticks: {{ font: {{ size: 8 }}, maxRotation: 0 }} }} }}
+                scales: {{
+                    y: {{ beginAtZero: true, ticks: {{ font: {{ size: 10 }}, stepSize: 1 }}, title: {{ display: true, text: 'QTY', font: {{ size: 10 }} }} }},
+                    x: {{ ticks: {{ font: {{ size: 9 }}, maxRotation: 0, autoSkip: true, maxTicksLimit: 7 }} }}
+                }}
             }}
         }});
         </script>
         """
-        st.components.v1.html(qty_html, height=240)
+        st.components.v1.html(qty_html, height=270)
 
     with kpi2:
         case_html = f"""
@@ -274,7 +278,7 @@ if "14 Days" in page:
             <div style="color:#555; font-size:11px; font-weight:800; letter-spacing:2px;">📋 CASE</div>
             <div style="color:#000; font-size:32px; font-weight:900; line-height:1;">{total_case:,}<span style="font-size:14px; color:#FFD700; margin-left:4px;">CASE</span></div>
         </div>
-        <div style="width:100%; height:180px; background:#fff; border:1px solid #ddd; border-radius:8px; padding:8px;">
+        <div style="width:100%; height:220px; background:#fff; border:1px solid #ddd; border-radius:8px; padding:12px;">
             <canvas id="kpiCaseChart"></canvas>
         </div>
         <script src="{CHARTJS_CDN}"></script>
@@ -288,18 +292,22 @@ if "14 Days" in page:
                     borderColor: '#FFD700',
                     backgroundColor: 'rgba(0,0,0,0.1)',
                     borderWidth: 2, tension: 0.3, fill: true,
-                    pointRadius: 3, pointBackgroundColor: '#000'
+                    pointRadius: 4, pointBackgroundColor: '#000',
+                    pointBorderColor: '#FFD700', pointBorderWidth: 1
                 }}]
             }},
             options: {{
                 responsive: true, maintainAspectRatio: false, animation: false,
                 plugins: {{ legend: {{ display: false }} }},
-                scales: {{ y: {{ beginAtZero: true, ticks: {{ font: {{ size: 9 }} }} }}, x: {{ ticks: {{ font: {{ size: 8 }}, maxRotation: 0 }} }} }}
+                scales: {{
+                    y: {{ beginAtZero: true, ticks: {{ font: {{ size: 10 }}, stepSize: 1 }}, title: {{ display: true, text: 'CASE', font: {{ size: 10 }} }} }},
+                    x: {{ ticks: {{ font: {{ size: 9 }}, maxRotation: 0, autoSkip: true, maxTicksLimit: 7 }} }}
+                }}
             }}
         }});
         </script>
         """
-        st.components.v1.html(case_html, height=240)
+        st.components.v1.html(case_html, height=270)
 
     # --- Problem Mode ---
     st.markdown('<div class="section-header">⚠️ PROBLEM MODE</div>', unsafe_allow_html=True)
