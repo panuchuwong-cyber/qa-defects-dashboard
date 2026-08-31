@@ -287,62 +287,64 @@ st.markdown("""
         margin-top: 14px;
         display: grid;
         grid-template-columns: repeat(3, 1fr);
-        gap: 8px;
+        gap: 10px;
     }
     .info-card {
-        background: rgba(255,255,255,0.06);
-        backdrop-filter: blur(10px);
-        border: 1px solid rgba(255,215,0,0.4);
+        background: linear-gradient(135deg, #1a1a1a 0%, #2d2d2d 100%);
+        border: 1.5px solid #FFD700;
         border-radius: 10px;
-        padding: 12px 8px;
+        padding: 14px 8px;
         text-align: center;
-        transition: transform 0.2s ease, border-color 0.2s ease;
+        transition: transform 0.2s ease, box-shadow 0.2s ease;
+        box-shadow: 0 2px 8px rgba(0,0,0,0.3);
     }
     .info-card:hover {
-        transform: translateY(-2px);
-        border-color: rgba(255,215,0,0.8);
+        transform: translateY(-3px);
+        box-shadow: 0 6px 16px rgba(255,215,0,0.25);
     }
     .info-card-icon {
-        font-size: 20px;
-        margin-bottom: 4px;
+        font-size: 22px;
+        margin-bottom: 6px;
         display: block;
     }
     .info-card-value {
         color: #FFD700;
-        font-size: 18px;
+        font-size: 20px;
         font-weight: 900;
         line-height: 1.1;
+        font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
     }
     .info-card-label {
-        color: #fff;
+        color: #ffffff;
         font-size: 9px;
         font-weight: 700;
-        letter-spacing: 1px;
+        letter-spacing: 1.2px;
         text-transform: uppercase;
-        margin-top: 2px;
-        opacity: 0.85;
+        margin-top: 4px;
+        opacity: 0.9;
     }
     .live-indicator {
-        margin-top: 10px;
-        background: rgba(76,175,80,0.15);
-        border: 1px solid rgba(76,175,80,0.4);
-        color: #4CAF50;
-        padding: 8px 12px;
-        border-radius: 8px;
+        margin-top: 12px;
+        background: linear-gradient(90deg, #1a1a1a 0%, #2d2d2d 100%);
+        border: 1.5px solid #FFD700;
+        color: #FFD700;
+        padding: 10px 12px;
+        border-radius: 10px;
         font-size: 11px;
         font-weight: 800;
         text-align: center;
-        letter-spacing: 1.5px;
+        letter-spacing: 2px;
         display: flex;
         align-items: center;
         justify-content: center;
-        gap: 8px;
+        gap: 10px;
     }
     .live-dot {
-        width: 8px; height: 8px;
-        background: #4CAF50;
+        width: 9px; height: 9px;
+        background: #FFD700;
         border-radius: 50%;
         animation: pulse 1.5s ease-in-out infinite;
+        box-shadow: 0 0 8px #FFD700;
     }
 
     /* === KPI CARD === */
