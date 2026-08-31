@@ -357,7 +357,7 @@ st.markdown("""
                     box-shadow 0.3s cubic-bezier(0.4, 0, 0.2, 1);
         cursor: default;
         height: 100%;
-        min-height: 140px;
+        min-height: 160px;
         display: flex;
         flex-direction: column;
         justify-content: space-between;
@@ -389,7 +389,7 @@ st.markdown("""
         margin-bottom: 10px; margin-top: 4px;
     }
     .kpi-value {
-        color: #000; font-size: 36px; font-weight: 900;
+        color: #000; font-size: 32px; font-weight: 900;
         line-height: 1; margin: 4px 0 12px 0;
         font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
         white-space: nowrap;
