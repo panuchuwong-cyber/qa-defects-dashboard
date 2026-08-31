@@ -390,7 +390,7 @@ st.markdown("""
     }
     .kpi-value {
         color: #000; font-size: 32px; font-weight: 900;
-        line-height: 1; margin: 4px 0 12px 0;
+        line-height: 1; margin: 4px 0 8px 0;
         font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
         white-space: nowrap;
         display: flex;
@@ -405,9 +405,10 @@ st.markdown("""
     }
     .kpi-trend {
         font-size: 11px; font-weight: 700;
-        padding: 5px 12px; border-radius: 14px;
+        padding: 6px 14px; border-radius: 14px;
         display: inline-flex; align-items: center; gap: 4px;
         align-self: flex-start;
+        margin-top: 14px;
     }
     .trend-up {
         color: #B71C1C; background: rgba(255,107,107,0.12);
