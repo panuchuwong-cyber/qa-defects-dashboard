@@ -44,6 +44,68 @@ def check_password():
             letter-spacing: 2px; text-transform: uppercase;
         }
         .login-form { position: relative; z-index: 1; }
+
+        /* === PASSWORD INPUT === */
+        .login-form input[type="password"],
+        .login-form input[type="text"] {
+            background: #0a0a0a !important;
+            border: 2px solid #FFD700 !important;
+            border-radius: 10px !important;
+            color: #FFD700 !important;
+            font-size: 15px !important;
+            font-weight: 600 !important;
+            letter-spacing: 2px !important;
+            padding: 12px 16px !important;
+            text-align: center !important;
+            transition: all 0.3s ease !important;
+        }
+        .login-form input[type="password"]:focus,
+        .login-form input[type="text"]:focus {
+            border-color: #FFC107 !important;
+            box-shadow: 0 0 0 3px rgba(255,215,0,0.25) !important;
+            outline: none !important;
+        }
+        .login-form input::placeholder {
+            color: #666 !important;
+            letter-spacing: 1px !important;
+        }
+
+        /* === ACCESS BUTTON — YELLOW & BLACK THEME === */
+        div[data-testid="stButton"] button[kind="primary"] {
+            background: linear-gradient(135deg, #FFD700 0%, #FFC107 50%, #FFD700 100%) !important;
+            background-size: 200% 100% !important;
+            color: #000000 !important;
+            font-weight: 900 !important;
+            font-size: 15px !important;
+            letter-spacing: 2px !important;
+            text-transform: uppercase !important;
+            border: 2px solid #000000 !important;
+            border-radius: 10px !important;
+            padding: 14px 24px !important;
+            margin-top: 14px !important;
+            box-shadow: 0 6px 20px rgba(255,215,0,0.35),
+                        inset 0 1px 0 rgba(255,255,255,0.3) !important;
+            animation: btnShimmer 3s linear infinite !important;
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1) !important;
+            position: relative !important;
+            overflow: hidden !important;
+        }
+        div[data-testid="stButton"] button[kind="primary"]:hover {
+            background: #000000 !important;
+            color: #FFD700 !important;
+            border-color: #FFD700 !important;
+            box-shadow: 0 8px 28px rgba(255,215,0,0.55),
+                        inset 0 0 0 2px rgba(255,215,0,0.2) !important;
+            transform: translateY(-2px) !important;
+        }
+        div[data-testid="stButton"] button[kind="primary"]:active {
+            transform: translateY(0) !important;
+            box-shadow: 0 4px 12px rgba(255,215,0,0.4) !important;
+        }
+        @keyframes btnShimmer {
+            0%   { background-position: 0% 50%; }
+            100% { background-position: 200% 50%; }
+        }
         </style>
         <div class="login-wrap">
             <div style="margin-bottom:20px;">
@@ -60,7 +122,7 @@ def check_password():
             password = st.text_input("🔑 Password", type="password",
                                      label_visibility="collapsed",
                                      placeholder="Enter access password")
-            if st.button("� ACCESS DASHBOARD", use_container_width=True, type="primary"):
+            if st.button("⚡ ACCESS DASHBOARD", use_container_width=True, type="primary"):
                 try:
                     correct = st.secrets["password"]
                 except Exception:
