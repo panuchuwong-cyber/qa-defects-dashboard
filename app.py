@@ -459,56 +459,100 @@ else:
     # === Bar Chart: PPM by Problem Mode ===
     st.markdown('<div class="section-header">📊 TOTAL DEFECT PPM SEPARATE MONTH (PPM)</div>', unsafe_allow_html=True)
     months = ["Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec", "Jan", "Feb", "Mar"]
-    fy25_data = [0.5, 0.8, 0.3, 0.6, 0.4, 0.7, 0.2, 0.5, 0.3, 0.4, 0.6, 0.2]
-    fy26_data = [0.4, 0.6, 0.5, 0.7, 0.5, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0]
+    fy25_data = [3.2, 4.8, 2.5, 6.1, 5.5, 0, 0, 0, 0, 0, 0, 0]
+    fy26_data = [0, 0, 0, 0, 8.4, 0, 0, 0, 0, 0, 0, 0]
 
     ppm_chart = f"""
-    <canvas id="ppmChart" height="160"></canvas>
+    <div style="width:100%; height:380px; background:#fff; border:1px solid #ddd; border-radius:8px; padding:12px;">
+        <div style="color:#000; font-weight:900; font-size:13px; margin-bottom:8px; letter-spacing:1px;">
+            📊 PPM by Month
+        </div>
+        <div style="width:100%; height:330px;">
+            <canvas id="ppmChart"></canvas>
+        </div>
+    </div>
     <script src="{CHARTJS_CDN}"></script>
     <script>
-    new Chart(document.getElementById('ppmChart'), {{
-        type: 'bar',
-        data: {{
-            labels: {months},
-            datasets: [
-                {{ label: 'FY25', data: {fy25_data}, backgroundColor: '#FFD700', stack: 's1' }},
-                {{ label: 'FY26', data: {fy26_data}, backgroundColor: '#000000', stack: 's2' }}
-            ]
-        }},
-        options: {{
-            responsive: true, maintainAspectRatio: false,
-            plugins: {{ legend: {{ position: 'bottom' }} }},
-            scales: {{ y: {{ beginAtZero: true, title: {{ display: true, text: 'PPM' }} }} }}
+    (function() {{
+        const canvas = document.getElementById('ppmChart');
+        const months = {months};
+        const fy25 = {fy25_data};
+        const fy26 = {fy26_data};
+        function makeChart() {{
+            canvas.width = canvas.parentElement.clientWidth - 8;
+            canvas.height = 330;
+            return new Chart(canvas, {{
+                type: 'bar',
+                data: {{
+                    labels: months,
+                    datasets: [
+                        {{ label: 'FY25', data: fy25, backgroundColor: '#FFD700', borderColor: '#000000', borderWidth: 1, categoryPercentage: 0.7, barPercentage: 0.9 }},
+                        {{ label: 'FY26', data: fy26, backgroundColor: '#000000', borderColor: '#FFD700', borderWidth: 1, categoryPercentage: 0.7, barPercentage: 0.9 }}
+                    ]
+                }},
+                options: {{
+                    responsive: false, maintainAspectRatio: false, animation: false,
+                    plugins: {{ legend: {{ position: 'bottom', labels: {{ font: {{ size: 11 }} }} }} }},
+                    scales: {{
+                        y: {{ beginAtZero: true, title: {{ display: true, text: 'PPM', font: {{ size: 11 }} }}, ticks: {{ font: {{ size: 10 }} }}, grid: {{ color: '#eee' }} }},
+                        x: {{ ticks: {{ font: {{ size: 10 }} }}, grid: {{ display: false }} }}
+                    }}
+                }}
+            }});
         }}
-    }});
+        const chart = makeChart();
+        window.addEventListener('resize', () => chart.resize());
+    }})();
     </script>
     """
-    st.components.v1.html(ppm_chart, height=380)
+    st.components.v1.html(ppm_chart, height=400)
 
     # === Bar Chart: CASE by Problem Mode ===
     st.markdown('<div class="section-header">📊 TOTAL DEFECT PPM SEPARATE MONTH (CASE)</div>', unsafe_allow_html=True)
     case_chart = f"""
-    <canvas id="caseChart" height="160"></canvas>
+    <div style="width:100%; height:380px; background:#fff; border:1px solid #ddd; border-radius:8px; padding:12px;">
+        <div style="color:#000; font-weight:900; font-size:13px; margin-bottom:8px; letter-spacing:1px;">
+            📊 CASE by Month
+        </div>
+        <div style="width:100%; height:330px;">
+            <canvas id="caseChart"></canvas>
+        </div>
+    </div>
     <script src="{CHARTJS_CDN}"></script>
     <script>
-    new Chart(document.getElementById('caseChart'), {{
-        type: 'bar',
-        data: {{
-            labels: {months},
-            datasets: [
-                {{ label: 'FY25', data: {fy25_data}, backgroundColor: '#FFD700', stack: 's1' }},
-                {{ label: 'FY26', data: {fy26_data}, backgroundColor: '#000000', stack: 's2' }}
-            ]
-        }},
-        options: {{
-            responsive: true, maintainAspectRatio: false,
-            plugins: {{ legend: {{ position: 'bottom' }} }},
-            scales: {{ y: {{ beginAtZero: true, title: {{ display: true, text: 'CASE' }} }} }}
+    (function() {{
+        const canvas = document.getElementById('caseChart');
+        const months = {months};
+        const fy25 = {fy25_data};
+        const fy26 = {fy26_data};
+        function makeChart() {{
+            canvas.width = canvas.parentElement.clientWidth - 8;
+            canvas.height = 330;
+            return new Chart(canvas, {{
+                type: 'bar',
+                data: {{
+                    labels: months,
+                    datasets: [
+                        {{ label: 'FY25', data: fy25, backgroundColor: '#FFD700', borderColor: '#000000', borderWidth: 1, categoryPercentage: 0.7, barPercentage: 0.9 }},
+                        {{ label: 'FY26', data: fy26, backgroundColor: '#000000', borderColor: '#FFD700', borderWidth: 1, categoryPercentage: 0.7, barPercentage: 0.9 }}
+                    ]
+                }},
+                options: {{
+                    responsive: false, maintainAspectRatio: false, animation: false,
+                    plugins: {{ legend: {{ position: 'bottom', labels: {{ font: {{ size: 11 }} }} }} }},
+                    scales: {{
+                        y: {{ beginAtZero: true, title: {{ display: true, text: 'CASE', font: {{ size: 11 }} }}, ticks: {{ font: {{ size: 10 }} }}, grid: {{ color: '#eee' }} }},
+                        x: {{ ticks: {{ font: {{ size: 10 }} }}, grid: {{ display: false }} }}
+                    }}
+                }}
+            }});
         }}
-    }});
+        const chart = makeChart();
+        window.addEventListener('resize', () => chart.resize());
+    }})();
     </script>
     """
-    st.components.v1.html(case_chart, height=380)
+    st.components.v1.html(case_chart, height=400)
 
     # === FY Comparison Table: Problem Mode ===
     st.markdown('<div class="section-header">📋 FY2025 - FY2026 PROBLEM MODE</div>', unsafe_allow_html=True)
