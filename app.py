@@ -417,28 +417,15 @@ min_date = max_date - timedelta(days=13)
 hdr1, hdr2 = st.columns([3, 1])
 with hdr1:
     st.markdown(
-        '<div class="dashboard-header">'
-        '<div class="header-logo-wrap">'
-        '<div style="width:72px;height:72px;border-radius:14px;'
-        'box-shadow:0 4px 12px rgba(255,215,0,0.4);'
-        'background:#FFD700;display:flex;align-items:center;justify-content:center;'
-        'font-size:32px;font-weight:900;color:#000;">'
-        '3K'
-        '</div>'
-        '<div>'
-        f'<h1 style="margin:0;">⚡ {title_text}</h1>'
-        f'<div class="subtitle">{subtitle}</div>'
-        '<div class="badge">🏭 3K BATTERY CO., LTD.</div>'
-        '</div>'
-        '</div>'
-        '</div>',
+        f"""
+        <div class="dashboard-header">
+            <h1>⚡ {title_text}</h1>
+            <div class="subtitle">{subtitle}</div>
+            <div class="badge">🏭 3K BATTERY CO., LTD.</div>
+        </div>
+        """,
         unsafe_allow_html=True
     )
-    # Show actual logo image below as backup
-    try:
-        st.image(LOGO_URL, width=64)
-    except Exception:
-        pass
 with hdr2:
     st.markdown(f"""
     <div class="date-chip">
