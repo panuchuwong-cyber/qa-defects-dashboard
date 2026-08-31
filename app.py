@@ -284,30 +284,66 @@ st.markdown("""
 
     /* === INFO STACK (sidebar cards) === */
     .info-stack {
-        margin-top: 12px;
-        background: rgba(255,255,255,0.08);
+        margin-top: 14px;
+        display: grid;
+        grid-template-columns: repeat(3, 1fr);
+        gap: 8px;
+    }
+    .info-card {
+        background: rgba(255,255,255,0.06);
         backdrop-filter: blur(10px);
-        border: 1px solid rgba(255,215,0,0.3);
-        border-radius: 12px;
-        padding: 14px 16px;
+        border: 1px solid rgba(255,215,0,0.4);
+        border-radius: 10px;
+        padding: 12px 8px;
+        text-align: center;
+        transition: transform 0.2s ease, border-color 0.2s ease;
+    }
+    .info-card:hover {
+        transform: translateY(-2px);
+        border-color: rgba(255,215,0,0.8);
+    }
+    .info-card-icon {
+        font-size: 20px;
+        margin-bottom: 4px;
+        display: block;
+    }
+    .info-card-value {
+        color: #FFD700;
+        font-size: 18px;
+        font-weight: 900;
+        line-height: 1.1;
+    }
+    .info-card-label {
+        color: #fff;
+        font-size: 9px;
+        font-weight: 700;
+        letter-spacing: 1px;
+        text-transform: uppercase;
+        margin-top: 2px;
+        opacity: 0.85;
+    }
+    .live-indicator {
+        margin-top: 10px;
+        background: rgba(76,175,80,0.15);
+        border: 1px solid rgba(76,175,80,0.4);
+        color: #4CAF50;
+        padding: 8px 12px;
+        border-radius: 8px;
+        font-size: 11px;
+        font-weight: 800;
+        text-align: center;
+        letter-spacing: 1.5px;
         display: flex;
-        flex-direction: column;
-        gap: 10px;
+        align-items: center;
+        justify-content: center;
+        gap: 8px;
     }
-    .info-row {
-        display: flex; align-items: center; gap: 12px;
-        color: #fff; font-size: 13px; font-weight: 600;
-        padding: 6px 0;
-        border-bottom: 1px solid rgba(255,215,0,0.15);
-    }
-    .info-row:last-child { border-bottom: none; }
-    .info-row.live { color: #FFD700; font-weight: 800; }
-    .info-icon { font-size: 18px; min-width: 24px; text-align: center; }
-    .info-icon.pulse {
+    .live-dot {
+        width: 8px; height: 8px;
+        background: #4CAF50;
+        border-radius: 50%;
         animation: pulse 1.5s ease-in-out infinite;
-        display: inline-block;
     }
-    .info-text b { color: #FFD700; font-size: 15px; }
 
     /* === KPI CARD === */
     .kpi-container {
@@ -632,22 +668,26 @@ with hdr2:
     </div>
 
     <div class="info-stack">
-        <div class="info-row">
-            <span class="info-icon">🏭</span>
-            <span class="info-text"><b>{n_suppliers}</b> Suppliers</span>
+        <div class="info-card">
+            <span class="info-card-icon">🏭</span>
+            <div class="info-card-value">{n_suppliers}</div>
+            <div class="info-card-label">Suppliers</div>
         </div>
-        <div class="info-row">
-            <span class="info-icon">📦</span>
-            <span class="info-text"><b>{n_groups}</b> Groups</span>
+        <div class="info-card">
+            <span class="info-card-icon">📦</span>
+            <div class="info-card-value">{n_groups}</div>
+            <div class="info-card-label">Groups</div>
         </div>
-        <div class="info-row">
-            <span class="info-icon">⚠️</span>
-            <span class="info-text"><b>{n_modes}</b> Modes</span>
+        <div class="info-card">
+            <span class="info-card-icon">⚠️</span>
+            <div class="info-card-value">{n_modes}</div>
+            <div class="info-card-label">Modes</div>
         </div>
-        <div class="info-row live">
-            <span class="info-icon pulse">🟢</span>
-            <span class="info-text">LIVE DATA</span>
-        </div>
+    </div>
+
+    <div class="live-indicator">
+        <span class="live-dot"></span>
+        <span>LIVE DATA</span>
     </div>
     """, unsafe_allow_html=True)
 
