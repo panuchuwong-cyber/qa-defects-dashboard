@@ -1,8 +1,7 @@
 __pycache__/
 *.pyc
 .DS_Store
-*.xlsx
 dashboard.html
 build_dashboard.py
-csv_to_xlsx.py
 generate_sample_data.py
+.streamlit/secrets.toml

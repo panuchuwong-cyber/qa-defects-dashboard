@@ -1,22 +1,32 @@
-# QA Defects Dashboard - TEST Co.
+# TEST QA Defects Dashboard
 
-14 Days Defect Monitoring Dashboard (Daikin style) for TEST Co.
+Dashboard for **Thai Energy Storage Technology Public Company Limited (TEST)** - Incoming Quality Department.
+
+Two pages:
+1. **14 Days Defect Monitoring** - Daily defect quantity and case overview
+2. **Searching Supplier Information** - PPM analysis and supplier comparison
 
 ## Tech Stack
-- Streamlit
-- Pandas
-- Chart.js
+- Streamlit (Python web framework)
+- Chart.js (charts)
+- Pandas (data processing)
+
+## Theme
+Yellow & Black (⚡ energy brand)
 
 ## Files
-- `app.py` - Main Streamlit application
-- `QA_Defects_Data.csv` - Defects data
+- `app.py` - Main application
+- `QA_Defects_Data.csv` - Data source
+- `QA_Defects_Data.xlsx` - Excel format (optional)
 - `requirements.txt` - Python dependencies
 
-## Local Run
+## Run Locally
 ```bash
 pip install -r requirements.txt
 streamlit run app.py
 ```
 
-## Deployment
-Deployed on Streamlit Cloud: https://qa-defects-test.streamlit.app
+Default password: `TEST@2026`
+
+## Live URL
+https://panuchuwong-cyber-test-defects.streamlit.app
