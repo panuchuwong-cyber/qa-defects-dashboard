@@ -324,11 +324,12 @@ st.markdown("""
         opacity: 0.9;
     }
     .live-indicator {
-        margin-top: 12px;
+        margin-top: 16px;
+        margin-bottom: 20px;
         background: linear-gradient(90deg, #1a1a1a 0%, #2d2d2d 100%);
         border: 1.5px solid #FFD700;
         color: #FFD700;
-        padding: 10px 12px;
+        padding: 12px 14px;
         border-radius: 10px;
         font-size: 11px;
         font-weight: 800;
