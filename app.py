@@ -439,7 +439,10 @@ def load_data():
     else:
         return pd.DataFrame(columns=["Date","Supplier","Group Part","Problem Mode","Part Name","Part No","Qty","Comment"])
 
-    df["Date"] = pd.to_datetime(df["Date"])
+    # Normalize Date column - handle mixed formats ('2026-08-31' and '2026-08-31 00:00:00')
+    df["Date"] = pd.to_datetime(df["Date"], format="mixed", errors="coerce")
+    # Drop rows where Date couldn't be parsed
+    df = df.dropna(subset=["Date"]).reset_index(drop=True)
     return df
 
 df = load_data()
