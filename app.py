@@ -548,18 +548,43 @@ if "14 Days" in page:
         )
     st.markdown(f"<style>{''.join(css_rules)}</style>", unsafe_allow_html=True)
 
-    # Add universal button sizing CSS
+    # Add universal button sizing CSS — force identical dimensions
     st.markdown("""
     <style>
+        /* Force uniform height + width for all group buttons */
         div[data-testid="stHorizontalBlock"] button[key^="grp_"] {
-            height: 140px !important; white-space: pre-line !important;
-            font-size: 13px !important; line-height: 1.4 !important;
-            padding: 14px 10px !important; border-radius: 14px !important;
-            letter-spacing: 1px !important; text-transform: uppercase !important;
+            height: 145px !important;
+            min-height: 145px !important;
+            max-height: 145px !important;
+            width: 100% !important;
+            min-width: 100% !important;
+            white-space: pre-line !important;
+            font-size: 13px !important;
+            line-height: 1.5 !important;
+            padding: 16px 8px !important;
+            border-radius: 14px !important;
+            letter-spacing: 1px !important;
+            text-transform: uppercase !important;
+            display: flex !important;
+            align-items: center !important;
+            justify-content: center !important;
+            text-align: center !important;
             transition: transform 0.2s, box-shadow 0.2s, filter 0.2s !important;
+            margin: 0 !important;
+        }
+        div[data-testid="stHorizontalBlock"] button[key^="grp_"]:hover {
+            transform: translateY(-3px) !important;
+            box-shadow: 0 8px 20px rgba(0,0,0,0.2) !important;
+            filter: brightness(1.1) !important;
         }
         div[data-testid="stHorizontalBlock"] button[key^="grp_"]:active {
             transform: translateY(0) !important;
+        }
+        /* Also force column widths to be equal */
+        div[data-testid="stHorizontalBlock"] > div[data-testid="stColumn"] {
+            flex: 1 1 0 !important;
+            min-width: 0 !important;
+            width: calc(100% / 6) !important;
         }
     </style>
     """, unsafe_allow_html=True)
