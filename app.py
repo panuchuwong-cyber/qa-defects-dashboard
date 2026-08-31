@@ -344,53 +344,103 @@ df = load_data()
 # SIDEBAR
 # ============================================================
 with st.sidebar:
-    # Use st.image to render the logo reliably (HTML <img> can fail in Streamlit markdown)
-    st.markdown('<div class="sidebar-logo-wrap">', unsafe_allow_html=True)
+    # === LOGO SECTION (centered with proper spacing) ===
+    # Open container with generous padding
+    st.markdown(
+        '<div style="padding: 24px 12px 16px 12px; text-align: center;">',
+        unsafe_allow_html=True
+    )
+
+    # Logo image — centered, no decorations
     try:
-        st.image(LOGO_URL, width=160)
+        st.image(LOGO_URL, width=180)
     except Exception:
-        # Fallback: use HTML img tag if st.image fails
         st.markdown(
-            f'<img src="{LOGO_URL}" width="160" '
-            f'style="border-radius:10px;display:block;margin:0 auto 8px auto;">',
+            f'<img src="{LOGO_URL}" width="180" '
+            f'style="border-radius:12px;display:block;margin:0 auto;">',
             unsafe_allow_html=True
         )
+
+    # Brand text — clean, centered, proper line-height
     st.markdown(
-        '<div style="color:#000; font-size:18px; font-weight:900; '
-        'letter-spacing:3px;">⚡ 3K BATTERY</div>'
-        '<div style="color:#000; font-size:10px; font-weight:700; '
-        'letter-spacing:2px; margin-top:2px;">QA DEFECTS DASHBOARD</div>'
+        '<div style="color:#FFD700; font-size:20px; font-weight:900; '
+        'letter-spacing:3px; margin-top:18px; line-height:1.2;">'
+        '⚡ 3K BATTERY</div>'
+        '<div style="color:#999; font-size:10px; font-weight:600; '
+        'letter-spacing:2.5px; margin-top:8px; line-height:1.2;">'
+        'QA DEFECTS DASHBOARD</div>'
         '</div>',
         unsafe_allow_html=True
     )
 
-    page = st.radio("📌 NAVIGATION", [
-        "� 14 Days Monitoring",
-        "🔍 Searching Supplier Information"
-    ], label_visibility="collapsed")
+    # Divider
+    st.markdown(
+        '<div style="height:1px; margin:24px 8px; '
+        'background:linear-gradient(90deg, transparent 0%, '
+        'rgba(255,215,0,0.4) 50%, transparent 100%);"></div>',
+        unsafe_allow_html=True
+    )
 
-    st.markdown("<br>", unsafe_allow_html=True)
-    st.markdown('<p style="color:#FFD700; font-size:11px; font-weight:800; letter-spacing:2px;">🎛️ FILTERS</p>', unsafe_allow_html=True)
+    # === NAVIGATION ===
+    page = st.radio(
+        "NAVIGATION",
+        ["📊 14 Days Monitoring", "🔍 Searching Supplier Information"],
+        label_visibility="collapsed"
+    )
 
-    supplier_f = st.selectbox("Supplier", ["All"] + sorted(df["Supplier"].unique().tolist()))
-    group_f = st.selectbox("Group Part", ["All"] + sorted(df["Group Part"].unique().tolist()))
-    mode_f = st.selectbox("Problem Mode", ["All"] + sorted(df["Problem Mode"].unique().tolist()))
+    # Divider
+    st.markdown(
+        '<div style="height:1px; margin:20px 8px; '
+        'background:linear-gradient(90deg, transparent 0%, '
+        'rgba(255,215,0,0.3) 50%, transparent 100%);"></div>',
+        unsafe_allow_html=True
+    )
 
+    # === FILTERS ===
+    st.markdown(
+        '<div style="color:#FFD700; font-size:11px; font-weight:800; '
+        'letter-spacing:2.5px; margin:0 4px 12px 4px; '
+        'text-transform:uppercase;">🎛️ FILTERS</div>',
+        unsafe_allow_html=True
+    )
+
+    supplier_f = st.selectbox(
+        "Supplier", ["All"] + sorted(df["Supplier"].unique().tolist())
+    )
+    group_f = st.selectbox(
+        "Group Part", ["All"] + sorted(df["Group Part"].unique().tolist())
+    )
+    mode_f = st.selectbox(
+        "Problem Mode", ["All"] + sorted(df["Problem Mode"].unique().tolist())
+    )
+
+    # Divider
+    st.markdown(
+        '<div style="height:1px; margin:20px 8px; '
+        'background:linear-gradient(90deg, transparent 0%, '
+        'rgba(255,215,0,0.3) 50%, transparent 100%);"></div>',
+        unsafe_allow_html=True
+    )
+
+    # Reset button
     if st.button("🗑️ RESET ALL FILTERS", use_container_width=True):
         st.session_state.selected_group = None
         st.rerun()
 
-    st.markdown("<br><br>", unsafe_allow_html=True)
-    st.markdown(f"""
-    <div style="background: rgba(255,215,0,0.1); border: 1px solid #FFD700;
-                padding: 12px; border-radius: 8px; text-align: center;">
-        <div style="color: #FFD700; font-size: 10px; font-weight: 700;
-                    letter-spacing: 1px;">📅 LAST UPDATE</div>
-        <div style="color: #fff; font-size: 12px; font-weight: 800;
-                    margin-top: 4px;">{datetime.now().strftime('%Y-%m-%d')}</div>
-        <div style="color: #999; font-size: 10px; margin-top: 2px;">{datetime.now().strftime('%H:%M:%S')}</div>
-    </div>
-    """, unsafe_allow_html=True)
+    # Footer info at bottom
+    st.markdown(
+        '<div style="position:relative; margin-top:24px; padding:14px 12px; '
+        'background:rgba(255,215,0,0.08); border:1px solid rgba(255,215,0,0.3); '
+        'border-radius:10px; text-align:center;">'
+        '<div style="color:#FFD700; font-size:9px; font-weight:700; '
+        'letter-spacing:2px;">📅 LAST UPDATE</div>'
+        f'<div style="color:#fff; font-size:11px; font-weight:800; '
+        f'margin-top:4px;">{datetime.now().strftime("%Y-%m-%d")}</div>'
+        f'<div style="color:#666; font-size:9px; margin-top:2px;">'
+        f'{datetime.now().strftime("%H:%M:%S")}</div>'
+        '</div>',
+        unsafe_allow_html=True
+    )
 
 # Apply filters
 filtered = df.copy()
