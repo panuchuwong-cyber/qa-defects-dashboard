@@ -424,9 +424,9 @@ st.markdown("""
 # ============================================================
 # DATA LOAD
 # ============================================================
-@st.cache_data
+@st.cache_data(ttl=30)
 def load_data():
-    """Read from .xlsx file - primary data source (38 records, last sync 31 Aug 2026)."""
+    """Read from .xlsx file - cache expires every 30s so updates appear quickly."""
     xlsx_path = Path(__file__).parent / "QA_Defects_Data.xlsx"
     csv_path  = Path(__file__).parent / "QA_Defects_Data.csv"
 
