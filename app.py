@@ -384,7 +384,7 @@ with st.sidebar:
     # === NAVIGATION ===
     page = st.radio(
         "NAVIGATION",
-        ["📊 14 Days Monitoring", "🔍 Searching Supplier Information"],
+        ["📊 14 Days Monitoring", "🔍 Searching Supplier Information", "📝 Data Entry"],
         label_visibility="collapsed"
     )
 
@@ -457,9 +457,12 @@ if mode_f != "All":
 if "14 Days" in page:
     title_text = "14 DAYS DEFECT MONITORING"
     subtitle = "Incoming Quality Dashboard"
-else:
+elif "Searching" in page:
     title_text = "SEARCHING SUPPLIER INFORMATION"
     subtitle = "PPM Analysis & Comparison"
+else:  # Data Entry
+    title_text = "DATA ENTRY"
+    subtitle = "Quick Defect Logging System"
 
 max_date = df["Date"].max()
 min_date = max_date - timedelta(days=13)
@@ -829,6 +832,263 @@ if "14 Days" in page:
         </span>
     </div>
     """, unsafe_allow_html=True)
+
+
+# ============================================================
+# PAGE 3: DATA ENTRY (Quick Logging System)
+# ============================================================
+elif "Data Entry" in page:
+    st.markdown(
+        '<div class="section-header">'
+        '<div class="section-icon">📝</div>'
+        'QUICK DEFECT LOGGING'
+        '</div>',
+        unsafe_allow_html=True
+    )
+
+    # Initialize session state for new entries
+    if "new_entries" not in st.session_state:
+        st.session_state.new_entries = []
+
+    if "form_reset_counter" not in st.session_state:
+        st.session_state.form_reset_counter = 0
+
+    # === INFO BOX ===
+    st.markdown("""
+    <div style="background: linear-gradient(135deg, #000 0%, #1a1a1a 100%);
+                color: #FFD700; padding: 16px 20px; border-radius: 12px;
+                border: 1px solid #FFD700; margin-bottom: 20px;
+                box-shadow: 0 4px 16px rgba(0,0,0,0.15);">
+        <b style="font-size: 14px;">💡 HOW IT WORKS</b><br>
+        <span style="color: #ccc; font-size: 12px;">
+            1. Fill the form below<br>
+            2. Click <b>"✅ ADD RECORD"</b> — data appears in table below<br>
+            3. Copy the table data and send to Kanom via Telegram<br>
+            4. Kanom will save to GitHub → Dashboard refreshes for everyone
+        </span>
+    </div>
+    """, unsafe_allow_html=True)
+
+    # === FORM ===
+    col_form, col_preview = st.columns([3, 2])
+
+    with col_form:
+        st.markdown(
+            '<div style="background:white; padding:24px; border-radius:14px; '
+            'border:2px solid #000; box-shadow:0 4px 16px rgba(0,0,0,0.08);">'
+            '<div style="color:#000; font-weight:900; font-size:14px; '
+            'letter-spacing:2px; margin-bottom:16px; '
+            'border-bottom:3px solid #FFD700; padding-bottom:8px;">'
+            '📋 NEW DEFECT RECORD</div>',
+            unsafe_allow_html=True
+        )
+
+        # Form fields with key based on reset counter to force clear after save
+        rc = st.session_state.form_reset_counter
+        c1, c2 = st.columns(2)
+        with c1:
+            entry_date = st.date_input(
+                "📅 Date",
+                value=datetime.now().date(),
+                key=f"date_{rc}"
+            )
+            entry_supplier = st.selectbox(
+                "🏭 Supplier",
+                ["-- Select Supplier --"] + sorted(df["Supplier"].unique().tolist()) + ["➕ Add new..."],
+                key=f"supplier_{rc}"
+            )
+            if entry_supplier == "➕ Add new...":
+                entry_supplier = st.text_input(
+                    "✏️ New supplier name", key=f"new_supplier_{rc}"
+                )
+            entry_group = st.selectbox(
+                "📦 Group Part",
+                ["-- Select Group --",
+                 "ELECTRIC & ELEC.", "PACKING", "PIPING", "PLASTIC",
+                 "PRINTING", "RAW MATERIAL", "RUBBER", "SHEET METAL",
+                 "FOAM", "SEALING", "OTHERS"],
+                key=f"group_{rc}"
+            )
+            entry_mode = st.selectbox(
+                "⚠️ Problem Mode",
+                ["-- Select Mode --",
+                 "APPEARANCE NG", "PART MISTAKE", "DIMENSION NG",
+                 "FUNCTION NG", "LEAK"],
+                key=f"mode_{rc}"
+            )
+
+        with c2:
+            entry_part_name = st.text_input(
+                "⚙️ Part Name",
+                placeholder="e.g., ELBOW PIPE 1/2",
+                key=f"partname_{rc}"
+            )
+            entry_part_no = st.text_input(
+                "🔧 Part No.",
+                placeholder="e.g., 1P095004-1 K",
+                key=f"partno_{rc}"
+            )
+            entry_qty = st.number_input(
+                "📦 Quantity (PCS)",
+                min_value=1,
+                value=1,
+                step=1,
+                key=f"qty_{rc}"
+            )
+            entry_comment = st.text_area(
+                "💬 Comment",
+                placeholder="Describe the defect...",
+                height=80,
+                key=f"comment_{rc}"
+            )
+
+        # Action buttons
+        st.markdown("<br>", unsafe_allow_html=True)
+        btn_c1, btn_c2 = st.columns(2)
+        with btn_c1:
+            add_clicked = st.button(
+                "✅ ADD RECORD",
+                use_container_width=True,
+                type="primary"
+            )
+        with btn_c2:
+            clear_clicked = st.button(
+                "�️ CLEAR FORM",
+                use_container_width=True,
+                type="secondary"
+            )
+
+        st.markdown('</div>', unsafe_allow_html=True)
+
+        # Handle ADD
+        if add_clicked:
+            # Validate required fields
+            errors = []
+            if entry_supplier in ["-- Select Supplier --", None, ""]:
+                errors.append("Supplier")
+            if entry_group in ["-- Select Group --", None, ""]:
+                errors.append("Group Part")
+            if entry_mode in ["-- Select Mode --", None, ""]:
+                errors.append("Problem Mode")
+            if not entry_part_no.strip():
+                errors.append("Part No.")
+
+            if errors:
+                st.error(f"❌ Please fill required fields: {', '.join(errors)}")
+            else:
+                new_record = {
+                    "Date": entry_date.strftime("%Y-%m-%d"),
+                    "Supplier": entry_supplier,
+                    "Group Part": entry_group,
+                    "Problem Mode": entry_mode,
+                    "Part Name": entry_part_name.strip() or "—",
+                    "Part No": entry_part_no.strip(),
+                    "Qty": int(entry_qty),
+                    "Comment": entry_comment.strip() or "—"
+                }
+                st.session_state.new_entries.append(new_record)
+                st.session_state.form_reset_counter += 1
+                st.success(f"✅ Record #{len(st.session_state.new_entries)} added!")
+                st.rerun()
+
+        # Handle CLEAR form
+        if clear_clicked:
+            st.session_state.form_reset_counter += 1
+            st.rerun()
+
+    # === PREVIEW / PENDING RECORDS ===
+    with col_preview:
+        st.markdown(
+            '<div style="background:white; padding:20px; border-radius:14px; '
+            'border:2px solid #FFD700; box-shadow:0 4px 16px rgba(255,215,0,0.2);">'
+            '<div style="color:#000; font-weight:900; font-size:14px; '
+            'letter-spacing:2px; margin-bottom:12px; '
+            'border-bottom:3px solid #000; padding-bottom:8px;">'
+            f'📦 PENDING ({len(st.session_state.new_entries)} records)</div>',
+            unsafe_allow_html=True
+        )
+
+        if st.session_state.new_entries:
+            pending_df = pd.DataFrame(st.session_state.new_entries)
+            st.dataframe(
+                pending_df[["Date", "Supplier", "Group Part", "Qty"]],
+                use_container_width=True, hide_index=True,
+                height=300
+            )
+
+            # Total summary
+            total_pending_qty = pending_df["Qty"].sum()
+            st.markdown(
+                f'<div style="background:#FFD700; color:#000; padding:10px; '
+                f'border-radius:8px; margin-top:8px; text-align:center; '
+                f'font-weight:900;">'
+                f'TOTAL: {total_pending_qty} PCS / {len(pending_df)} CASE'
+                f'</div>',
+                unsafe_allow_html=True
+            )
+
+            # Export buttons
+            st.markdown("<br>", unsafe_allow_html=True)
+            csv_data = pending_df.to_csv(index=False).encode('utf-8')
+            st.download_button(
+                "📥 DOWNLOAD CSV",
+                csv_data,
+                "defects_pending.csv",
+                "text/csv",
+                use_container_width=True,
+                type="secondary"
+            )
+
+            if st.button("🗑️ CLEAR ALL PENDING", use_container_width=True):
+                st.session_state.new_entries = []
+                st.rerun()
+        else:
+            st.markdown(
+                '<div style="color:#999; font-size:13px; text-align:center; '
+                'padding:30px 10px;">'
+                '📋 No pending records yet.<br>'
+                'Add records using the form →'
+                '</div>',
+                unsafe_allow_html=True
+            )
+
+        st.markdown('</div>', unsafe_allow_html=True)
+
+    # === SEND TO KANOM INSTRUCTIONS ===
+    if st.session_state.new_entries:
+        st.markdown(
+            '<div class="section-header">'
+            '<div class="section-icon">📤</div>'
+            'SEND TO KANOM TO PUBLISH'
+            '</div>',
+            unsafe_allow_html=True
+        )
+
+        st.markdown("""
+        <div style="background: #FFF8DC; padding: 20px; border-radius: 12px;
+                    border: 2px solid #FFD700; margin-bottom: 16px;">
+            <b style="color: #000; font-size: 14px;">📌 3 WAYS TO SEND:</b>
+            <ol style="color: #333; font-size: 13px; line-height: 1.8; margin-top: 8px;">
+                <li><b>Screenshot</b> the table below → send via Telegram</li>
+                <li><b>Copy-paste</b> the CSV text below → paste in Telegram chat</li>
+                <li><b>Download</b> CSV file → send file via Telegram</li>
+            </ol>
+            <div style="background: #000; color: #FFD700; padding: 10px 14px;
+                        border-radius: 8px; margin-top: 12px; font-size: 12px;">
+                ⏱️ <b>Kanom will publish within 30 seconds!</b><br>
+                📊 Dashboard refreshes → everyone sees new data
+            </div>
+        </div>
+        """, unsafe_allow_html=True)
+
+        # Show CSV text for easy copy
+        csv_text = pending_df.to_csv(index=False)
+        st.text_area(
+            "📋 Copy this CSV:",
+            csv_text,
+            height=200,
+            help="Copy this text and paste in Telegram to Kanom"
+        )
 
 
 # ============================================================
