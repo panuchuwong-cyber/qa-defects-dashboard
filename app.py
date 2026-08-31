@@ -426,8 +426,18 @@ st.markdown("""
 # ============================================================
 @st.cache_data
 def load_data():
-    p = Path(__file__).parent / "QA_Defects_Data.csv"
-    df = pd.read_csv(p)
+    """Read from .xlsx file - primary data source (38 records, last sync 31 Aug 2026)."""
+    xlsx_path = Path(__file__).parent / "QA_Defects_Data.xlsx"
+    csv_path  = Path(__file__).parent / "QA_Defects_Data.csv"
+
+    # Try .xlsx first (current source of truth)
+    if xlsx_path.exists():
+        df = pd.read_excel(xlsx_path)
+    elif csv_path.exists():
+        df = pd.read_csv(csv_path)
+    else:
+        return pd.DataFrame(columns=["Date","Supplier","Group Part","Problem Mode","Part Name","Part No","Qty","Comment"])
+
     df["Date"] = pd.to_datetime(df["Date"])
     return df
 
