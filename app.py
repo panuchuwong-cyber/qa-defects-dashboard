@@ -721,7 +721,7 @@ if "14 Days" in page:
         <div class="kpi-container kpi-black">
             <div class="kpi-icon">⚙</div>
             <div class="kpi-label">⚙ UNIQUE PARTS</div>
-            <div class="kpi-value">{unique_parts}<span class="kpi-unit">PN</span></div>
+            <div class="kpi-value">{unique_parts}<span class="kpi-unit">PART</span></div>
             <div class="kpi-trend trend-{parts_arrow}">{arrow_icon} {abs(parts_pct):.1f}% vs prev 7d</div>
         </div>
         """, unsafe_allow_html=True)
