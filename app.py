@@ -7,6 +7,7 @@ Theme: Yellow & Black (Energy Brand)
 import streamlit as st
 import pandas as pd
 from pathlib import Path
+import io
 from datetime import datetime, timedelta
 
 CHARTJS_CDN = "https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"
@@ -1230,25 +1231,49 @@ elif "Data Entry" in page:
                                 if gh_token:
                                     import requests
                                     import base64
+                                    from openpyxl import load_workbook
 
-                                    # Read existing file from GitHub to get sha
+                                    # Merge uploaded records with existing data, then push
+                                    existing_path = Path("QA_Defects_Data.xlsx")
+                                    if existing_path.exists():
+                                        existing_wb = load_workbook(existing_path)
+                                        existing_ws = existing_wb.active
+                                        # Read existing records (skip header)
+                                        existing_records = []
+                                        headers = [c.value for c in existing_ws[1]]
+                                        for row in existing_ws.iter_rows(min_row=2, values_only=True):
+                                            existing_records.append(dict(zip(headers, row)))
+                                    else:
+                                        existing_records = []
+                                        headers = ["Date","Supplier","Group Part","Problem Mode","Part Name","Part No","Qty","Comment"]
+
+                                    # Merge: new records on top (don't dedupe - let dashboard show what's added)
+                                    new_records_df = pd.DataFrame(valid_records)
+                                    merged_df = pd.concat([new_records_df, pd.DataFrame(existing_records)], ignore_index=True)
+
+                                    # Save to bytes for upload
+                                    from openpyxl import Workbook
+                                    wb_out = Workbook()
+                                    ws_out = wb_out.active
+                                    ws_out.append(headers)
+                                    for _, row in merged_df.iterrows():
+                                        ws_out.append([row.get(h, "") for h in headers])
+                                    buf = io.BytesIO()
+                                    wb_out.save(buf)
+                                    content_b64 = base64.b64encode(buf.getvalue()).decode()
+
+                                    # Read existing file SHA from GitHub
                                     api_base = f"https://api.github.com/repos/{gh_repo}/contents/QA_Defects_Data.xlsx"
-                                    headers = {
+                                    headers_auth = {
                                         "Authorization": f"Bearer {gh_token}",
                                         "Accept": "application/vnd.github+json"
                                     }
-
-                                    # Get existing file SHA (needed for update)
-                                    existing_resp = requests.get(api_base, headers=headers, params={"ref": gh_branch}, timeout=10)
+                                    existing_resp = requests.get(api_base, headers=headers_auth, params={"ref": gh_branch}, timeout=10)
                                     sha = existing_resp.json().get("sha") if existing_resp.status_code == 200 else None
 
-                                    # Read local xlsx and encode to base64
-                                    with open("QA_Defects_Data.xlsx", "rb") as f:
-                                        content_b64 = base64.b64encode(f.read()).decode()
-
-                                    # Push new content
+                                    # Push merged xlsx
                                     payload = {
-                                        "message": f"DATA: auto-sync {len(valid_records)} records from dashboard",
+                                        "message": f"DATA: sync {len(valid_records)} new records (total {len(merged_df)})",
                                         "content": content_b64,
                                         "branch": gh_branch,
                                     }
