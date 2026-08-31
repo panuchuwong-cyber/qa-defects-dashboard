@@ -1246,9 +1246,23 @@ elif "Data Entry" in page:
                                             "💬 Kanom will reply when sync is complete."
                                         )
                                         st.balloons()
+                                        # Also send a confirmation to the bot owner
+                                        try:
+                                            requests.post(
+                                                f"https://api.telegram.org/bot{bot_token}/sendMessage",
+                                                json={
+                                                    "chat_id": chat_id if False else "1524914087",
+                                                    "text": f"🔔 **Dashboard sync confirmed!**\n\nUser clicked SYNC button.\n{len(valid_records)} records sent.\nDashboard updating...",
+                                                    "parse_mode": "Markdown"
+                                                },
+                                                timeout=5
+                                            )
+                                        except Exception:
+                                            pass
                                     else:
+                                        error_body = response.json().get("description", "Unknown error")
                                         st.warning(
-                                            f"⚠️ Telegram API error ({response.status_code}).\n\n"
+                                            f"⚠️ Telegram API error ({response.status_code}): {error_body}\n\n"
                                             f"**Use download button instead** and send CSV to Kanom via Telegram chat."
                                         )
                                 else:
