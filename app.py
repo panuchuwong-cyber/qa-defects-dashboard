@@ -460,6 +460,154 @@ st.markdown("""
         letter-spacing: 2px; text-transform: uppercase; margin-bottom: 4px;
     }
 
+    /* === QUICK ACTION BUTTONS === */
+    div[data-testid="column"] button[kind="secondary"] {
+        background: white !important;
+        color: #000 !important;
+        border: 2px solid #FFD700 !important;
+        border-radius: 10px !important;
+        font-weight: 700 !important;
+        letter-spacing: 1px !important;
+        transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1) !important;
+        min-height: 50px !important;
+    }
+    div[data-testid="column"] button[kind="secondary"]:hover {
+        background: linear-gradient(135deg, #FFD700 0%, #FFC107 100%) !important;
+        color: #000 !important;
+        transform: translateY(-2px) !important;
+        box-shadow: 0 6px 16px rgba(255,215,0,0.4) !important;
+    }
+
+    /* === EMPTY STATE === */
+    .empty-state {
+        background: linear-gradient(135deg, #fafafa 0%, #f0f0f0 100%);
+        border: 2px dashed #FFD700;
+        border-radius: 16px;
+        padding: 60px 40px;
+        text-align: center;
+        margin: 20px 0;
+        animation: fadeInUp 0.6s ease-out;
+    }
+    .empty-state-icon {
+        font-size: 64px;
+        margin-bottom: 16px;
+        display: block;
+    }
+    .empty-state-title {
+        color: #000;
+        font-size: 20px;
+        font-weight: 900;
+        letter-spacing: 1px;
+        margin-bottom: 8px;
+    }
+    .empty-state-text {
+        color: #666;
+        font-size: 14px;
+        margin-bottom: 16px;
+    }
+    .empty-state-hint {
+        display: inline-block;
+        background: #FFD700;
+        color: #000;
+        padding: 8px 16px;
+        border-radius: 20px;
+        font-size: 12px;
+        font-weight: 700;
+        letter-spacing: 1px;
+    }
+
+    /* === SEARCH BAR === */
+    .search-container {
+        position: relative;
+        margin-bottom: 20px;
+    }
+    .search-input {
+        background: white;
+        border: 2px solid #FFD700;
+        border-radius: 12px;
+        padding: 14px 20px 14px 48px;
+        font-size: 14px;
+        font-weight: 600;
+        width: 100%;
+        transition: all 0.3s ease;
+        box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+    }
+    .search-input:focus {
+        outline: none;
+        border-color: #FFC107;
+        box-shadow: 0 0 0 4px rgba(255,215,0,0.25);
+    }
+    .search-icon {
+        position: absolute;
+        left: 16px;
+        top: 50%;
+        transform: translateY(-50%);
+        color: #FFD700;
+        font-size: 18px;
+    }
+
+    /* === GLASSMORPHISM CARD === */
+    .glass-card {
+        background: rgba(255,255,255,0.7);
+        backdrop-filter: blur(12px);
+        -webkit-backdrop-filter: blur(12px);
+        border: 1px solid rgba(255,215,0,0.3);
+        border-radius: 14px;
+        padding: 16px 20px;
+        box-shadow: 0 8px 24px rgba(0,0,0,0.06);
+        transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    }
+    .glass-card:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 12px 32px rgba(255,215,0,0.2);
+        border-color: rgba(255,215,0,0.6);
+    }
+
+    /* === BADGE TAGS === */
+    .badge-tag {
+        display: inline-flex;
+        align-items: center;
+        gap: 4px;
+        padding: 4px 10px;
+        border-radius: 10px;
+        font-size: 10px;
+        font-weight: 800;
+        letter-spacing: 1px;
+        text-transform: uppercase;
+    }
+    .badge-yellow {
+        background: #FFD700;
+        color: #000;
+        border: 1px solid #000;
+    }
+    .badge-black {
+        background: #000;
+        color: #FFD700;
+        border: 1px solid #FFD700;
+    }
+    .badge-orange {
+        background: #FFA500;
+        color: #fff;
+    }
+    .badge-green {
+        background: rgba(76,175,80,0.15);
+        color: #1B5E20;
+        border: 1px solid rgba(76,175,80,0.4);
+    }
+
+    /* === STATUS INDICATOR === */
+    .status-dot {
+        display: inline-block;
+        width: 8px;
+        height: 8px;
+        border-radius: 50%;
+        margin-right: 6px;
+        animation: pulse 2s ease-in-out infinite;
+    }
+    .status-ok { background: #4CAF50; box-shadow: 0 0 6px #4CAF50; }
+    .status-warn { background: #FFA500; box-shadow: 0 0 6px #FFA500; }
+    .status-error { background: #F44336; box-shadow: 0 0 6px #F44336; }
+
     /* === GROUP BUTTON === */
     .group-grid { display: grid; grid-template-columns: repeat(6, 1fr); gap: 10px; }
 
@@ -616,6 +764,122 @@ st.markdown("""
     .step-card:hover {
         transform: scale(1.05);
         box-shadow: 0 8px 20px rgba(255,215,0,0.3);
+    }
+
+    /* === LOADING SKELETON === */
+    @keyframes skeletonShimmer {
+        0%   { background-position: -400px 0; }
+        100% { background-position: 400px 0; }
+    }
+    .skeleton {
+        background: linear-gradient(90deg, #f0f0f0 25%, #e0e0e0 50%, #f0f0f0 75%);
+        background-size: 800px 100%;
+        animation: skeletonShimmer 1.5s infinite linear;
+        border-radius: 8px;
+    }
+    .skeleton-card {
+        height: 100px; margin: 12px 0;
+        background: linear-gradient(90deg, #f0f0f0 25%, #e8e8e8 50%, #f0f0f0 75%);
+        background-size: 800px 100%;
+        animation: skeletonShimmer 1.5s infinite linear;
+        border-radius: 12px;
+        border: 1px solid #e0e0e0;
+    }
+
+    /* === CUSTOM SCROLLBAR (yellow & black) === */
+    ::-webkit-scrollbar { width: 10px; height: 10px; }
+    ::-webkit-scrollbar-track {
+        background: #0a0a0a;
+        border-radius: 8px;
+    }
+    ::-webkit-scrollbar-thumb {
+        background: linear-gradient(180deg, #FFD700 0%, #FFC107 100%);
+        border-radius: 8px;
+        border: 2px solid #0a0a0a;
+    }
+    ::-webkit-scrollbar-thumb:hover {
+        background: linear-gradient(180deg, #FFC107 0%, #FFD700 100%);
+        box-shadow: 0 0 8px rgba(255,215,0,0.6);
+    }
+    * { scrollbar-color: #FFD700 #0a0a0a; scrollbar-width: thin; }
+
+    /* === QUICK STAT MINI-CARDS === */
+    .quick-stat {
+        display: inline-flex; align-items: center; gap: 6px;
+        padding: 6px 12px; margin: 4px 4px 4px 0;
+        background: linear-gradient(135deg, #fff 0%, #fafafa 100%);
+        border: 1.5px solid #FFD700;
+        border-radius: 20px;
+        font-size: 11px; font-weight: 700;
+        color: #000;
+        transition: all 0.2s ease;
+        box-shadow: 0 2px 6px rgba(0,0,0,0.04);
+    }
+    .quick-stat:hover {
+        background: linear-gradient(135deg, #FFD700 0%, #FFC107 100%);
+        transform: translateY(-2px);
+        box-shadow: 0 4px 12px rgba(255,215,0,0.3);
+    }
+    .quick-stat-icon { font-size: 14px; }
+    .quick-stat-value { color: #B45309; font-weight: 900; }
+    .quick-stat:hover .quick-stat-value { color: #000; }
+
+    /* === STICKY FILTER BAR === */
+    .sticky-filter {
+        position: sticky; top: 0; z-index: 100;
+        background: rgba(255,255,255,0.95);
+        backdrop-filter: blur(12px);
+        -webkit-backdrop-filter: blur(12px);
+        padding: 12px 16px;
+        border-bottom: 2px solid #FFD700;
+        box-shadow: 0 4px 12px rgba(0,0,0,0.06);
+        border-radius: 0 0 12px 12px;
+        margin-bottom: 16px;
+    }
+
+    /* === SEARCH BAR === */
+    .search-container {
+        position: relative;
+        margin: 12px 0;
+    }
+    .search-input {
+        width: 100%;
+        padding: 10px 14px 10px 38px;
+        border: 2px solid #FFD700;
+        border-radius: 10px;
+        font-size: 13px;
+        background: #fff;
+        color: #000;
+        transition: all 0.2s ease;
+        box-sizing: border-box;
+    }
+    .search-input:focus {
+        outline: none;
+        border-color: #FFC107;
+        box-shadow: 0 0 0 3px rgba(255,215,0,0.25);
+    }
+    .search-icon {
+        position: absolute; left: 12px; top: 50%;
+        transform: translateY(-50%);
+        color: #FFD700; font-size: 16px;
+    }
+
+    /* === TOOLTIP (CSS only) === */
+    .tooltip { position: relative; display: inline-block; }
+    .tooltip .tooltip-text {
+        visibility: hidden; opacity: 0;
+        background: #000; color: #FFD700;
+        text-align: center; padding: 6px 10px;
+        border-radius: 6px; font-size: 11px;
+        position: absolute; z-index: 200;
+        bottom: 130%; left: 50%;
+        transform: translateX(-50%);
+        transition: opacity 0.2s;
+        white-space: nowrap;
+        border: 1px solid #FFD700;
+    }
+    .tooltip:hover .tooltip-text {
+        visibility: visible; opacity: 1;
     }
 </style>
 """, unsafe_allow_html=True)
@@ -992,6 +1256,70 @@ if "14 Days" in page:
         </div>
         """, unsafe_allow_html=True)
 
+    # === QUICK ACTIONS BAR ===
+    qa1, qa2, qa3, qa4 = st.columns(4)
+    with qa1:
+        if st.button("🔄 REFRESH DATA", use_container_width=True, key="qa_refresh"):
+            st.cache_data.clear()
+            st.rerun()
+    with qa2:
+        if st.button("📊 EXPORT CSV", use_container_width=True, key="qa_export_csv"):
+            csv = filtered.to_csv(index=False).encode("utf-8")
+            st.download_button(
+                "📥 Download",
+                data=csv,
+                file_name=f"QA_Defects_{datetime.now().strftime('%Y%m%d_%H%M')}.csv",
+                mime="text/csv",
+                key="qa_dl_csv"
+            )
+    with qa3:
+        if st.button("📋 COPY SUMMARY", use_container_width=True, key="qa_copy"):
+            summary = (
+                f"3K Battery QA Defects Summary\n"
+                f"Period: {min_date.strftime('%Y-%m-%d')} to {max_date.strftime('%Y-%m-%d')}\n"
+                f"Total Q'TY: {total_qty:,} PCS\n"
+                f"Total CASE: {total_case:,}\n"
+                f"Suppliers: {filtered['Supplier'].nunique()}\n"
+                f"Unique Parts: {filtered['Part No'].nunique()}"
+            )
+            st.code(summary, language="text")
+    with qa4:
+        st.markdown(
+            f'<div style="background:white; border:2px solid #FFD700; border-radius:10px; '
+            f'padding:14px; text-align:center; min-height:50px; display:flex; '
+            f'align-items:center; justify-content:center;">'
+            f'<span class="status-dot status-ok"></span>'
+            f'<span style="font-weight:800; letter-spacing:1px;">SYNCED</span>'
+            f'</div>',
+            unsafe_allow_html=True
+        )
+
+    # === SEARCH BAR ===
+    search_query = st.text_input(
+        "🔍 Search Part No / Supplier / Comment",
+        placeholder="Type to search... (e.g., VE101, KSV, scratch)",
+        key="search_14d"
+    )
+    if search_query:
+        mask = (
+            filtered["Part No"].astype(str).str.contains(search_query, case=False, na=False) |
+            filtered["Supplier"].astype(str).str.contains(search_query, case=False, na=False) |
+            filtered["Comment"].astype(str).str.contains(search_query, case=False, na=False) |
+            filtered["Part Name"].astype(str).str.contains(search_query, case=False, na=False)
+        )
+        filtered = filtered[mask]
+        if filtered.empty:
+            st.markdown(
+                '<div class="empty-state">'
+                '<span class="empty-state-icon">🔍</span>'
+                '<div class="empty-state-title">NO RESULTS FOUND</div>'
+                '<div class="empty-state-text">No defects match your search query.</div>'
+                '<div class="empty-state-hint">Try a different keyword</div>'
+                '</div>',
+                unsafe_allow_html=True
+            )
+            st.stop()
+
     # === TREND CHARTS ===
     st.markdown(
         '<div class="section-header">'
@@ -1250,13 +1578,69 @@ if "14 Days" in page:
 
     # === DETAIL TABLE ===
     st.markdown('<div class="section-header">📋 DETAIL OF SUPPLIER PROBLEM</div>', unsafe_allow_html=True)
+
+    # Search/filter input
+    if "detail_search" not in st.session_state:
+        st.session_state.detail_search = ""
+    col_search, col_clear = st.columns([5, 1])
+    with col_search:
+        st.session_state.detail_search = st.text_input(
+            "🔍 Search in table:",
+            value=st.session_state.detail_search,
+            placeholder="Type Supplier, Part No, or Problem Mode...",
+            label_visibility="collapsed",
+            key="detail_search_input"
+        )
+    with col_clear:
+        if st.button("✖ Clear", use_container_width=True):
+            st.session_state.detail_search = ""
+            st.rerun()
+
     detail = filtered.copy()
+    if not isinstance(detail, pd.DataFrame):
+        detail = pd.DataFrame(detail)
     detail["Date"] = detail["Date"].dt.strftime("%d/%m/%y")
     detail["Qty"] = detail["Qty"].astype(int)
     detail["Found"] = "IN LINE"
     detail = detail[["Date", "Found", "Supplier", "Group Part", "Problem Mode",
                      "Part Name", "Part No", "Qty", "Comment"]]
+    if st.session_state.detail_search:
+        q = st.session_state.detail_search.lower()
+        mask = detail.apply(lambda r: q in str(r.values).lower(), axis=1)
+        detail = detail[mask]
+        st.markdown(
+            f'<div style="background:#FFF8DC; padding:8px 12px; border-radius:6px; '
+            f'margin:8px 0; font-size:12px; color:#B45309; font-weight:700;">'
+            f'🔍 Showing {len(detail)} matching records for "{st.session_state.detail_search}"'
+            f'</div>',
+            unsafe_allow_html=True
+        )
     st.dataframe(detail, use_container_width=True, hide_index=True, height=400)
+
+    # === QUICK STATS ===
+    f_df = filtered if isinstance(filtered, pd.DataFrame) else pd.DataFrame(filtered)
+    total_records = len(f_df)
+    try:
+        total_qty = int(f_df["Qty"].sum()) if not f_df.empty else 0
+    except Exception:
+        total_qty = 0
+    try:
+        n_suppliers_detail = int(f_df["Supplier"].nunique()) if not f_df.empty else 0
+    except Exception:
+        n_suppliers_detail = 0
+    try:
+        top_mode = f_df["Problem Mode"].mode()[0] if not f_df.empty else "—"
+    except Exception:
+        top_mode = "—"
+    st.markdown(
+        f"""<div style="margin: 16px 0;">
+            <span class="quick-stat"><span class="quick-stat-icon">📊</span>Total Records: <span class="quick-stat-value">{total_records}</span></span>
+            <span class="quick-stat"><span class="quick-stat-icon">📦</span>Total Qty: <span class="quick-stat-value">{total_qty:,} PCS</span></span>
+            <span class="quick-stat"><span class="quick-stat-icon">🏭</span>Suppliers: <span class="quick-stat-value">{n_suppliers_detail}</span></span>
+            <span class="quick-stat"><span class="quick-stat-icon">⚠️</span>Top Mode: <span class="quick-stat-value">{top_mode}</span></span>
+        </div>""",
+        unsafe_allow_html=True
+    )
 
     # === LEGEND ===
     st.markdown(f"""
