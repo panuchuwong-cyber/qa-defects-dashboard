@@ -1397,13 +1397,14 @@ st.markdown("""
         }
         /* Remove iframe body margin so charts pack tightly */
         iframe[title="streamlit.components.v1.html"] {
-            margin-bottom: 0 !important;
-        }
-        /* Compress content inside chart iframe on mobile */
-        iframe[title="streamlit.components.v1.html"] {
             display: block !important;
             margin-bottom: 0 !important;
-            height: 430px !important;  /* tight enough for 2 stacked charts at 170px each + padding */
+            height: 385px !important;  /* tight fit for 2 stacked charts (170px each) + gap + padding */
+        }
+        /* Remove the body default top/bottom space inside the iframe */
+        iframe[title="streamlit.components.v1.html"] body {
+            margin: 0 !important;
+            padding: 0 !important;
         }
 
         /* === Bottom 2-col grids (mode + suppliers) stack === */
