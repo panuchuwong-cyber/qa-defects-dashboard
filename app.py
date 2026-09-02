@@ -415,10 +415,20 @@ st.markdown("""
     .trend-up {
         color: #B71C1C; background: rgba(255,107,107,0.12);
         border: 1px solid rgba(255,107,107,0.2);
+        animation: trendPulseRed 2s ease-in-out infinite;
+    }
+    @keyframes trendPulseRed {
+        0%, 100% { box-shadow: 0 0 0 0 rgba(255,107,107,0); }
+        50%      { box-shadow: 0 0 0 6px rgba(255,107,107,0.15); }
     }
     .trend-down {
         color: #1B5E20; background: rgba(76,175,80,0.12);
         border: 1px solid rgba(76,175,80,0.2);
+        animation: trendPulseGreen 2s ease-in-out infinite;
+    }
+    @keyframes trendPulseGreen {
+        0%, 100% { box-shadow: 0 0 0 0 rgba(76,175,80,0); }
+        50%      { box-shadow: 0 0 0 6px rgba(76,175,80,0.15); }
     }
     .trend-neutral {
         color: #555; background: rgba(0,0,0,0.05);
@@ -948,6 +958,50 @@ st.markdown("""
     }
     .tooltip:hover .tooltip-text {
         visibility: visible; opacity: 1;
+    }
+
+    /* === SUCCESS CARD (post-sync) === */
+    @keyframes checkmarkPop {
+        0%   { transform: scale(0) rotate(-180deg); opacity: 0; }
+        60%  { transform: scale(1.3) rotate(0deg); opacity: 1; }
+        100% { transform: scale(1) rotate(0deg); opacity: 1; }
+    }
+    @keyframes cardSlideIn {
+        from { opacity: 0; transform: translateY(-20px) scale(0.95); }
+        to   { opacity: 1; transform: translateY(0) scale(1); }
+    }
+    .success-card {
+        text-align: center;
+        padding: 28px 24px;
+        margin: 16px 0;
+        background: linear-gradient(135deg, #000 0%, #1a1a1a 100%);
+        border: 2px solid #FFD700;
+        border-radius: 16px;
+        box-shadow: 0 8px 32px rgba(255,215,0,0.3);
+        animation: cardSlideIn 0.5s cubic-bezier(0.16, 1, 0.3, 1);
+    }
+    .success-checkmark {
+        width: 64px; height: 64px;
+        margin: 0 auto 14px;
+        background: linear-gradient(135deg, #00E676 0%, #00C853 100%);
+        border-radius: 50%;
+        display: flex; align-items: center; justify-content: center;
+        color: #fff; font-size: 36px; font-weight: 900;
+        box-shadow: 0 4px 16px rgba(0,230,118,0.4);
+        animation: checkmarkPop 0.7s cubic-bezier(0.16, 1, 0.3, 1);
+    }
+    .success-title {
+        color: #FFD700; font-size: 18px; font-weight: 900;
+        letter-spacing: 2px; margin-bottom: 12px;
+    }
+    .success-stats {
+        display: flex; justify-content: center; gap: 20px;
+        margin-bottom: 12px;
+        color: #fff; font-size: 13px;
+    }
+    .success-stats b { color: #FFD700; }
+    .success-note {
+        color: #999; font-size: 11px; font-style: italic;
     }
 </style>
 """, unsafe_allow_html=True)
@@ -2050,12 +2104,17 @@ elif "Data Entry" in page:
                                     push_resp = requests.put(api_base, headers=headers_auth, json=payload, timeout=15)
 
                                     if push_resp.status_code in (200, 201):
-                                        st.success(
-                                            f"✅ **Pushed to GitHub successfully!**\n\n"
-                                            f"📊 {len(valid_records)} records committed.\n"
-                                            f"🔄 Dashboard will rebuild and refresh in 1-2 minutes.\n\n"
-                                            f"💡 **No Telegram needed** — pure Git workflow!"
-                                        )
+                                        st.markdown(f"""
+                                        <div class="success-card">
+                                            <div class="success-checkmark">✓</div>
+                                            <div class="success-title">SYNCED TO GITHUB!</div>
+                                            <div class="success-stats">
+                                                <span>📊 <b>{len(valid_records)}</b> records</span>
+                                                <span>🔄 Rebuild in <b>1-2 min</b></span>
+                                            </div>
+                                            <div class="success-note">💡 No Telegram needed — pure Git workflow!</div>
+                                        </div>
+                                        """, unsafe_allow_html=True)
                                         st.balloons()
                                     else:
                                         err = push_resp.json().get("message", push_resp.text)
