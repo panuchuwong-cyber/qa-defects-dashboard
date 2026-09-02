@@ -1391,6 +1391,12 @@ st.markdown("""
         iframe[title="streamlit.components.v1.html"] {
             margin-bottom: 0 !important;
         }
+        /* Compress content inside chart iframe on mobile */
+        iframe[title="streamlit.components.v1.html"] {
+            display: block !important;
+            margin-bottom: 0 !important;
+            height: 430px !important;  /* tight enough for 2 stacked charts at 170px each + padding */
+        }
 
         /* === Bottom 2-col grids (mode + suppliers) stack === */
         div[data-testid="stHorizontalBlock"]:has(.resp-row-2col) {
@@ -2159,7 +2165,8 @@ if "14 Days" in page:
     }})();
     </script>
     """
-    st.components.v1.html(trend_html, height=680)
+    # Render chart in component iframe (height fits content via CSS)
+    st.components.v1.html(trend_html, height=680, scrolling=False)
 
     # === PROBLEM MODE + TOP 5 SUPPLIERS ===
     col_l, col_r = st.columns(2)
