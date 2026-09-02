@@ -144,7 +144,7 @@ check_password()
 # PAGE CONFIG
 # ============================================================
 st.set_page_config(
-    page_title="TEST QA Dashboard",
+    page_title="3K Battery QA Dashboard",
     page_icon="⚡",
     layout="wide",
     initial_sidebar_state="expanded"
@@ -491,6 +491,132 @@ st.markdown("""
         margin-top: 32px; padding: 20px 0;
         border-top: 1px solid #e0e0e0;
     }
+
+    /* === ANIMATIONS & POLISH === */
+    @keyframes fadeInUp {
+        from { opacity: 0; transform: translateY(20px); }
+        to   { opacity: 1; transform: translateY(0); }
+    }
+    @keyframes pulseGlow {
+        0%, 100% { box-shadow: 0 0 0 0 rgba(255,215,0,0.6); }
+        50%      { box-shadow: 0 0 0 10px rgba(255,215,0,0); }
+    }
+    @keyframes shimmer {
+        0%   { background-position: -200% 0; }
+        100% { background-position: 200% 0; }
+    }
+    @keyframes slideIn {
+        from { opacity: 0; transform: translateX(-15px); }
+        to   { opacity: 1; transform: translateX(0); }
+    }
+
+    /* KPI cards: smooth entrance + hover lift */
+    [data-testid="stMetric"], .kpi-container, .kpi-card {
+        animation: fadeInUp 0.5s ease-out;
+        transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1) !important;
+    }
+    [data-testid="stMetric"]:hover, .kpi-container:hover, .kpi-card:hover {
+        transform: translateY(-4px) scale(1.02);
+        box-shadow: 0 12px 28px rgba(255,215,0,0.25) !important;
+    }
+
+    /* === SIDEBAR NAV GRADIENT BUTTONS === */
+    /* Target each nav button by its key (Streamlit generates data-testid with key suffix) */
+    [data-testid="stSidebar"] button[kind="secondary"] {
+        min-height: 60px !important;
+        border-radius: 12px !important;
+        margin-bottom: 10px !important;
+        font-weight: 800 !important;
+        font-size: 13px !important;
+        letter-spacing: 1.5px !important;
+        text-transform: uppercase !important;
+        transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1) !important;
+        border: 2px solid transparent !important;
+    }
+    [data-testid="stSidebar"] button[kind="secondary"]:hover {
+        transform: translateX(4px) scale(1.02) !important;
+        box-shadow: 0 8px 20px rgba(255,215,0,0.3) !important;
+    }
+    /* Button 1: 14 Days Monitoring - Yellow gradient */
+    [data-testid="stSidebar"] button[kind="secondary"]:has(span:contains("14 DAYS MONITORING")) {
+        background: linear-gradient(135deg, #FFD700 0%, #FFC107 100%) !important;
+        color: #000 !important;
+    }
+    /* Button 2: Searching Supplier - Black gradient */
+    [data-testid="stSidebar"] button[kind="secondary"]:has(span:contains("SEARCHING SUPPLIER")) {
+        background: linear-gradient(135deg, #000000 0%, #434343 100%) !important;
+        color: #FFD700 !important;
+        border: 2px solid #FFD700 !important;
+    }
+    /* Button 3: Data Entry - Orange gradient */
+    [data-testid="stSidebar"] button[kind="secondary"]:has(span:contains("DATA ENTRY")) {
+        background: linear-gradient(135deg, #FFA500 0%, #FF6347 100%) !important;
+        color: #fff !important;
+    }
+
+    /* KPI TREND BADGES (consolidated - see line 408) */
+
+    /* LIVE indicator: pulsing glow */
+    .live-pulse {
+        display: inline-block; width: 10px; height: 10px;
+        background: #00E676; border-radius: 50%;
+        animation: pulseGlow 2s infinite;
+        box-shadow: 0 0 8px #00E676;
+    }
+
+    /* DataFrame rows: smooth hover */
+    .stDataFrame tbody tr {
+        transition: background-color 0.2s ease, transform 0.15s ease;
+    }
+    .stDataFrame tbody tr:hover {
+        background-color: rgba(255,215,0,0.08) !important;
+        transform: translateX(2px);
+    }
+
+    /* Section headers: shimmer background */
+    .section-header {
+        position: relative; overflow: hidden;
+        background: linear-gradient(90deg, #FFD700 0%, #FFC107 50%, #FFD700 100%) !important;
+        background-size: 200% 100% !important;
+        animation: shimmer 4s linear infinite;
+    }
+    .section-header > * {
+        position: relative; z-index: 1;
+    }
+
+    /* Sidebar info cards: slide in */
+    .info-card {
+        animation: slideIn 0.4s ease-out;
+    }
+
+    /* Empty state styling */
+    .empty-state {
+        text-align: center; padding: 48px 24px;
+        background: linear-gradient(135deg, #fafafa 0%, #fff 100%);
+        border: 2px dashed #FFD700; border-radius: 14px;
+        margin: 20px 0;
+    }
+    .empty-state-icon {
+        font-size: 64px; margin-bottom: 16px;
+        animation: fadeInUp 0.6s ease-out;
+    }
+    .empty-state-title {
+        color: #333; font-size: 18px; font-weight: 800;
+        margin-bottom: 8px; letter-spacing: 1px;
+    }
+    .empty-state-sub {
+        color: #999; font-size: 13px;
+    }
+
+    /* Step indicator cards: scale on hover */
+    .step-card {
+        transition: transform 0.3s ease, box-shadow 0.3s ease;
+        cursor: default;
+    }
+    .step-card:hover {
+        transform: scale(1.05);
+        box-shadow: 0 8px 20px rgba(255,215,0,0.3);
+    }
 </style>
 """, unsafe_allow_html=True)
 
@@ -560,12 +686,26 @@ with st.sidebar:
         unsafe_allow_html=True
     )
 
-    # === NAVIGATION ===
-    page = st.radio(
-        "NAVIGATION",
-        ["📊 14 Days Monitoring", "🔍 Searching Supplier Information", "📝 Data Entry"],
-        label_visibility="collapsed"
-    )
+    # === NAVIGATION (gradient buttons) ===
+    if "current_page" not in st.session_state:
+        st.session_state.current_page = "📊 14 Days Monitoring"
+
+    nav_items = [
+        ("📊 14 Days Monitoring",   "📊", "linear-gradient(135deg, #FFD700 0%, #FFC107 100%)", "#000"),
+        ("🔍 Searching Supplier",   "🔍", "linear-gradient(135deg, #000000 0%, #434343 100%)", "#FFD700"),
+        ("📝 Data Entry",           "📝", "linear-gradient(135deg, #FFA500 0%, #FF6347 100%)", "#fff"),
+    ]
+    for full_label, icon, gradient, text_color in nav_items:
+        is_active = (st.session_state.current_page == full_label)
+        active_border = "3px solid #FFD700" if is_active else "2px solid transparent"
+        if st.button(
+            f"{icon}  {full_label.replace(icon + ' ', '')}",
+            key=f"nav_{full_label}",
+            use_container_width=True
+        ):
+            st.session_state.current_page = full_label
+            st.rerun()
+    page = st.session_state.current_page
 
     # Divider
     st.markdown(
@@ -691,9 +831,39 @@ with hdr2:
     </div>
 
     <div class="live-indicator">
-        <span class="live-dot"></span>
+        <span class="live-pulse"></span>
         <span>LIVE DATA</span>
     </div>
+
+    <div style="margin-top: 14px; padding: 10px; background: rgba(255,215,0,0.06);
+                border: 1px solid rgba(255,215,0,0.2); border-radius: 8px;
+                text-align: center;">
+        <div style="color: #FFD700; font-size: 9px; font-weight: 700;
+                    letter-spacing: 2px; text-transform: uppercase; margin-bottom: 4px;">
+            ⏰ CURRENT TIME
+        </div>
+        <div id="kanom-clock" style="color: #fff; font-size: 16px; font-weight: 900;
+                    font-family: 'Courier New', monospace; letter-spacing: 1px;">
+            --:--:--
+        </div>
+        <div style="color: #666; font-size: 10px; margin-top: 4px;">
+            {datetime.now().strftime('%A, %B %d, %Y')}
+        </div>
+    </div>
+
+    <script>
+    (function() {{
+        const el = document.getElementById('kanom-clock');
+        if (!el) return;
+        function tick() {{
+            const d = new Date();
+            const pad = (n) => String(n).padStart(2, '0');
+            el.textContent = pad(d.getHours()) + ':' + pad(d.getMinutes()) + ':' + pad(d.getSeconds());
+        }}
+        tick();
+        setInterval(tick, 1000);
+    }})();
+    </script>
     """, unsafe_allow_html=True)
 
 # ============================================================
@@ -1660,24 +1830,54 @@ elif "Data Entry" in page:
                 # Export buttons
                 st.markdown("<br>", unsafe_allow_html=True)
                 csv_data = pending_df.to_csv(index=False).encode('utf-8')
-                st.download_button(
-                    "📥 DOWNLOAD CSV",
-                    csv_data,
-                    "defects_pending.csv",
-                    "text/csv",
-                    use_container_width=True,
-                    type="secondary"
-                )
+                exp_c1, exp_c2 = st.columns(2)
+                with exp_c1:
+                    st.download_button(
+                        "📥 CSV",
+                        csv_data,
+                        "defects_pending.csv",
+                        "text/csv",
+                        use_container_width=True,
+                        type="secondary"
+                    )
+                with exp_c2:
+                    # Build a simple HTML that prints nicely + printable as PDF
+                    html_table = pending_df.to_html(index=False, classes="pending-table")
+                    html_report = f"""<!DOCTYPE html><html><head><meta charset="utf-8">
+<style>
+body {{ font-family: Arial; margin: 24px; }}
+h1 {{ color: #000; border-bottom: 3px solid #FFD700; padding-bottom: 8px; }}
+table {{ width: 100%; border-collapse: collapse; margin-top: 16px; }}
+th {{ background: #FFD700; color: #000; padding: 8px; text-align: left; }}
+td {{ padding: 6px 8px; border-bottom: 1px solid #eee; }}
+.meta {{ color: #666; font-size: 12px; margin: 8px 0 16px; }}
+</style></head><body>
+<h1>⚡ 3K BATTERY — Defect Report</h1>
+<div class="meta">Generated: {datetime.now().strftime('%Y-%m-%d %H:%M')} | Records: {len(pending_df)} | Total Qty: {pending_df["Qty"].sum()} PCS</div>
+{html_table}
+</body></html>"""
+                    st.download_button(
+                        "📄 PDF (HTML)",
+                        html_report.encode("utf-8"),
+                        f"defects_report_{datetime.now().strftime('%Y%m%d_%H%M')}.html",
+                        "text/html",
+                        use_container_width=True,
+                        type="secondary",
+                        help="Open in browser → Print → Save as PDF"
+                    )
 
                 if st.button("🗑️ CLEAR ALL PENDING", use_container_width=True):
                     st.session_state.new_entries = []
                     st.rerun()
             else:
                 st.markdown(
-                    '<div style="color:#999; font-size:13px; text-align:center; '
-                    'padding:30px 10px;">'
-                    '📋 No pending records yet.<br>'
-                    'Add records using the form →'
+                    '<div class="empty-state">'
+                    '<div class="empty-state-icon">📦</div>'
+                    '<div class="empty-state-title">NO PENDING RECORDS</div>'
+                    '<div class="empty-state-sub">'
+                    'Add records using the form on the left<br>'
+                    'or upload an Excel file above'
+                    '</div>'
                     '</div>',
                     unsafe_allow_html=True
                 )
