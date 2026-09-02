@@ -1357,8 +1357,16 @@ st.markdown("""
         }
         .kpi-unit {
             font-size: 10px !important;
-            padding: 1px 6px !important;
-            margin-left: 3px !important;
+            color: #FFD700 !important;
+            background: #000 !important;
+            padding: 2px 7px !important;
+            border-radius: 8px !important;
+            margin-left: 4px !important;
+            font-weight: 700 !important;
+            line-height: 1.2 !important;
+            display: inline-block !important;
+            white-space: nowrap !important;
+            letter-spacing: 0.3px !important;
         }
         .kpi-trend {
             font-size: 9px !important;
