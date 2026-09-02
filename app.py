@@ -1370,18 +1370,26 @@ st.markdown("""
         /* === TREND CHARTS - stack vertically on mobile === */
         .trend-grid {
             grid-template-columns: 1fr !important;
-            gap: 10px !important;
+            gap: 8px !important;
+            margin-bottom: 8px !important;
         }
         .trend-card {
-            padding: 12px 10px !important;
+            padding: 10px 8px !important;
             border-radius: 10px !important;
         }
+        .trend-card-head {
+            margin-bottom: 4px !important;
+        }
         .trend-card-title {
-            font-size: 12px !important;
+            font-size: 11px !important;
         }
         .trend-canvas-wrap,
         .trend-canvas-wrap canvas {
-            height: 220px !important;
+            height: 170px !important;
+        }
+        /* Remove iframe body margin so charts pack tightly */
+        iframe[title="streamlit.components.v1.html"] {
+            margin-bottom: 0 !important;
         }
 
         /* === Bottom 2-col grids (mode + suppliers) stack === */
