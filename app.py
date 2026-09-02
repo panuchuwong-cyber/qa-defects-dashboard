@@ -140,6 +140,46 @@ def check_password():
 
 check_password()
 
+# === LOADING SPLASH (first time only) ===
+if "splash_shown" not in st.session_state:
+    st.session_state.splash_shown = False
+if not st.session_state.splash_shown:
+    splash_placeholder = st.empty()
+    with splash_placeholder.container():
+        st.markdown(
+            '<div style="position:fixed; top:0; left:0; right:0; bottom:0; '
+            'background:linear-gradient(135deg, #000000 0%, #1a1a1a 100%); '
+            'display:flex; align-items:center; justify-content:center; '
+            'flex-direction:column; z-index:9999; animation:fadeIn 0.3s ease;">'
+            '<div style="font-size:80px; margin-bottom:20px; '
+            'animation:pulse 1.5s ease-in-out infinite;">⚡</div>'
+            '<div style="color:#FFD700; font-size:32px; font-weight:900; '
+            'letter-spacing:6px; margin-bottom:12px;">3K BATTERY</div>'
+            '<div style="color:#fff; font-size:14px; letter-spacing:3px; '
+            'font-weight:700; margin-bottom:24px;">QA DEFECTS DASHBOARD</div>'
+            '<div style="width:200px; height:4px; background:rgba(255,215,0,0.2); '
+            'border-radius:2px; overflow:hidden;">'
+            '<div style="width:100%; height:100%; background:linear-gradient(90deg, #FFD700, #FFC107); '
+            'animation:loadingBar 1.2s ease-in-out infinite;"></div>'
+            '</div>'
+            '<div style="color:#999; font-size:11px; margin-top:20px; '
+            'letter-spacing:2px;">LOADING DASHBOARD...</div>'
+            '</div>'
+            '<style>'
+            '@keyframes fadeIn { from { opacity:0; } to { opacity:1; } }'
+            '@keyframes loadingBar { '
+            '0% { transform:translateX(-100%); } '
+            '50% { transform:translateX(0); } '
+            '100% { transform:translateX(100%); } }'
+            '</style>',
+            unsafe_allow_html=True
+        )
+        import time as _time
+        _time.sleep(1.2)
+    splash_placeholder.empty()
+    st.session_state.splash_shown = True
+    st.rerun()
+
 # ============================================================
 # PAGE CONFIG
 # ============================================================
@@ -1578,9 +1618,9 @@ if "14 Days" in page:
         mode_summary["Qty"] = mode_summary["Qty"].astype(int)
         # Add % share column
         total_qty_all = max(int(mode_summary["Qty"].sum()), 1)
-        mode_summary["% Share"] = [
-            f"{round((q/total_qty_all)*100, 1)}%" for q in mode_summary["Qty"]
-        ]
+        mode_summary["% Share"] = mode_summary["Qty"].astype(int).map(
+            lambda q: f"{round((int(q)/total_qty_all)*100, 1)}%"
+        )
 
         def color_mode(val):
             if val not in mode_summary["Problem Mode"].values: return ''
@@ -1612,9 +1652,9 @@ if "14 Days" in page:
         top5.insert(0, "Rank", range(1, len(top5) + 1))
 
         # Add % share column
-        total_qty_top = int(top5["Qty"].sum()) or 1
-        top5["% Share"] = top5["Qty"].apply(
-            lambda x: f"{round((x/total_qty_top)*100, 1)}%"
+        total_qty_top = max(int(top5["Qty"].sum()), 1)
+        top5["% Share"] = top5["Qty"].astype(int).map(
+            lambda q: f"{round((int(q)/total_qty_top)*100, 1)}%"
         )
 
         def color_rank(val):
