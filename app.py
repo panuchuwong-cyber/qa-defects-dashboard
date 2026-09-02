@@ -144,10 +144,15 @@ check_password()
 # PAGE CONFIG
 # ============================================================
 st.set_page_config(
-    page_title="3K Battery QA Dashboard",
+    page_title="⚡ 3K Battery QA Defects Dashboard",
     page_icon="⚡",
     layout="wide",
-    initial_sidebar_state="expanded"
+    initial_sidebar_state="expanded",
+    menu_items={
+        "About": "3K Battery QA Defects Dashboard v2.0\nBuilt with Streamlit + Chart.js\n⚡ Made by Kanom AI for K-Kream",
+        "Get Help": "https://github.com/panuchuwong-cyber/qa-defects-dashboard",
+        "Report a bug": "https://github.com/panuchuwong-cyber/qa-defects-dashboard/issues",
+    }
 )
 
 # ============================================================
@@ -1003,7 +1008,50 @@ st.markdown("""
     .success-note {
         color: #999; font-size: 11px; font-style: italic;
     }
+
+    /* === SCROLL TO TOP BUTTON === */
+    @keyframes fadeInBtn {
+        from { opacity: 0; transform: translateY(20px); }
+        to   { opacity: 1; transform: translateY(0); }
+    }
+    .scroll-top-btn {
+        position: fixed;
+        bottom: 24px; right: 24px;
+        width: 48px; height: 48px;
+        background: linear-gradient(135deg, #FFD700 0%, #FFC107 100%);
+        border: 2px solid #000;
+        border-radius: 50%;
+        display: flex; align-items: center; justify-content: center;
+        font-size: 20px; font-weight: 900; color: #000;
+        cursor: pointer;
+        box-shadow: 0 4px 16px rgba(255,215,0,0.4);
+        transition: all 0.2s ease;
+        z-index: 999;
+        animation: fadeInBtn 0.5s ease-out;
+    }
+    .scroll-top-btn:hover {
+        transform: translateY(-4px) scale(1.1);
+        box-shadow: 0 8px 24px rgba(255,215,0,0.6);
+    }
 </style>
+
+<script>
+(function() {
+    // Smooth scroll for any anchor
+    document.documentElement.style.scrollBehavior = 'smooth';
+    // Create floating scroll-to-top button
+    const btn = document.createElement('button');
+    btn.className = 'scroll-top-btn';
+    btn.innerHTML = '↑';
+    btn.title = 'Back to top';
+    btn.onclick = () => window.scrollTo({top: 0, behavior: 'smooth'});
+    btn.style.display = 'none';
+    document.body.appendChild(btn);
+    window.addEventListener('scroll', () => {
+        btn.style.display = window.scrollY > 400 ? 'flex' : 'none';
+    });
+})();
+</script>
 """, unsafe_allow_html=True)
 
 # ============================================================
