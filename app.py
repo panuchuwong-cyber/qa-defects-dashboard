@@ -1073,12 +1073,126 @@ st.markdown("""
         transform: translateY(-4px) scale(1.1);
         box-shadow: 0 8px 24px rgba(255,215,0,0.6);
     }
+
+    /* === DARK THEME OVERRIDES === */
+    [data-theme="dark"] .stApp,
+    body.dark-mode .stApp {
+        background: linear-gradient(135deg, #0a0a0a 0%, #1a1a1a 100%) !important;
+        color: #FFD700 !important;
+    }
+    [data-theme="dark"] .kpi-container,
+    body.dark-mode .kpi-container {
+        background: linear-gradient(135deg, #1a1a1a 0%, #0a0a0a 100%) !important;
+        color: #FFD700 !important;
+        border-color: #FFD700 !important;
+    }
+    [data-theme="dark"] .quick-stat,
+    body.dark-mode .quick-stat {
+        background: linear-gradient(135deg, #1a1a1a 0%, #2d2d2d 100%) !important;
+        color: #FFD700 !important;
+    }
+    [data-theme="dark"] .quick-stat-value,
+    body.dark-mode .quick-stat-value {
+        color: #FFD700 !important;
+    }
+
+    /* Theme toggle button */
+    .theme-toggle {
+        position: fixed; top: 12px; right: 12px;
+        width: 44px; height: 44px;
+        background: linear-gradient(135deg, #FFD700 0%, #FFC107 100%);
+        border: 2px solid #000;
+        border-radius: 50%;
+        display: flex; align-items: center; justify-content: center;
+        font-size: 18px; cursor: pointer;
+        box-shadow: 0 4px 12px rgba(255,215,0,0.4);
+        transition: all 0.2s ease;
+        z-index: 998;
+    }
+    .theme-toggle:hover {
+        transform: rotate(180deg) scale(1.1);
+        box-shadow: 0 6px 16px rgba(255,215,0,0.6);
+    }
+
+    /* === PINNED SUPPLIER BADGE === */
+    .pinned-badge {
+        display: inline-flex; align-items: center; gap: 6px;
+        padding: 6px 12px;
+        background: linear-gradient(135deg, #FFD700 0%, #FFC107 100%);
+        color: #000; font-weight: 900; font-size: 11px;
+        border-radius: 20px;
+        border: 2px solid #000;
+        box-shadow: 0 2px 8px rgba(255,215,0,0.4);
+        letter-spacing: 1px;
+        margin: 4px;
+    }
+    .pinned-badge::before {
+        content: "📌";
+        animation: pinBob 2s ease-in-out infinite;
+    }
+    @keyframes pinBob {
+        0%, 100% { transform: rotate(-10deg); }
+        50%      { transform: rotate(10deg); }
+    }
+
+    /* === TOAST NOTIFICATION === */
+    @keyframes toastSlide {
+        0%   { transform: translateX(120%); opacity: 0; }
+        10%  { transform: translateX(0); opacity: 1; }
+        90%  { transform: translateX(0); opacity: 1; }
+        100% { transform: translateX(120%); opacity: 0; }
+    }
+    .toast {
+        position: fixed; top: 80px; right: 24px;
+        background: linear-gradient(135deg, #000 0%, #1a1a1a 100%);
+        color: #FFD700; padding: 12px 20px;
+        border: 2px solid #FFD700; border-radius: 10px;
+        font-weight: 700; font-size: 13px;
+        box-shadow: 0 6px 20px rgba(255,215,0,0.3);
+        z-index: 997;
+        animation: toastSlide 3s ease-in-out forwards;
+    }
+
+    /* === ONBOARDING TOOLTIP === */
+    @keyframes tooltipBounce {
+        0%, 100% { transform: translateY(0); }
+        50%      { transform: translateY(-6px); }
+    }
+    .onboarding-tip {
+        background: linear-gradient(135deg, #FFD700 0%, #FFC107 100%);
+        color: #000; padding: 12px 16px;
+        border-radius: 10px; border: 2px solid #000;
+        font-size: 13px; font-weight: 700;
+        box-shadow: 0 4px 16px rgba(255,215,0,0.3);
+        animation: tooltipBounce 2s ease-in-out infinite;
+        display: inline-block;
+        margin: 8px 0;
+    }
 </style>
 
 <script>
 (function() {
+    // Theme toggle persistence
+    const saved = localStorage.getItem('kanom_theme') || 'light';
+    if (saved === 'dark') document.body.classList.add('dark-mode');
+    
+    // Create theme toggle button
+    const themeBtn = document.createElement('button');
+    themeBtn.className = 'theme-toggle';
+    themeBtn.innerHTML = saved === 'dark' ? '☀️' : '🌙';
+    themeBtn.title = 'Toggle theme';
+    themeBtn.onclick = () => {
+        const isDark = document.body.classList.toggle('dark-mode');
+        localStorage.setItem('kanom_theme', isDark ? 'dark' : 'light');
+        themeBtn.innerHTML = isDark ? '☀️' : '🌙';
+        // Notify Streamlit to re-render (preserves state via session_state)
+        window.parent.postMessage({type: 'streamlit:rerun'}, '*');
+    };
+    document.body.appendChild(themeBtn);
+    
     // Smooth scroll for any anchor
     document.documentElement.style.scrollBehavior = 'smooth';
+    
     // Create floating scroll-to-top button
     const btn = document.createElement('button');
     btn.className = 'scroll-top-btn';
