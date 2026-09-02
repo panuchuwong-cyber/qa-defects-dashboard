@@ -1173,6 +1173,51 @@ st.markdown("""
     /* === RESPONSIVE DESIGN — MOBILE / TABLET ============ */
     /* ===================================================== */
 
+    /* === TREND CHART GRID (Daily Trend Analysis) === */
+    .trend-grid {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 14px;
+        margin-bottom: 18px;
+    }
+    .trend-card {
+        background: #ffffff;
+        border: 2px solid #000;
+        border-radius: 12px;
+        padding: 14px;
+        box-shadow: 0 4px 12px rgba(0,0,0,0.08);
+    }
+    .trend-card-head {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        margin-bottom: 8px;
+    }
+    .trend-dot {
+        width: 10px;
+        height: 10px;
+        border-radius: 50%;
+        flex-shrink: 0;
+    }
+    .trend-dot-gold  { background: #FFD700; }
+    .trend-dot-black { background: #000; }
+    .trend-card-title {
+        color: #000;
+        font-weight: 900;
+        font-size: 13px;
+        letter-spacing: 1px;
+    }
+    .trend-canvas-wrap {
+        width: 100%;
+        height: 200px;
+        position: relative;
+    }
+    .trend-canvas-wrap canvas {
+        display: block;
+        width: 100% !important;
+        height: 200px !important;
+    }
+
     /* Tablet & small laptop (768px - 1024px) */
     @media (max-width: 1024px) {
         .dashboard-header h1 {
@@ -1189,6 +1234,9 @@ st.markdown("""
             padding: 18px 16px !important;
             min-height: 140px !important;
         }
+        .trend-grid { gap: 12px !important; }
+        .trend-card { padding: 12px !important; }
+        .trend-card-title { font-size: 11px !important; }
     }
 
     /* Mobile (≤768px) */
@@ -1201,11 +1249,11 @@ st.markdown("""
             max-width: 100% !important;
         }
 
-        /* Force header to single column on mobile */
-        div[data-testid="stHorizontalBlock"]:has(> div[data-testid="stColumn"]:first-child .dashboard-header) {
+        /* Stack header columns vertically */
+        div[data-testid="stHorizontalBlock"]:has(> div[data-testid="stColumn"] .dashboard-header) {
             flex-wrap: wrap !important;
         }
-        div[data-testid="stHorizontalBlock"]:has(> div[data-testid="stColumn"]:first-child .dashboard-header)
+        div[data-testid="stHorizontalBlock"]:has(> div[data-testid="stColumn"] .dashboard-header)
             > div[data-testid="stColumn"] {
             flex: 1 1 100% !important;
             min-width: 100% !important;
@@ -1286,37 +1334,26 @@ st.markdown("""
             font-size: 14px !important;
         }
 
-        /* KPI row - 2 columns on mobile instead of 4 */
-        div[data-testid="stHorizontalBlock"]:has(> div[data-testid="stColumn"] .kpi-container) {
-            flex-wrap: wrap !important;
-        }
-        div[data-testid="stHorizontalBlock"]:has(> div[data-testid="stColumn"] .kpi-container)
-            > div[data-testid="stColumn"] {
-            flex: 1 1 calc(50% - 4px) !important;
-            min-width: calc(50% - 4px) !important;
-            max-width: calc(50% - 4px) !important;
-            width: calc(50% - 4px) !important;
-        }
-
-        /* KPI cards - smaller padding */
-        .kpi-container {
+        /* === KPI CARDS (now 2x2 via Python st.columns(2) rows) === */
+        /* Target the inner kpi-card directly without :has() */
+        .kpi-card {
             padding: 14px 12px !important;
-            min-height: 120px !important;
-            margin-bottom: 8px !important;
+            min-height: 130px !important;
+            margin-bottom: 4px !important;
             border-radius: 12px !important;
         }
         .kpi-icon {
-            font-size: 20px !important;
+            font-size: 22px !important;
             top: 10px !important;
             right: 10px !important;
         }
         .kpi-label {
-            font-size: 8px !important;
+            font-size: 9px !important;
             letter-spacing: 1.5px !important;
             margin-bottom: 6px !important;
         }
         .kpi-value {
-            font-size: 22px !important;
+            font-size: 24px !important;
         }
         .kpi-unit {
             font-size: 10px !important;
@@ -1329,7 +1366,34 @@ st.markdown("""
             margin-top: 8px !important;
             letter-spacing: 0.3px !important;
         }
-        .kpi-trend::before { content: ""; }
+
+        /* === TREND CHARTS - stack vertically on mobile === */
+        .trend-grid {
+            grid-template-columns: 1fr !important;
+            gap: 10px !important;
+        }
+        .trend-card {
+            padding: 12px 10px !important;
+            border-radius: 10px !important;
+        }
+        .trend-card-title {
+            font-size: 12px !important;
+        }
+        .trend-canvas-wrap,
+        .trend-canvas-wrap canvas {
+            height: 220px !important;
+        }
+
+        /* === Bottom 2-col grids (mode + suppliers) stack === */
+        div[data-testid="stHorizontalBlock"]:has(.section-header):not(:has(.dashboard-header)) {
+            flex-wrap: wrap !important;
+        }
+        div[data-testid="stHorizontalBlock"]:has(.section-header):not(:has(.dashboard-header))
+            > div[data-testid="stColumn"] {
+            flex: 1 1 100% !important;
+            min-width: 100% !important;
+            width: 100% !important;
+        }
 
         /* Section headers - tighter */
         .section-header {
@@ -1338,6 +1402,11 @@ st.markdown("""
             letter-spacing: 1.5px !important;
             border-radius: 8px !important;
             margin: 14px 0 10px 0 !important;
+        }
+
+        /* DataFrames / tables - allow horizontal scroll instead of breaking layout */
+        .stDataFrame {
+            overflow-x: auto !important;
         }
 
         /* Hide hover effects on mobile (they cause jank on touch) */
@@ -1352,9 +1421,10 @@ st.markdown("""
         .dashboard-header .subtitle { font-size: 9px !important; }
         .info-card-value { font-size: 14px !important; }
         .info-card-label { font-size: 7px !important; }
-        .kpi-value { font-size: 19px !important; }
-        .kpi-label { font-size: 7px !important; }
-        .kpi-container { padding: 12px 10px !important; }
+        .kpi-value { font-size: 21px !important; }
+        .kpi-label { font-size: 8px !important; }
+        .kpi-card { padding: 12px 10px !important; min-height: 120px !important; }
+        .trend-card-title { font-size: 11px !important; }
     }
 </style>
 
@@ -1718,14 +1788,15 @@ if "14 Days" in page:
     qty_data = daily["Qty"].tolist()
     case_data = daily["Case"].tolist()
 
-    # === KPI ROW ===
-    kpi1, kpi2, kpi3, kpi4 = st.columns(4)
+    # === KPI ROW (2x2 on mobile, 4-across on desktop via CSS) ===
+    kpi_row1_left, kpi_row1_right = st.columns(2, gap="small")
+    kpi_row2_left, kpi_row2_right = st.columns(2, gap="small")
 
-    with kpi1:
+    with kpi_row1_left:
         unique_suppliers = filtered["Supplier"].nunique()
         arrow_icon = {"up": "▲", "down": "▼", "neutral": "—"}[qty_arrow]
         st.markdown(f"""
-        <div class="kpi-container kpi-yellow">
+        <div class="kpi-container kpi-yellow kpi-card">
             <div class="kpi-icon">📦</div>
             <div class="kpi-label">📦 TOTAL Q'TY</div>
             <div class="kpi-value">{total_qty:,}<span class="kpi-unit">PCS</span></div>
@@ -1733,10 +1804,10 @@ if "14 Days" in page:
         </div>
         """, unsafe_allow_html=True)
 
-    with kpi2:
+    with kpi_row1_right:
         arrow_icon = {"up": "▲", "down": "▼", "neutral": "—"}[case_arrow]
         st.markdown(f"""
-        <div class="kpi-container kpi-black">
+        <div class="kpi-container kpi-black kpi-card">
             <div class="kpi-icon">📋</div>
             <div class="kpi-label">📋 TOTAL CASE</div>
             <div class="kpi-value">{total_case:,}<span class="kpi-unit">CASE</span></div>
@@ -1744,11 +1815,11 @@ if "14 Days" in page:
         </div>
         """, unsafe_allow_html=True)
 
-    with kpi3:
+    with kpi_row2_left:
         avg_qty = round(total_qty / max(total_case, 1), 1)
         arrow_icon = {"up": "▲", "down": "▼", "neutral": "—"}[avg_arrow]
         st.markdown(f"""
-        <div class="kpi-container kpi-yellow">
+        <div class="kpi-container kpi-yellow kpi-card">
             <div class="kpi-icon">📊</div>
             <div class="kpi-label">📊 AVG / CASE</div>
             <div class="kpi-value">{avg_qty}<span class="kpi-unit">PCS</span></div>
@@ -1756,11 +1827,11 @@ if "14 Days" in page:
         </div>
         """, unsafe_allow_html=True)
 
-    with kpi4:
+    with kpi_row2_right:
         unique_parts = filtered["Part No"].nunique()
         arrow_icon = {"up": "▲", "down": "▼", "neutral": "—"}[parts_arrow]
         st.markdown(f"""
-        <div class="kpi-container kpi-black">
+        <div class="kpi-container kpi-black kpi-card">
             <div class="kpi-icon">⚙</div>
             <div class="kpi-label">⚙ UNIQUE PARTS</div>
             <div class="kpi-value">{unique_parts}<span class="kpi-unit">PART</span></div>
@@ -1891,22 +1962,22 @@ if "14 Days" in page:
     )
 
     trend_html = f"""
-    <div style="display:grid; grid-template-columns: 1fr 1fr; gap: 16px;">
-        <div style="background: white; border: 2px solid #000; border-radius: 12px; padding: 16px; box-shadow: 0 4px 12px rgba(0,0,0,0.08);">
-            <div style="display:flex; align-items:center; gap:8px; margin-bottom:8px;">
-                <div style="width:10px; height:10px; background:#FFD700; border-radius:50%;"></div>
-                <div style="color:#000; font-weight:900; font-size:13px; letter-spacing:1px;">Q'TY (PCS) TREND</div>
+    <div class="trend-grid">
+        <div class="trend-card">
+            <div class="trend-card-head">
+                <div class="trend-dot trend-dot-gold"></div>
+                <div class="trend-card-title">Q'TY (PCS) TREND</div>
             </div>
-            <div style="width:100%; height:200px;">
+            <div class="trend-canvas-wrap">
                 <canvas id="kpiQtyChart"></canvas>
             </div>
         </div>
-        <div style="background: white; border: 2px solid #000; border-radius: 12px; padding: 16px; box-shadow: 0 4px 12px rgba(0,0,0,0.08);">
-            <div style="display:flex; align-items:center; gap:8px; margin-bottom:8px;">
-                <div style="width:10px; height:10px; background:#000; border-radius:50%;"></div>
-                <div style="color:#000; font-weight:900; font-size:13px; letter-spacing:1px;">CASE TREND</div>
+        <div class="trend-card">
+            <div class="trend-card-head">
+                <div class="trend-dot trend-dot-black"></div>
+                <div class="trend-card-title">CASE TREND</div>
             </div>
-            <div style="width:100%; height:200px;">
+            <div class="trend-canvas-wrap">
                 <canvas id="kpiCaseChart"></canvas>
             </div>
         </div>
@@ -1914,42 +1985,66 @@ if "14 Days" in page:
     <script src="{CHARTJS_CDN}"></script>
     <script>
     (function() {{
-        const makeChart = (id, labels, data, borderColor, bgColor, pointColor, pointBorder) => {{
+        function makeChart(id, labels, data, borderColor, bgColor, pointColor, pointBorder) {{
             const canvas = document.getElementById(id);
-            canvas.width = canvas.parentElement.clientWidth - 8;
-            canvas.height = 200;
-            return new Chart(canvas, {{
-                type: 'line',
-                data: {{
-                    labels: labels,
-                    datasets: [{{
-                        data: data, borderColor: borderColor, backgroundColor: bgColor,
-                        borderWidth: 2.5, tension: 0.35, fill: true,
-                        pointRadius: 5, pointHoverRadius: 7,
-                        pointBackgroundColor: pointColor, pointBorderColor: pointBorder,
-                        pointBorderWidth: 2
-                    }}]
-                }},
-                options: {{
-                    responsive: false, maintainAspectRatio: false, animation: false,
-                    plugins: {{ legend: {{ display: false }} }},
-                    scales: {{
-                        y: {{ beginAtZero: true, ticks: {{ font: {{ size: 10 }}, stepSize: 1 }},
-                              title: {{ display: true, text: id.includes('Qty') ? 'QTY' : 'CASE', font: {{ size: 10, weight: 'bold' }} }},
-                              grid: {{ color: '#f0f0f0', drawBorder: false }} }},
-                        x: {{ ticks: {{ font: {{ size: 10 }}, maxRotation: 0, autoSkip: true, maxTicksLimit: 7 }},
-                              grid: {{ display: false }} }}
+            if (!canvas) return null;
+            // Resize canvas to fit parent (handles mobile width changes)
+            function fit() {{
+                const parent = canvas.parentElement;
+                const w = parent.clientWidth;
+                if (w <= 0) return false;
+                canvas.width = w;
+                canvas.height = 200;
+                return true;
+            }}
+            if (!fit()) {{
+                requestAnimationFrame(function() {{ fit(); new Chart(canvas, getConfig()); }});
+                return null;
+            }}
+            function getConfig() {{
+                return {{
+                    type: 'line',
+                    data: {{
+                        labels: labels,
+                        datasets: [{{
+                            data: data, borderColor: borderColor, backgroundColor: bgColor,
+                            borderWidth: 2.5, tension: 0.35, fill: true,
+                            pointRadius: 5, pointHoverRadius: 7,
+                            pointBackgroundColor: pointColor, pointBorderColor: pointBorder,
+                            pointBorderWidth: 2
+                        }}]
+                    }},
+                    options: {{
+                        responsive: false, maintainAspectRatio: false, animation: false,
+                        plugins: {{ legend: {{ display: false }} }},
+                        scales: {{
+                            y: {{ beginAtZero: true, ticks: {{ font: {{ size: 10 }}, stepSize: 1, precision: 0 }},
+                                  title: {{ display: true, text: id.includes('Qty') ? 'QTY' : 'CASE', font: {{ size: 10, weight: 'bold' }} }},
+                                  grid: {{ color: '#f0f0f0', drawBorder: false }} }},
+                            x: {{ ticks: {{ font: {{ size: 10 }}, maxRotation: 0, autoSkip: true, maxTicksLimit: 7 }},
+                                  grid: {{ display: false }} }}
+                        }}
                     }}
-                }}
+                }};
+            }}
+            const c = new Chart(canvas, getConfig());
+            window.addEventListener('resize', function() {{
+                fit();
+                c.resize();
             }});
-        }};
-        const c1 = makeChart('kpiQtyChart', {labels}, {qty_data}, '#000000', 'rgba(255,215,0,0.3)', '#FFD700', '#000000');
-        const c2 = makeChart('kpiCaseChart', {labels}, {case_data}, '#FFD700', 'rgba(0,0,0,0.1)', '#000000', '#FFD700');
-        window.addEventListener('resize', () => {{ c1.resize(); c2.resize(); }});
+            return c;
+        }}
+        const c1 = makeChart('kpiQtyChart', {labels}, {qty_data}, '#000000', 'rgba(255,215,0,0.35)', '#FFD700', '#000000');
+        const c2 = makeChart('kpiCaseChart', {labels}, {case_data}, '#FFD700', 'rgba(0,0,0,0.12)', '#000000', '#FFD700');
+        // Re-fit after mobile browser settles (address-bar collapse etc.)
+        setTimeout(function() {{
+            if (c1) {{ c1.canvas.parentElement && (c1.canvas.width = c1.canvas.parentElement.clientWidth); c1.resize(); }}
+            if (c2) {{ c2.canvas.parentElement && (c2.canvas.width = c2.canvas.parentElement.clientWidth); c2.resize(); }}
+        }}, 350);
     }})();
     </script>
     """
-    st.components.v1.html(trend_html, height=320)
+    st.components.v1.html(trend_html, height=680)
 
     # === PROBLEM MODE + TOP 5 SUPPLIERS ===
     col_l, col_r = st.columns(2)
