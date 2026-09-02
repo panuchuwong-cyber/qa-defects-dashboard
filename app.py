@@ -775,13 +775,13 @@ if mode_f != "All":
 # ============================================================
 if "14 Days" in page:
     title_text = "14 DAYS DEFECT MONITORING"
-    subtitle = "Incoming Quality Dashboard"
+    subtitle = "Incoming Quality Dashboard · Auto-sync from GitHub"
 elif "Searching" in page:
     title_text = "SEARCHING SUPPLIER INFORMATION"
-    subtitle = "PPM Analysis & Comparison"
+    subtitle = "PPM Analysis & FY Comparison · Auto-sync from GitHub"
 else:  # Data Entry
     title_text = "DATA ENTRY"
-    subtitle = "Quick Defect Logging System"
+    subtitle = "Quick Defect Logging System · 1-Click Sync"
 
 max_date = df["Date"].max()
 min_date = max_date - timedelta(days=13)
