@@ -1466,6 +1466,55 @@ if "14 Days" in page:
         </div>
         """, unsafe_allow_html=True)
 
+    # === SMART INSIGHTS ===
+    if not filtered.empty:
+        # Find worst supplier by total qty
+        sup_qty = filtered.groupby("Supplier")["Qty"].sum().sort_values(ascending=False)
+        worst_supplier = sup_qty.index[0] if len(sup_qty) > 0 else "N/A"
+        worst_qty = int(sup_qty.iloc[0]) if len(sup_qty) > 0 else 0
+
+        # Find worst mode
+        mode_qty = filtered.groupby("Problem Mode")["Qty"].sum().sort_values(ascending=False)
+        worst_mode = mode_qty.index[0] if len(mode_qty) > 0 else "N/A"
+
+        # Trend direction
+        if qty_pct > 20:
+            trend_msg = f"⚠️ Defects spiked {qty_pct:.1f}% vs previous 7 days"
+            trend_color = "#B71C1C"
+            trend_bg = "rgba(255,107,107,0.12)"
+        elif qty_pct > 0:
+            trend_msg = f"📈 Defects up {qty_pct:.1f}% vs previous 7 days"
+            trend_color = "#E65100"
+            trend_bg = "rgba(255,152,0,0.12)"
+        elif qty_pct < -10:
+            trend_msg = f"✅ Defects down {abs(qty_pct):.1f}% — great improvement!"
+            trend_color = "#1B5E20"
+            trend_bg = "rgba(76,175,80,0.12)"
+        elif qty_pct < 0:
+            trend_msg = f"📉 Defects down {abs(qty_pct):.1f}% vs previous 7 days"
+            trend_color = "#2E7D32"
+            trend_bg = "rgba(76,175,80,0.12)"
+        else:
+            trend_msg = "➡️ Defects stable vs previous 7 days"
+            trend_color = "#555"
+            trend_bg = "rgba(0,0,0,0.05)"
+
+        st.markdown(
+            f'<div style="background:{trend_bg}; border-left:6px solid {trend_color}; '
+            f'border-radius:10px; padding:16px 20px; margin:20px 0; '
+            f'display:flex; align-items:center; gap:16px; '
+            f'box-shadow:0 4px 12px rgba(0,0,0,0.06);">'
+            f'<div style="font-size:24px;">💡</div>'
+            f'<div style="flex:1;">'
+            f'<div style="font-weight:900; color:{trend_color}; font-size:15px; '
+            f'letter-spacing:0.5px; margin-bottom:6px;">{trend_msg}</div>'
+            f'<div style="color:#555; font-size:12px;">'
+            f'🏭 Worst supplier: <b>{worst_supplier}</b> ({worst_qty:,} PCS)  ·  '
+            f'⚠️ Top mode: <b>{worst_mode}</b>'
+            f'</div></div></div>',
+            unsafe_allow_html=True
+        )
+
     # === QUICK ACTIONS BAR ===
     qa1, qa2, qa3, qa4 = st.columns(4)
     with qa1:
