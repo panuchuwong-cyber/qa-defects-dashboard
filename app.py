@@ -2010,6 +2010,61 @@ elif "Data Entry" in page:
     </div>
     """, unsafe_allow_html=True)
 
+    # === DOWNLOAD TEMPLATE SECTION ===
+    st.markdown(
+        '<div style="background: linear-gradient(135deg, #000 0%, #1a1a1a 100%); '
+        'border: 2px solid #FFD700; border-radius: 12px; padding: 18px 22px; '
+        'margin: 20px 0; box-shadow: 0 4px 12px rgba(255,215,0,0.2);">'
+        '<div style="color: #FFD700; font-size: 14px; font-weight: 900; '
+        'letter-spacing: 2px; margin-bottom: 12px;">📥 DOWNLOAD TEMPLATES</div>'
+        '<div style="color: #ccc; font-size: 12px; margin-bottom: 14px;">'
+        'Download Excel template → fill in your data → upload back</div>'
+        '</div>',
+        unsafe_allow_html=True
+    )
+    dl1, dl2, dl3 = st.columns(3)
+    with dl1:
+        try:
+            with open("QA_Defects_Template_14days.xlsx", "rb") as f:
+                st.download_button(
+                    "📋 14-DAY TEMPLATE",
+                    data=f.read(),
+                    file_name="QA_Defects_Template_14days.xlsx",
+                    mime="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
+                    use_container_width=True,
+                    key="dl_14d"
+                )
+        except FileNotFoundError:
+            st.warning("Template file not found")
+    with dl2:
+        try:
+            with open("QA_Defects_Template_FullYear.xlsx", "rb") as f:
+                st.download_button(
+                    "📊 FULL-YEAR TEMPLATE",
+                    data=f.read(),
+                    file_name="QA_Defects_Template_FullYear.xlsx",
+                    mime="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
+                    use_container_width=True,
+                    key="dl_fy"
+                )
+        except FileNotFoundError:
+            st.warning("Template file not found")
+    with dl3:
+        try:
+            with open("QA_Defects_Template.xlsx", "rb") as f:
+                st.download_button(
+                    "📄 BLANK TEMPLATE",
+                    data=f.read(),
+                    file_name="QA_Defects_Template.xlsx",
+                    mime="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
+                    use_container_width=True,
+                    key="dl_blank"
+                )
+        except FileNotFoundError:
+            st.warning("Template file not found")
+
+    st.markdown("<br>", unsafe_allow_html=True)
+
     # === MODE SELECTOR ===
     entry_mode = st.radio(
         "📋 Choose how you want to add data:",
