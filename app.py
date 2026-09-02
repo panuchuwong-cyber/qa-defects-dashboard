@@ -1913,6 +1913,25 @@ elif "Data Entry" in page:
     if "uploaded_data" not in st.session_state:
         st.session_state.uploaded_data = None
 
+    # === PENDING STATS ===
+    n_pending = len(st.session_state.new_entries)
+    n_qty = sum(e.get("Qty", 0) for e in st.session_state.new_entries)
+    n_suppliers_pending = len(set(e.get("Supplier", "") for e in st.session_state.new_entries))
+    n_parts_pending = len(set(e.get("Part No", "") for e in st.session_state.new_entries))
+
+    if n_pending > 0:
+        st.markdown("**📊 PENDING ENTRIES**")
+        ps1, ps2, ps3, ps4 = st.columns(4)
+        with ps1:
+            st.markdown(f'<div class="glass-card" style="text-align:center;"><div style="font-size:10px; color:#666; letter-spacing:2px; font-weight:800;">RECORDS</div><div style="font-size:28px; font-weight:900; color:#000; margin-top:4px;">{n_pending}</div></div>', unsafe_allow_html=True)
+        with ps2:
+            st.markdown(f'<div class="glass-card" style="text-align:center;"><div style="font-size:10px; color:#666; letter-spacing:2px; font-weight:800;">TOTAL QTY</div><div style="font-size:28px; font-weight:900; color:#000; margin-top:4px;">{n_qty:,}</div></div>', unsafe_allow_html=True)
+        with ps3:
+            st.markdown(f'<div class="glass-card" style="text-align:center;"><div style="font-size:10px; color:#666; letter-spacing:2px; font-weight:800;">SUPPLIERS</div><div style="font-size:28px; font-weight:900; color:#000; margin-top:4px;">{n_suppliers_pending}</div></div>', unsafe_allow_html=True)
+        with ps4:
+            st.markdown(f'<div class="glass-card" style="text-align:center;"><div style="font-size:10px; color:#666; letter-spacing:2px; font-weight:800;">PARTS</div><div style="font-size:28px; font-weight:900; color:#000; margin-top:4px;">{n_parts_pending}</div></div>', unsafe_allow_html=True)
+        st.markdown("")
+
     # === STEP INDICATOR ===
     st.markdown("""
     <div style="display:grid; grid-template-columns: 1fr auto 1fr auto 1fr; gap: 8px;
@@ -2759,7 +2778,13 @@ else:
         )
 
     with col_r:
-        st.markdown('<div class="section-header">🚨 TOP WORSE SUPPLIERS</div>', unsafe_allow_html=True)
+        st.markdown(
+            '<div class="section-header">'
+            '<div class="section-icon">🚨</div>'
+            'TOP WORSE SUPPLIERS'
+            '</div>',
+            unsafe_allow_html=True
+        )
         sup_stats = filtered.groupby("Supplier").agg(
             Qty=("Qty", "sum"), Case=("Qty", "count")
         ).reset_index().sort_values("Qty", ascending=False).head(8)
@@ -2779,6 +2804,82 @@ else:
         st.dataframe(
             sup_df.style.map(color_pct, subset=["Change"]),
             use_container_width=True, hide_index=True, height=280
+        )
+
+    # === SUPPLIER SCORE (kanom-qa algorithm v5) ===
+    st.markdown(
+        '<div class="section-header">'
+        '<div class="section-icon">⭐</div>'
+        'SUPPLIER SCORE RANKING (Higher = Worse)'
+        '</div>',
+        unsafe_allow_html=True
+    )
+
+    if not filtered.empty:
+        # Score: 0.35 * qty_norm + 0.45 * case_norm + 0.20 * freq_norm
+        # Ensure filtered is a DataFrame (defensive)
+        fdf = pd.DataFrame(filtered)
+        # Identify CASE rows (severity)
+        fdf = fdf.copy()
+        comment_str = fdf["Comment"].astype(str)
+        fdf["is_case"] = comment_str.str.contains(
+            "CASE|REJECT", case=False, na=False
+        ).astype(int)
+
+        # Frequency: days with at least one defect
+        freq_series = fdf.groupby("Supplier")["Date"].apply(
+            lambda x: x.dt.date.nunique()
+        )
+        freq_df = freq_series.reset_index(name="days")
+        period_days = max((fdf["Date"].max() - fdf["Date"].min()).days + 1, 1)
+
+        agg = fdf.groupby("Supplier").agg(
+            qty=("Qty", "sum"),
+            case=("is_case", "sum")
+        ).reset_index()
+        score_grp = agg.merge(freq_df, on="Supplier")
+        score_grp["freq"] = score_grp["days"] / period_days
+
+        # Normalize 0-1 by max
+        for col in ["qty", "case", "freq"]:
+            col_max = score_grp[col].max() if score_grp[col].max() > 0 else 1
+            score_grp[f"{col}_norm"] = score_grp[col] / col_max
+
+        score_grp["Score"] = (
+            0.35 * score_grp["qty_norm"]
+            + 0.45 * score_grp["case_norm"]
+            + 0.20 * score_grp["freq_norm"]
+        ).round(3)
+        score_grp = score_grp.sort_values("Score", ascending=False).reset_index(drop=True)
+        score_grp.insert(0, "Rank", range(1, len(score_grp) + 1))
+        score_grp["Score"] = score_grp["Score"].apply(lambda x: f"{x:.3f}")
+
+        def color_score_rank(val):
+            if val == 1: return 'background-color: #FFCDD2; color: #B71C1C; font-weight:900; text-align:center'
+            elif val <= 3: return 'background-color: #FFD700; color: #000; font-weight:900; text-align:center'
+            elif val <= 5: return 'background-color: #FFE082; color: #000; font-weight:700; text-align:center'
+            else: return 'background-color: #C8E6C9; color: #1B5E20; font-weight:700; text-align:center'
+
+        display_df = score_grp[["Rank", "Supplier", "qty", "case", "freq", "Score"]].copy()
+        display_df = display_df.rename(columns={"qty": "QTY", "case": "CASE", "freq": "Freq"})
+
+        st.dataframe(
+            display_df.style.map(color_score_rank, subset=["Rank"]),
+            use_container_width=True, hide_index=True, height=320
+        )
+        st.caption(
+            "**Score formula:** 0.35 × QTY + 0.45 × CASE + 0.20 × Frequency  ·  "
+            "All dimensions normalized by max.  **Lower is better.**"
+        )
+    else:
+        st.markdown(
+            '<div class="empty-state">'
+            '<span class="empty-state-icon">📊</span>'
+            '<div class="empty-state-title">NO SUPPLIER DATA</div>'
+            '<div class="empty-state-text">No defects in current filter range.</div>'
+            '<div class="empty-state-hint">Try adjusting date range or filters</div>'
+            '</div>',
+            unsafe_allow_html=True
         )
 
     # === DETAIL TABLE ===
