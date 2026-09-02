@@ -1427,6 +1427,112 @@ st.markdown("""
         .kpi-card { padding: 12px 10px !important; min-height: 120px !important; }
         .trend-card-title { font-size: 11px !important; }
     }
+
+    /* ===================================================== */
+    /* === GLOBAL MOBILE STACKING — ALL PAGES ============ */
+    /* ===================================================== */
+
+    /* Any horizontal block with 3+ columns stacks on mobile */
+    @media (max-width: 768px) {
+        /* Universal: stack every 3+ column layout to single column */
+        div[data-testid="stHorizontalBlock"] {
+            flex-wrap: wrap !important;
+            gap: 8px !important;
+        }
+        div[data-testid="stHorizontalBlock"] > div[data-testid="stColumn"] {
+            flex: 1 1 100% !important;
+            min-width: 100% !important;
+            width: 100% !important;
+            margin-bottom: 4px !important;
+        }
+        /* EXCEPTIONS — keep these as 2-col on mobile */
+        /* Header row stays single column (already wrapped above) */
+        /* KPI rows: 2x2 layout */
+        div[data-testid="stHorizontalBlock"]:has(.kpi-card) {
+            gap: 6px !important;
+        }
+        div[data-testid="stHorizontalBlock"]:has(.kpi-card) > div[data-testid="stColumn"] {
+            flex: 1 1 calc(50% - 4px) !important;
+            min-width: calc(50% - 4px) !important;
+            max-width: calc(50% - 4px) !important;
+            width: calc(50% - 4px) !important;
+            margin-bottom: 4px !important;
+        }
+        /* Selection supplier group buttons: 3-col grid */
+        div[data-testid="stHorizontalBlock"]:has(.group-btn-wrap) {
+            gap: 8px !important;
+        }
+        div[data-testid="stHorizontalBlock"]:has(.group-btn-wrap) > div[data-testid="stColumn"] {
+            flex: 1 1 calc(33.333% - 6px) !important;
+            min-width: calc(33.333% - 6px) !important;
+            max-width: calc(33.333% - 6px) !important;
+            width: calc(33.333% - 6px) !important;
+            margin-bottom: 6px !important;
+        }
+    }
+
+    /* === Streamlit widget polish on mobile === */
+    @media (max-width: 768px) {
+        /* Buttons full width by default */
+        .stButton > button,
+        .stDownloadButton > button,
+        .stFormSubmitButton > button {
+            width: 100% !important;
+            min-height: 44px !important;
+            font-size: 13px !important;
+        }
+        /* Selectbox / Multiselect / TextInput full width */
+        .stSelectbox, .stMultiselect, .stTextInput,
+        .stTextArea, .stNumberInput, .stDateInput {
+            width: 100% !important;
+        }
+        /* Tabs more compact */
+        .stTabs [data-baseweb="tab-list"] {
+            gap: 4px !important;
+            flex-wrap: wrap !important;
+        }
+        .stTabs [data-baseweb="tab"] {
+            padding: 6px 10px !important;
+            font-size: 11px !important;
+        }
+        /* DataFrames scrollable */
+        .stDataFrame, [data-testid="stDataFrame"] {
+            overflow-x: auto !important;
+            -webkit-overflow-scrolling: touch !important;
+        }
+        /* Expander header larger touch target */
+        .streamlit-expanderHeader,
+        summary[data-testid="stExpander"] {
+            padding: 10px 14px !important;
+            font-size: 13px !important;
+        }
+        /* Alert/info boxes tighter */
+        .stAlert {
+            padding: 10px 14px !important;
+            font-size: 12px !important;
+        }
+        /* Markdown paragraphs tighter */
+        .stMarkdown p {
+            font-size: 13px !important;
+            line-height: 1.5 !important;
+        }
+        /* Subheaders smaller */
+        h2 { font-size: 18px !important; }
+        h3 { font-size: 15px !important; }
+        h4 { font-size: 13px !important; }
+    }
+
+    /* === Improve touch ergonomics === */
+    @media (max-width: 768px) {
+        /* Tap targets at least 44px (Apple HIG) */
+        button, [role="button"], input, select, textarea {
+            min-height: 40px !important;
+        }
+        /* Hide the chart_fullscreen toggle on mobile if present */
+        [data-testid="stFullScreenButton"] {
+            display: none !important;
+        }
+    }
 </style>
 
 <script>
@@ -2217,6 +2323,7 @@ if "14 Days" in page:
         cols = st.columns(n_cols)
         for j, g in enumerate(row_groups):
             with cols[j]:
+                st.markdown('<div class="group-btn-wrap">', unsafe_allow_html=True)
                 icon, _, _ = group_meta.get(g, ("📦", "", ""))
                 count = int(df[df["Group Part"] == g]["Qty"].sum())
                 is_sel = (st.session_state.selected_group == g)
@@ -2251,6 +2358,7 @@ if "14 Days" in page:
                                 use_container_width=True, type="secondary"):
                         st.session_state.selected_group = g
                         st.rerun()
+                st.markdown('</div>', unsafe_allow_html=True)
 
     if st.session_state.selected_group:
         _, _, col_c = st.columns([2, 2, 1])
