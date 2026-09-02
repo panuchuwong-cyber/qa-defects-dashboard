@@ -319,6 +319,191 @@ st.markdown("""
         position: relative; z-index: 1;
     }
 
+    /* === HERO HEADER (new unified design) === */
+    .hero-header {
+        background:
+            linear-gradient(135deg, #000000 0%, #1a1a1a 50%, #000000 100%),
+            radial-gradient(circle at 80% 20%, rgba(255,215,0,0.18) 0%, transparent 60%);
+        border: 2px solid #FFD700;
+        border-radius: 16px;
+        padding: 20px 22px;
+        margin-bottom: 18px;
+        position: relative;
+        overflow: hidden;
+        box-shadow: 0 8px 28px rgba(0,0,0,0.25);
+        display: grid;
+        grid-template-columns: 1fr auto;
+        grid-template-areas:
+            "left right"
+            "stats stats"
+            "live live";
+        gap: 14px 18px;
+    }
+    .hero-header::before {
+        content: "";
+        position: absolute; top: -50%; right: -20%;
+        width: 320px; height: 320px;
+        background: radial-gradient(circle, rgba(255,215,0,0.18) 0%, transparent 60%);
+        animation: pulse 5s ease-in-out infinite;
+        pointer-events: none;
+    }
+    .hero-left {
+        grid-area: left;
+        position: relative; z-index: 1;
+    }
+    .hero-title {
+        color: #FFD700;
+        font-size: 22px;
+        font-weight: 900;
+        letter-spacing: 2px;
+        line-height: 1.15;
+        text-shadow: 0 2px 12px rgba(255,215,0,0.4);
+    }
+    .hero-subtitle {
+        color: #cccccc;
+        font-size: 10px;
+        letter-spacing: 1.5px;
+        text-transform: uppercase;
+        margin-top: 6px;
+        font-weight: 600;
+    }
+    .hero-badge {
+        display: inline-block;
+        background: linear-gradient(135deg, #FFD700 0%, #FFA500 100%);
+        color: #000;
+        padding: 5px 12px;
+        border-radius: 12px;
+        font-size: 9px;
+        font-weight: 900;
+        letter-spacing: 1.5px;
+        margin-top: 10px;
+        box-shadow: 0 4px 12px rgba(255,215,0,0.35);
+    }
+    .hero-right {
+        grid-area: right;
+        background: rgba(255,215,0,0.08);
+        border: 1px solid rgba(255,215,0,0.25);
+        border-radius: 10px;
+        padding: 8px 12px;
+        text-align: right;
+        position: relative; z-index: 1;
+        min-width: 120px;
+    }
+    .hero-date-row {
+        display: flex;
+        flex-direction: column;
+        align-items: flex-end;
+        gap: 1px;
+    }
+    .hero-date-label {
+        color: #FFD700;
+        font-size: 8px;
+        font-weight: 800;
+        letter-spacing: 2px;
+        text-transform: uppercase;
+    }
+    .hero-date-val {
+        color: #ffffff;
+        font-size: 13px;
+        font-weight: 800;
+        font-family: 'Courier New', monospace;
+        letter-spacing: 0.5px;
+    }
+    .hero-date-divider {
+        color: rgba(255,215,0,0.5);
+        font-size: 9px;
+        letter-spacing: 1px;
+        margin: 2px 0;
+        text-align: right;
+    }
+    .hero-stats {
+        grid-area: stats;
+        display: grid;
+        grid-template-columns: repeat(4, 1fr);
+        gap: 8px;
+        position: relative; z-index: 1;
+    }
+    .hero-stat {
+        background: linear-gradient(135deg, rgba(255,215,0,0.06) 0%, rgba(0,0,0,0.4) 100%);
+        border: 1px solid rgba(255,215,0,0.3);
+        border-radius: 8px;
+        padding: 8px 6px;
+        text-align: center;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        gap: 2px;
+        transition: transform 0.2s, box-shadow 0.2s;
+    }
+    .hero-stat:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 4px 12px rgba(255,215,0,0.2);
+    }
+    .hero-stat-icon {
+        font-size: 14px;
+    }
+    .hero-stat-value {
+        color: #FFD700;
+        font-size: 16px;
+        font-weight: 900;
+        line-height: 1;
+        font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+    }
+    .hero-stat-label {
+        color: #ffffff;
+        font-size: 8px;
+        font-weight: 700;
+        letter-spacing: 1px;
+        text-transform: uppercase;
+        opacity: 0.85;
+    }
+    .hero-stat-clock {
+        background: linear-gradient(135deg, #FFD700 0%, #FFA500 100%);
+        border-color: #FFD700;
+    }
+    .hero-stat-clock .hero-stat-icon { font-size: 12px; }
+    .hero-stat-clock .hero-stat-label {
+        color: #000;
+        opacity: 1;
+        font-weight: 800;
+    }
+    .hero-stat-clock-val {
+        color: #000;
+        font-size: 12px;
+        font-weight: 900;
+        font-family: 'Courier New', monospace;
+        letter-spacing: 0.5px;
+        line-height: 1;
+    }
+    .hero-live {
+        grid-area: live;
+        background: linear-gradient(90deg, rgba(255,215,0,0.12) 0%, rgba(0,0,0,0.3) 100%);
+        border: 1px solid rgba(255,215,0,0.4);
+        border-radius: 8px;
+        padding: 6px 12px;
+        color: #FFD700;
+        font-size: 10px;
+        font-weight: 800;
+        letter-spacing: 1.5px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: 8px;
+        position: relative; z-index: 1;
+    }
+    .hero-live-pulse {
+        width: 8px; height: 8px;
+        background: #4CAF50;
+        border-radius: 50%;
+        box-shadow: 0 0 0 0 rgba(76,175,80,0.7);
+        animation: livePulse 1.8s ease-in-out infinite;
+        flex-shrink: 0;
+    }
+    @keyframes livePulse {
+        0%, 100% { box-shadow: 0 0 0 0 rgba(76,175,80,0.7); transform: scale(1); }
+        50%      { box-shadow: 0 0 0 8px rgba(76,175,80,0); transform: scale(1.1); }
+    }
+
     /* === DATE RANGE CHIP === */
     .date-chip {
         background: linear-gradient(135deg, #FFD700 0%, #FFA500 100%);
@@ -1249,6 +1434,64 @@ st.markdown("""
             max-width: 100% !important;
         }
 
+        /* === HERO HEADER mobile layout === */
+        .hero-header {
+            padding: 16px 16px !important;
+            margin-bottom: 12px !important;
+            border-radius: 12px !important;
+            grid-template-columns: 1fr !important;
+            grid-template-areas:
+                "left"
+                "right"
+                "stats"
+                "live" !important;
+            gap: 12px !important;
+        }
+        .hero-title {
+            font-size: 18px !important;
+            letter-spacing: 1.5px !important;
+        }
+        .hero-subtitle {
+            font-size: 9px !important;
+        }
+        .hero-badge {
+            font-size: 8px !important;
+            padding: 4px 10px !important;
+            margin-top: 8px !important;
+        }
+        .hero-right {
+            text-align: left !important;
+            min-width: auto !important;
+            padding: 8px 12px !important;
+        }
+        .hero-date-row {
+            flex-direction: row !important;
+            align-items: center !important;
+            justify-content: space-between !important;
+            gap: 8px !important;
+        }
+        .hero-date-divider {
+            text-align: center !important;
+            margin: 4px 0 !important;
+        }
+        .hero-stats {
+            grid-template-columns: repeat(4, 1fr) !important;
+            gap: 6px !important;
+        }
+        .hero-stat {
+            padding: 6px 4px !important;
+            gap: 1px !important;
+        }
+        .hero-stat-icon { font-size: 12px !important; }
+        .hero-stat-value { font-size: 13px !important; }
+        .hero-stat-label { font-size: 7px !important; letter-spacing: 0.5px !important; }
+        .hero-stat-clock-val { font-size: 10px !important; }
+        .hero-live {
+            font-size: 9px !important;
+            padding: 5px 10px !important;
+            letter-spacing: 1px !important;
+        }
+
         /* Stack header columns vertically */
         div[data-testid="stHorizontalBlock"]:has(> div[data-testid="stColumn"] .dashboard-header) {
             flex-wrap: wrap !important;
@@ -1764,85 +2007,70 @@ else:  # Data Entry
 max_date = df["Date"].max()
 min_date = max_date - timedelta(days=13)
 
-hdr1, hdr2 = st.columns([3, 1])
-with hdr1:
-    st.markdown(
-        f"""
-        <div class="dashboard-header">
-            <h1>⚡ {title_text}</h1>
-            <div class="subtitle">{subtitle}</div>
-            <div class="badge">🏭 3K BATTERY CO., LTD.</div>
-        </div>
-        """,
-        unsafe_allow_html=True
-    )
-with hdr2:
-    # Calculate quick stats for sidebar info
-    n_suppliers = filtered["Supplier"].nunique() if "Supplier" in filtered.columns else 0
-    n_groups    = filtered["Group Part"].nunique() if "Group Part" in filtered.columns else 0
-    n_modes     = filtered["Problem Mode"].nunique() if "Problem Mode" in filtered.columns else 0
+# Calculate quick stats for header info
+n_suppliers = filtered["Supplier"].nunique() if "Supplier" in filtered.columns else 0
+n_groups    = filtered["Group Part"].nunique() if "Group Part" in filtered.columns else 0
+n_modes     = filtered["Problem Mode"].nunique() if "Problem Mode" in filtered.columns else 0
 
-    st.markdown(f"""
-    <div class="date-chip">
-        📅 REPORT PERIOD<br>
-        <span style="font-size: 13px;">{min_date.strftime('%m/%d/%Y')}</span><br>
-        <span style="font-size: 16px;">↓</span><br>
-        <span style="font-size: 13px;">{max_date.strftime('%m/%d/%Y')}</span>
+st.markdown(f"""
+<div class="hero-header">
+    <div class="hero-left">
+        <div class="hero-title">⚡ {title_text}</div>
+        <div class="hero-subtitle">{subtitle}</div>
+        <div class="hero-badge">🏭 3K BATTERY CO., LTD.</div>
     </div>
-
-    <div class="info-stack">
-        <div class="info-card">
-            <span class="info-card-icon">🏭</span>
-            <div class="info-card-value">{n_suppliers}</div>
-            <div class="info-card-label">Suppliers</div>
+    <div class="hero-right">
+        <div class="hero-date-row">
+            <span class="hero-date-label">FROM</span>
+            <span class="hero-date-val">{min_date.strftime('%m/%d/%Y')}</span>
         </div>
-        <div class="info-card">
-            <span class="info-card-icon">📦</span>
-            <div class="info-card-value">{n_groups}</div>
-            <div class="info-card-label">Groups</div>
-        </div>
-        <div class="info-card">
-            <span class="info-card-icon">⚠️</span>
-            <div class="info-card-value">{n_modes}</div>
-            <div class="info-card-label">Modes</div>
+        <div class="hero-date-divider">━━━</div>
+        <div class="hero-date-row">
+            <span class="hero-date-label">TO</span>
+            <span class="hero-date-val">{max_date.strftime('%m/%d/%Y')}</span>
         </div>
     </div>
-
-    <div class="live-indicator">
-        <span class="live-pulse"></span>
-        <span>LIVE DATA</span>
+    <div class="hero-stats">
+        <div class="hero-stat">
+            <span class="hero-stat-icon">🏭</span>
+            <span class="hero-stat-value">{n_suppliers}</span>
+            <span class="hero-stat-label">Suppliers</span>
+        </div>
+        <div class="hero-stat">
+            <span class="hero-stat-icon">📦</span>
+            <span class="hero-stat-value">{n_groups}</span>
+            <span class="hero-stat-label">Groups</span>
+        </div>
+        <div class="hero-stat">
+            <span class="hero-stat-icon">⚠️</span>
+            <span class="hero-stat-value">{n_modes}</span>
+            <span class="hero-stat-label">Modes</span>
+        </div>
+        <div class="hero-stat hero-stat-clock">
+            <span class="hero-stat-icon">⏰</span>
+            <span class="hero-stat-label">Current Time</span>
+            <span id="kanom-clock" class="hero-stat-clock-val">--:--:--</span>
+        </div>
     </div>
-
-    <div style="margin-top: 14px; padding: 10px; background: rgba(255,215,0,0.06);
-                border: 1px solid rgba(255,215,0,0.2); border-radius: 8px;
-                text-align: center;">
-        <div style="color: #FFD700; font-size: 9px; font-weight: 700;
-                    letter-spacing: 2px; text-transform: uppercase; margin-bottom: 4px;">
-            ⏰ CURRENT TIME
-        </div>
-        <div id="kanom-clock" style="color: #fff; font-size: 16px; font-weight: 900;
-                    font-family: 'Courier New', monospace; letter-spacing: 1px;">
-            --:--:--
-        </div>
-        <div style="color: #666; font-size: 10px; margin-top: 4px;">
-            {datetime.now().strftime('%A, %B %d, %Y')}
-        </div>
+    <div class="hero-live">
+        <span class="hero-live-pulse"></span>
+        <span>LIVE DATA · Auto-synced from GitHub</span>
     </div>
-
-    <script>
-    (function() {{
-        const el = document.getElementById('kanom-clock');
-        if (!el) return;
-        function tick() {{
-            const d = new Date();
-            const pad = (n) => String(n).padStart(2, '0');
-            el.textContent = pad(d.getHours()) + ':' + pad(d.getMinutes()) + ':' + pad(d.getSeconds());
-        }}
-        tick();
-        setInterval(tick, 1000);
-    }})();
-    </script>
-    """, unsafe_allow_html=True)
+</div>
+<script>
+(function() {{
+    const el = document.getElementById('kanom-clock');
+    if (!el) return;
+    function tick() {{
+        const d = new Date();
+        const pad = (n) => String(n).padStart(2, '0');
+        el.textContent = pad(d.getHours()) + ':' + pad(d.getMinutes()) + ':' + pad(d.getSeconds());
+    }}
+    tick();
+    setInterval(tick, 1000);
+}})();
+</script>
+""", unsafe_allow_html=True)
 
 # ============================================================
 # PAGE 1: 14 DAYS MONITORING
