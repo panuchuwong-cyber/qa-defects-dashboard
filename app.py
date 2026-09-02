@@ -1564,12 +1564,23 @@ if "14 Days" in page:
     col_l, col_r = st.columns(2)
 
     with col_l:
-        st.markdown('<div class="section-header">⚠️ PROBLEM MODE BREAKDOWN</div>', unsafe_allow_html=True)
+        st.markdown(
+            '<div class="section-header">'
+            '<div class="section-icon">⚠️</div>'
+            'PROBLEM MODE BREAKDOWN'
+            '</div>',
+            unsafe_allow_html=True
+        )
         mode_summary = filtered.groupby("Problem Mode").agg(
             Qty=("Qty", "sum"), Case=("Qty", "count")
         ).reset_index().sort_values("Qty", ascending=False)
         mode_summary["Case"] = mode_summary["Case"].astype(int)
         mode_summary["Qty"] = mode_summary["Qty"].astype(int)
+        # Add % share column
+        total_qty_all = max(int(mode_summary["Qty"].sum()), 1)
+        mode_summary["% Share"] = [
+            f"{round((q/total_qty_all)*100, 1)}%" for q in mode_summary["Qty"]
+        ]
 
         def color_mode(val):
             if val not in mode_summary["Problem Mode"].values: return ''
@@ -1584,7 +1595,13 @@ if "14 Days" in page:
         )
 
     with col_r:
-        st.markdown('<div class="section-header">🏭 TOP 5 SUPPLIERS</div>', unsafe_allow_html=True)
+        st.markdown(
+            '<div class="section-header">'
+            '<div class="section-icon">🏭</div>'
+            'TOP 5 SUPPLIERS'
+            '</div>',
+            unsafe_allow_html=True
+        )
         top5 = filtered.groupby("Supplier").agg(
             Qty=("Qty", "sum"), Case=("Qty", "count")
         ).reset_index().sort_values("Qty", ascending=False).head(5)
@@ -1594,6 +1611,12 @@ if "14 Days" in page:
         # Add rank column
         top5.insert(0, "Rank", range(1, len(top5) + 1))
 
+        # Add % share column
+        total_qty_top = int(top5["Qty"].sum()) or 1
+        top5["% Share"] = top5["Qty"].apply(
+            lambda x: f"{round((x/total_qty_top)*100, 1)}%"
+        )
+
         def color_rank(val):
             if val == 1: return 'background-color: #FFD700; color: #000; font-weight:900; font-size:16px; text-align:center'
             elif val == 2: return 'background-color: #FFC107; color: #000; font-weight:900; text-align:center'
@@ -1602,6 +1625,7 @@ if "14 Days" in page:
 
         st.dataframe(
             top5.style.map(color_rank, subset=["Rank"]),
+            column_order=["Rank", "Supplier", "Qty", "Case", "% Share"],
             use_container_width=True, hide_index=True, height=280
         )
 
