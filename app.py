@@ -668,6 +668,74 @@ st.markdown("""
         box-shadow: 0 12px 28px rgba(255,215,0,0.25) !important;
     }
 
+    /* KPI value counter animation */
+    @keyframes countUp {
+        from { opacity: 0; transform: translateY(8px); }
+        to   { opacity: 1; transform: translateY(0); }
+    }
+    .kpi-value {
+        animation: countUp 0.6s cubic-bezier(0.16, 1, 0.3, 1);
+        display: flex; align-items: center; justify-content: center;
+        gap: 6px;
+    }
+
+    /* Subtle icon bobbing */
+    @keyframes iconBob {
+        0%, 100% { transform: translateY(0); }
+        50%      { transform: translateY(-3px); }
+    }
+    .kpi-icon {
+        animation: iconBob 3s ease-in-out infinite;
+        display: inline-block;
+    }
+
+    /* KPI value: gradient text + glow */
+    .kpi-value {
+        font-size: 32px !important;
+        font-weight: 900 !important;
+        letter-spacing: -1px;
+        background: linear-gradient(135deg, #FFD700 0%, #FFA500 50%, #FFD700 100%);
+        background-size: 200% 100%;
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+        background-clip: text;
+        animation: countUp 0.6s cubic-bezier(0.16, 1, 0.3, 1),
+                   shimmer 4s linear infinite;
+        display: flex; align-items: center; justify-content: center;
+        gap: 6px;
+    }
+    .kpi-container.kpi-black .kpi-value {
+        background: linear-gradient(135deg, #FFD700 0%, #FFC107 100%);
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+    }
+
+    /* KPI container: gradient border + glow on hover */
+    .kpi-container {
+        position: relative; padding: 18px;
+        background: linear-gradient(135deg, #fff 0%, #fafafa 100%);
+        border-radius: 14px;
+        text-align: center;
+        border: 2px solid #FFD700;
+        box-shadow: 0 4px 16px rgba(0,0,0,0.06);
+        overflow: hidden;
+    }
+    .kpi-container::before {
+        content: ""; position: absolute; top: 0; left: 0;
+        width: 100%; height: 4px;
+        background: linear-gradient(90deg, #FFD700 0%, #FFC107 50%, #FFD700 100%);
+        background-size: 200% 100%;
+        animation: shimmer 3s linear infinite;
+    }
+    .kpi-container.kpi-black {
+        background: linear-gradient(135deg, #0a0a0a 0%, #1f1f1f 100%);
+        color: #fff;
+        border: 2px solid #FFD700;
+    }
+    .kpi-container.kpi-black .kpi-label {
+        color: #FFD700 !important;
+    }
+
     /* === SIDEBAR NAV GRADIENT BUTTONS === */
     /* Target each nav button by its key (Streamlit generates data-testid with key suffix) */
     [data-testid="stSidebar"] button[kind="secondary"] {
