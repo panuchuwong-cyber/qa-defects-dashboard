@@ -1385,14 +1385,15 @@ st.markdown("""
         }
 
         /* === Bottom 2-col grids (mode + suppliers) stack === */
-        div[data-testid="stHorizontalBlock"]:has(.section-header):not(:has(.dashboard-header)) {
+        div[data-testid="stHorizontalBlock"]:has(.resp-row-2col) {
             flex-wrap: wrap !important;
         }
-        div[data-testid="stHorizontalBlock"]:has(.section-header):not(:has(.dashboard-header))
+        div[data-testid="stHorizontalBlock"]:has(.resp-row-2col)
             > div[data-testid="stColumn"] {
             flex: 1 1 100% !important;
             min-width: 100% !important;
             width: 100% !important;
+            margin-bottom: 14px !important;
         }
 
         /* Section headers - tighter */
@@ -2051,9 +2052,11 @@ if "14 Days" in page:
 
     with col_l:
         st.markdown(
+            '<div class="resp-row-2col">'
             '<div class="section-header">'
             '<div class="section-icon">⚠️</div>'
             'PROBLEM MODE BREAKDOWN'
+            '</div>'
             '</div>',
             unsafe_allow_html=True
         )
@@ -3246,7 +3249,12 @@ else:
     col_l, col_r = st.columns(2)
 
     with col_l:
-        st.markdown('<div class="section-header">📋 PROBLEM MODE COMPARISON</div>', unsafe_allow_html=True)
+        st.markdown(
+            '<div class="resp-row-2col">'
+            '<div class="section-header">📋 PROBLEM MODE COMPARISON</div>'
+            '</div>',
+            unsafe_allow_html=True
+        )
         all_modes = sorted(df["Problem Mode"].unique().tolist())
         total_q = max(int(df["Qty"].sum()), 1)
         fy_rows = []
