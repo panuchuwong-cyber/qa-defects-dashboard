@@ -1,0 +1,14 @@
+Supplier Code,Supplier Name,Country,Monthly Received Qty,Contract Active,Tier
+KSV,"KSV (Thailand) Co., Ltd.",Thailand,50000,YES,TIER 1
+AKUSAN,AKUSAN Trading,Japan,30000,YES,TIER 1
+NISSEN,NISSEN CHEMITEC,Japan,25000,YES,TIER 1
+PARADISE,PARADISE Industries,Thailand,20000,YES,TIER 2
+BTD,BTD Manufacturing,Thailand,15000,YES,TIER 2
+C.G.,C.G. Plastic,Thailand,18000,YES,TIER 2
+TTS PLASTIC,"TTS Plastic Co., Ltd.",Thailand,12000,YES,TIER 2
+SAMBO,SAMBO Industries,Korea,22000,YES,TIER 1
+DEM,DEM Engineering,Thailand,10000,YES,TIER 3
+APT,APT (Thailand),Thailand,8000,YES,TIER 3
+SUPERFAST,"Super Fast Co., Ltd.",China,35000,YES,TIER 1
+SAM NEO,SAM NEO Trading,Korea,15000,YES,TIER 2
+TECHNO ASSOCIATE,Techno Associate Inc.,Japan,28000,YES,TIER 1
