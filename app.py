@@ -1356,17 +1356,19 @@ st.markdown("""
             font-size: 24px !important;
         }
         .kpi-unit {
-            font-size: 10px !important;
+            font-size: 11px !important;
             color: #FFD700 !important;
             background: #000 !important;
-            padding: 2px 7px !important;
+            padding: 2px 8px !important;
             border-radius: 8px !important;
-            margin-left: 4px !important;
-            font-weight: 700 !important;
-            line-height: 1.2 !important;
+            margin-left: 5px !important;
+            font-weight: 800 !important;
+            line-height: 1.3 !important;
             display: inline-block !important;
             white-space: nowrap !important;
-            letter-spacing: 0.3px !important;
+            letter-spacing: 0.4px !important;
+            vertical-align: middle !important;
+            border: 1px solid #FFD700 !important;
         }
         .kpi-trend {
             font-size: 9px !important;
