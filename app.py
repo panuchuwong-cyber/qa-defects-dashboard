@@ -1168,6 +1168,194 @@ st.markdown("""
         display: inline-block;
         margin: 8px 0;
     }
+
+    /* ===================================================== */
+    /* === RESPONSIVE DESIGN — MOBILE / TABLET ============ */
+    /* ===================================================== */
+
+    /* Tablet & small laptop (768px - 1024px) */
+    @media (max-width: 1024px) {
+        .dashboard-header h1 {
+            font-size: 24px !important;
+            letter-spacing: 2px !important;
+        }
+        .dashboard-header {
+            padding: 22px 26px !important;
+        }
+        .kpi-value {
+            font-size: 26px !important;
+        }
+        .kpi-container {
+            padding: 18px 16px !important;
+            min-height: 140px !important;
+        }
+    }
+
+    /* Mobile (≤768px) */
+    @media (max-width: 768px) {
+        /* Hide Streamlit's default padding that wastes mobile space */
+        .block-container {
+            padding-left: 0.6rem !important;
+            padding-right: 0.6rem !important;
+            padding-top: 1rem !important;
+            max-width: 100% !important;
+        }
+
+        /* Force header to single column on mobile */
+        div[data-testid="stHorizontalBlock"]:has(> div[data-testid="stColumn"]:first-child .dashboard-header) {
+            flex-wrap: wrap !important;
+        }
+        div[data-testid="stHorizontalBlock"]:has(> div[data-testid="stColumn"]:first-child .dashboard-header)
+            > div[data-testid="stColumn"] {
+            flex: 1 1 100% !important;
+            min-width: 100% !important;
+            width: 100% !important;
+        }
+
+        /* Header card - tighter padding, smaller title */
+        .dashboard-header {
+            padding: 16px 18px !important;
+            margin-bottom: 14px !important;
+            border-radius: 12px !important;
+        }
+        .dashboard-header h1 {
+            font-size: 18px !important;
+            letter-spacing: 1.5px !important;
+            line-height: 1.2 !important;
+        }
+        .dashboard-header .subtitle {
+            font-size: 10px !important;
+            letter-spacing: 1px !important;
+            margin-top: 4px !important;
+        }
+        .dashboard-header .badge {
+            font-size: 9px !important;
+            padding: 4px 10px !important;
+            margin-top: 8px !important;
+        }
+
+        /* Date chip - more compact */
+        .date-chip {
+            padding: 10px 14px !important;
+            font-size: 12px !important;
+            margin-top: 10px !important;
+        }
+        .date-chip span {
+            font-size: 11px !important;
+        }
+        .date-chip span[style*="16px"] {
+            font-size: 13px !important;
+        }
+
+        /* Info stack - keep 3 cols but smaller */
+        .info-stack {
+            gap: 6px !important;
+            margin-top: 8px !important;
+            margin-bottom: 10px !important;
+        }
+        .info-card {
+            padding: 8px 4px !important;
+            border-radius: 8px !important;
+        }
+        .info-card-icon {
+            font-size: 16px !important;
+            margin-bottom: 2px !important;
+        }
+        .info-card-value {
+            font-size: 16px !important;
+        }
+        .info-card-label {
+            font-size: 8px !important;
+            letter-spacing: 0.8px !important;
+            margin-top: 2px !important;
+        }
+
+        /* Live indicator & clock box - compact */
+        .live-indicator {
+            padding: 6px 10px !important;
+            font-size: 10px !important;
+            letter-spacing: 1px !important;
+            margin-top: 8px !important;
+        }
+        div[style*="margin-top: 14px"][style*="background: rgba(255,215,0,0.06)"] {
+            margin-top: 8px !important;
+            padding: 8px !important;
+        }
+        div[style*="margin-top: 14px"][style*="background: rgba(255,215,0,0.06)"]
+            div[id="kanom-clock"] {
+            font-size: 14px !important;
+        }
+
+        /* KPI row - 2 columns on mobile instead of 4 */
+        div[data-testid="stHorizontalBlock"]:has(> div[data-testid="stColumn"] .kpi-container) {
+            flex-wrap: wrap !important;
+        }
+        div[data-testid="stHorizontalBlock"]:has(> div[data-testid="stColumn"] .kpi-container)
+            > div[data-testid="stColumn"] {
+            flex: 1 1 calc(50% - 4px) !important;
+            min-width: calc(50% - 4px) !important;
+            max-width: calc(50% - 4px) !important;
+            width: calc(50% - 4px) !important;
+        }
+
+        /* KPI cards - smaller padding */
+        .kpi-container {
+            padding: 14px 12px !important;
+            min-height: 120px !important;
+            margin-bottom: 8px !important;
+            border-radius: 12px !important;
+        }
+        .kpi-icon {
+            font-size: 20px !important;
+            top: 10px !important;
+            right: 10px !important;
+        }
+        .kpi-label {
+            font-size: 8px !important;
+            letter-spacing: 1.5px !important;
+            margin-bottom: 6px !important;
+        }
+        .kpi-value {
+            font-size: 22px !important;
+        }
+        .kpi-unit {
+            font-size: 10px !important;
+            padding: 1px 6px !important;
+            margin-left: 3px !important;
+        }
+        .kpi-trend {
+            font-size: 9px !important;
+            padding: 4px 8px !important;
+            margin-top: 8px !important;
+            letter-spacing: 0.3px !important;
+        }
+        .kpi-trend::before { content: ""; }
+
+        /* Section headers - tighter */
+        .section-header {
+            padding: 10px 14px !important;
+            font-size: 12px !important;
+            letter-spacing: 1.5px !important;
+            border-radius: 8px !important;
+            margin: 14px 0 10px 0 !important;
+        }
+
+        /* Hide hover effects on mobile (they cause jank on touch) */
+        .kpi-container:hover,
+        .info-card:hover,
+        .dashboard-header:hover { transform: none !important; }
+    }
+
+    /* Very small phones (≤420px) */
+    @media (max-width: 420px) {
+        .dashboard-header h1 { font-size: 16px !important; }
+        .dashboard-header .subtitle { font-size: 9px !important; }
+        .info-card-value { font-size: 14px !important; }
+        .info-card-label { font-size: 7px !important; }
+        .kpi-value { font-size: 19px !important; }
+        .kpi-label { font-size: 7px !important; }
+        .kpi-container { padding: 12px 10px !important; }
+    }
 </style>
 
 <script>
