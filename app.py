@@ -1125,6 +1125,35 @@ elif "Data Entry" in page:
     if "uploaded_data" not in st.session_state:
         st.session_state.uploaded_data = None
 
+    # === STEP INDICATOR ===
+    st.markdown("""
+    <div style="display:grid; grid-template-columns: 1fr auto 1fr auto 1fr; gap: 8px;
+                align-items:center; margin-bottom: 20px; padding: 14px;
+                background: linear-gradient(135deg, #000 0%, #1a1a1a 100%);
+                border: 2px solid #FFD700; border-radius: 12px;">
+        <div style="text-align:center; color: #FFD700;">
+            <div style="font-size: 22px;">📤</div>
+            <div style="font-size: 11px; font-weight: 900; letter-spacing: 1px; margin-top: 4px;">
+                STEP 1<br><span style="color:#fff; font-size:10px;">ADD DATA</span>
+            </div>
+        </div>
+        <div style="color: #FFD700; font-size: 24px; font-weight: 900;">➜</div>
+        <div style="text-align:center; color: #FFD700;">
+            <div style="font-size: 22px;">👁</div>
+            <div style="font-size: 11px; font-weight: 900; letter-spacing: 1px; margin-top: 4px;">
+                STEP 2<br><span style="color:#fff; font-size:10px;">PREVIEW</span>
+            </div>
+        </div>
+        <div style="color: #FFD700; font-size: 24px; font-weight: 900;">➜</div>
+        <div style="text-align:center; color: #FFD700;">
+            <div style="font-size: 22px;">🚀</div>
+            <div style="font-size: 11px; font-weight: 900; letter-spacing: 1px; margin-top: 4px;">
+                STEP 3<br><span style="color:#fff; font-size:10px;">SYNC</span>
+            </div>
+        </div>
+    </div>
+    """, unsafe_allow_html=True)
+
     # === MODE SELECTOR ===
     entry_mode = st.radio(
         "📋 Choose how you want to add data:",
@@ -1265,7 +1294,7 @@ elif "Data Entry" in page:
                         )
                         st.session_state.uploaded_data = valid_records
 
-                        # === SEND TO KANOM ===
+                        # === READY TO SYNC ===
                         st.markdown("<br>", unsafe_allow_html=True)
                         st.markdown(
                             '<div style="background: #000; color: #FFD700; padding: 16px 20px; '
@@ -1273,13 +1302,13 @@ elif "Data Entry" in page:
                             'border: 2px solid #FFD700;">'
                             '<b style="font-size: 14px;">📤 READY TO SYNC!</b><br>'
                             '<span style="color: #ccc; font-size: 12px;">'
-                            f'{len(valid_records)} valid records detected. Download CSV and send to Kanom via Telegram. '
+                            f'{len(valid_records)} valid records detected. Click <b>SYNC TO GITHUB</b> below to publish. '
                             'Dashboard will refresh in 1-2 minutes.'
                             '</span></div>',
                             unsafe_allow_html=True
                         )
 
-                        # CSV download + Telegram sync
+                        # CSV download + GitHub sync
                         csv_data = preview_df.to_csv(index=False).encode('utf-8')
                         col_dl1, col_dl2 = st.columns(2)
                         with col_dl1:
@@ -1297,18 +1326,18 @@ elif "Data Entry" in page:
                                 "📋 Or copy CSV text:",
                                 preview_df.to_csv(index=False),
                                 height=80,
-                                help="Copy and paste to Telegram"
+                                help="Backup option - paste into GitHub commit manually if 1-click sync fails"
                             )
 
-                        # === TELEGRAM DIRECT SYNC ===
+                        # === GITHUB DIRECT SYNC ===
                         st.markdown("<br>", unsafe_allow_html=True)
                         st.markdown(
                             '<div style="background: linear-gradient(135deg, #FFD700 0%, #FFC107 100%);'
                             'color: #000; padding: 16px; border-radius: 10px; margin-bottom: 12px;'
                             'border: 2px solid #000;">'
-                            '<b style="font-size: 14px;">⚡ FASTEST: Send directly to Kanom</b><br>'
+                            '<b style="font-size: 14px;">⚡ FASTEST: 1-CLICK SYNC TO GITHUB</b><br>'
                             '<span style="color: #333; font-size: 12px;">'
-                            'Click button below → message sent to Kanom via Telegram → dashboard refreshes in 1 min'
+                            'Click button below → push to GitHub → dashboard refreshes in 1-2 min. No Telegram needed!'
                             '</span></div>',
                             unsafe_allow_html=True
                         )
@@ -1463,9 +1492,9 @@ elif "Data Entry" in page:
             <b style="font-size: 14px;">💡 HOW IT WORKS</b><br>
             <span style="color: #ccc; font-size: 12px;">
                 1. Fill the form below<br>
-                2. Click <b>"✅ ADD RECORD"</b> — data appears in table below<br>
-                3. Copy the table data and send to Kanom via Telegram<br>
-                4. Kanom will save to GitHub → Dashboard refreshes for everyone
+                2. Click <b>"✅ ADD RECORD"</b> — data appears in preview table<br>
+                3. Click <b>"📤 SYNC TO GITHUB"</b> — pushed directly via API<br>
+                4. Dashboard refreshes for everyone in 1-2 min
             </span>
         </div>
         """, unsafe_allow_html=True)
@@ -1655,12 +1684,12 @@ elif "Data Entry" in page:
 
             st.markdown('</div>', unsafe_allow_html=True)
 
-        # === SEND TO KANOM INSTRUCTIONS ===
+        # === SYNC TO GITHUB ===
         if st.session_state.new_entries:
             st.markdown(
                 '<div class="section-header">'
                 '<div class="section-icon">📤</div>'
-                'SEND TO KANOM TO PUBLISH'
+                'SYNC TO GITHUB'
                 '</div>',
                 unsafe_allow_html=True
             )
@@ -1668,27 +1697,136 @@ elif "Data Entry" in page:
             st.markdown("""
             <div style="background: #FFF8DC; padding: 20px; border-radius: 12px;
                         border: 2px solid #FFD700; margin-bottom: 16px;">
-                <b style="color: #000; font-size: 14px;">📌 3 WAYS TO SEND:</b>
-                <ol style="color: #333; font-size: 13px; line-height: 1.8; margin-top: 8px;">
-                    <li><b>Screenshot</b> the table below → send via Telegram</li>
-                    <li><b>Copy-paste</b> the CSV text below → paste in Telegram chat</li>
-                    <li><b>Download</b> CSV file → send file via Telegram</li>
-                </ol>
+                <b style="color: #000; font-size: 14px;">⚡ ONE-CLICK PUBLISH:</b>
+                <p style="color: #333; font-size: 13px; line-height: 1.6; margin-top: 8px;">
+                    Click <b>SYNC TO GITHUB</b> below &rarr; records pushed directly &rarr;
+                    dashboard rebuilds in 1-2 min. <b>No Telegram required!</b>
+                </p>
                 <div style="background: #000; color: #FFD700; padding: 10px 14px;
                             border-radius: 8px; margin-top: 12px; font-size: 12px;">
-                    ⏱️ <b>Kanom will publish within 30 seconds!</b><br>
-                    📊 Dashboard refreshes → everyone sees new data
+                    ⏱️ <b>Push happens instantly via GitHub API</b><br>
+                    📊 Dashboard refreshes &rarr; everyone sees new data
                 </div>
             </div>
             """, unsafe_allow_html=True)
 
-            # Show CSV text for easy copy
+            # === ONE-CLICK SYNC BUTTON ===
+            if st.button(
+                "📤 SYNC TO GITHUB (1-CLICK)",
+                key="sync_pending_to_github",
+                use_container_width=True,
+                type="primary",
+                help="Push pending records directly to GitHub - no Telegram needed"
+            ):
+                try:
+                    gh_token = None
+                    gh_repo = "panuchuwong-cyber/qa-defects-dashboard"
+                    gh_branch = "main"
+                    try:
+                        gh_token = st.secrets["github_token"]
+                        gh_repo  = st.secrets.get("github_repo", gh_repo)
+                        gh_branch = st.secrets.get("github_branch", gh_branch)
+                    except (KeyError, FileNotFoundError, AttributeError):
+                        gh_token = None
+
+                    if gh_token:
+                        import requests
+                        import base64
+                        from openpyxl import load_workbook, Workbook
+
+                        # Merge pending records with existing data, then push
+                        existing_path = Path("QA_Defects_Data.xlsx")
+                        cols = ["Date","Supplier","Group Part","Problem Mode","Part Name","Part No","Qty","Comment"]
+                        if existing_path.exists():
+                            existing_wb = load_workbook(existing_path)
+                            existing_ws = existing_wb.active
+                            if existing_ws is not None:
+                                cols = [c.value for c in existing_ws[1]]
+                                existing_records = []
+                                for row in existing_ws.iter_rows(min_row=2, values_only=True):
+                                    existing_records.append(dict(zip(cols, row)))
+                            else:
+                                existing_records = []
+                        else:
+                            existing_records = []
+
+                        # Merge with deduplication
+                        new_records_df = pd.DataFrame(st.session_state.new_entries)
+                        existing_df = pd.DataFrame(existing_records)
+
+                        if not existing_df.empty:
+                            merged_df = pd.concat([new_records_df, existing_df], ignore_index=True)
+                            merged_df = merged_df.drop_duplicates(
+                                subset=["Date", "Supplier", "Part No"],
+                                keep="first"
+                            ).reset_index(drop=True)
+                        else:
+                            merged_df = new_records_df.reset_index(drop=True)
+
+                        added = len(new_records_df)
+                        total = len(merged_df)
+
+                        # Save to bytes
+                        wb_out = Workbook()
+                        ws_out = wb_out.active
+                        ws_out.append(cols)
+                        for _, row in merged_df.iterrows():
+                            ws_out.append([row.get(c, "") for c in cols])
+                        buf = io.BytesIO()
+                        wb_out.save(buf)
+                        content_b64 = base64.b64encode(buf.getvalue()).decode()
+
+                        # Read existing SHA
+                        api_base = f"https://api.github.com/repos/{gh_repo}/contents/QA_Defects_Data.xlsx"
+                        headers_auth = {
+                            "Authorization": f"Bearer {gh_token}",
+                            "Accept": "application/vnd.github+json"
+                        }
+                        existing_resp = requests.get(api_base, headers=headers_auth, params={"ref": gh_branch}, timeout=10)
+                        sha = existing_resp.json().get("sha") if existing_resp.status_code == 200 else None
+
+                        payload = {
+                            "message": f"DATA: sync {added} new records from web (total {total})",
+                            "content": content_b64,
+                            "branch": gh_branch,
+                        }
+                        if sha:
+                            payload["sha"] = sha
+
+                        push_resp = requests.put(api_base, headers=headers_auth, json=payload, timeout=15)
+
+                        if push_resp.status_code in (200, 201):
+                            st.success(
+                                f"✅ **Pushed to GitHub successfully!**\n\n"
+                                f"📊 {added} records committed.\n"
+                                f"🔄 Dashboard will rebuild in 1-2 minutes.\n\n"
+                                f"💡 **Pure Git workflow - no Telegram needed!**"
+                            )
+                            st.balloons()
+                            # Clear pending after success
+                            st.session_state.new_entries = []
+                        else:
+                            err = push_resp.json().get("message", push_resp.text)
+                            st.error(f"❌ GitHub push failed: {err}")
+                    else:
+                        st.warning("ℹ️ GitHub token not configured. Add `github_token` to Streamlit Cloud secrets.")
+
+                except Exception as e:
+                    st.error(f"❌ Sync error: {str(e)}")
+
+            st.markdown(
+                '<div style="text-align:center; color:#999; font-size:11px; '
+                'margin:12px 0 8px;">— OR use manual export below —</div>',
+                unsafe_allow_html=True
+            )
+
+            # Fallback: download CSV
             csv_text = pending_df.to_csv(index=False)
             st.text_area(
-                "📋 Copy this CSV:",
+                "📋 Copy this CSV (fallback only):",
                 csv_text,
-                height=200,
-                help="Copy this text and paste in Telegram to Kanom"
+                height=120,
+                help="Backup option - use only if 1-click sync fails"
             )
 
 
