@@ -605,19 +605,22 @@ st.markdown("""
     }
     .hero-live {
         grid-area: live;
-        background: linear-gradient(90deg, rgba(255,215,0,0.12) 0%, rgba(0,0,0,0.3) 100%);
-        border: 1px solid rgba(255,215,0,0.4);
-        border-radius: 8px;
-        padding: 6px 12px;
+        background: linear-gradient(135deg, #0a0a0a 0%, #1a1a1a 100%);
+        border: 1.5px solid #FFD700;
+        border-radius: 999px;
+        padding: 7px 16px;
         color: #FFD700;
-        font-size: 10px;
+        font-size: 12px;
         font-weight: 800;
-        letter-spacing: 1.5px;
-        display: flex;
+        letter-spacing: 2px;
+        display: inline-flex;
         align-items: center;
         justify-content: center;
-        gap: 8px;
+        gap: 9px;
         position: relative; z-index: 1;
+        width: fit-content;
+        justify-self: start;
+        box-shadow: 0 0 0 3px rgba(255,215,0,0.08), 0 4px 12px rgba(0,0,0,0.25);
     }
     .hero-live-pulse {
         width: 8px; height: 8px;
@@ -688,9 +691,9 @@ st.markdown("""
         background: linear-gradient(90deg, #1a1a1a 0%, #2d2d2d 100%);
         border: 1.5px solid #FFD700;
         color: #FFD700;
-        padding: 12px 14px;
+        padding: 12px 18px;
         border-radius: 10px;
-        font-size: 11px;
+        font-size: 12px;
         font-weight: 800;
         text-align: center;
         letter-spacing: 2px;
@@ -743,22 +746,6 @@ st.markdown("""
     .kpi-black::before {
         background: linear-gradient(90deg, #000000 0%, #333333 100%);
     }
-    /* Dark card color overrides */
-    .kpi-black {
-        background: linear-gradient(145deg, #000000 0%, #1a1a1a 100%) !important;
-        border: 2px solid #FFD700 !important;
-    }
-    .kpi-black .kpi-value { color: #FFD700 !important; }
-    .kpi-black .kpi-label { color: #cccccc !important; }
-    .kpi-black .kpi-icon {
-        opacity: 0.25 !important;
-        filter: drop-shadow(0 0 6px rgba(255,215,0,0.3));
-    }
-    .kpi-black .kpi-unit {
-        background: #FFD700 !important;
-        color: #000 !important;
-        border-color: #000 !important;
-    }
     .kpi-icon {
         position: absolute; top: 18px; right: 18px;
         font-size: 28px; opacity: 0.12;
@@ -766,31 +753,31 @@ st.markdown("""
     }
     .kpi-container:hover .kpi-icon { opacity: 0.25; }
     .kpi-label {
-        color: #FFE680; font-size: 12px; font-weight: 800;
+        color: #FFD700; font-size: 12px; font-weight: 800;
         letter-spacing: 2.5px; text-transform: uppercase;
         margin-bottom: 10px; margin-top: 4px;
-        opacity: 0.95;
     }
     .kpi-value {
-        color: #FFFFFF; font-size: 38px; font-weight: 900;
+        color: #FFD700; font-size: 32px; font-weight: 900;
         line-height: 1; margin: 4px 0 8px 0;
         font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
         white-space: nowrap;
         display: flex;
         align-items: center;
         gap: 6px;
-        text-shadow: 0 2px 8px rgba(255,215,0,0.3);
     }
     .kpi-unit {
-        font-size: 14px; color: #000; margin-left: 6px;
+        font-size: 13px; color: #000; margin-left: 6px;
         font-weight: 800;
         background: #FFD700; padding: 3px 10px; border-radius: 8px;
         text-shadow: none;
         letter-spacing: 0.5px;
+        white-space: nowrap;
+        border: 1px solid rgba(0,0,0,0.1);
     }
     .kpi-trend {
-        font-size: 13px; font-weight: 800;
-        padding: 7px 16px; border-radius: 14px;
+        font-size: 11px; font-weight: 800;
+        padding: 6px 14px; border-radius: 14px;
         display: inline-flex; align-items: center; gap: 4px;
         align-self: flex-start;
         margin-top: 14px;
@@ -833,9 +820,9 @@ st.markdown("""
     }
     .insight-banner:hover { transform: translateX(2px); }
     .insight-banner-icon {
-        font-size: 32px;
+        font-size: 28px;
         flex-shrink: 0;
-        width: 56px; height: 56px;
+        width: 50px; height: 50px;
         border-radius: 50%;
         display: flex;
         align-items: center;
@@ -845,19 +832,18 @@ st.markdown("""
     .insight-banner-body { flex: 1; min-width: 0; }
     .insight-banner-title {
         font-weight: 900;
-        font-size: 16px;
-        letter-spacing: 0.3px;
-        margin-bottom: 6px;
+        font-size: 17px;
+        letter-spacing: 0.2px;
+        margin-bottom: 5px;
         line-height: 1.3;
-        color: #0a0a0a;
     }
     .insight-banner-detail {
         font-size: 13px;
-        line-height: 1.5;
-        opacity: 0.9;
-        color: #374151;
+        line-height: 1.55;
+        opacity: 1;
         font-weight: 500;
     }
+    .insight-banner-detail b { font-weight: 800; opacity: 1; }
     .insight-banner-detail b { font-weight: 800; }
 
     /* Severity color variants */
@@ -898,28 +884,39 @@ st.markdown("""
         color: #555;
     }
 
-    /* === SECTION HEADER === */
+    /* === SECTION HEADER — dark premium (matches hero/KPI cards) === */
     .section-header {
-        background: linear-gradient(90deg, #FFD700 0%, #FFC107 50%, #FFD700 100%);
-        background-size: 200% 100%;
-        color: #000; padding: 14px 22px; border-radius: 12px;
-        font-weight: 900; font-size: 16px; letter-spacing: 2px;
+        position: relative; overflow: hidden;
+        background: linear-gradient(135deg, #0e0e0e 0%, #1f1f1f 60%, #2a2a2a 100%);
+        color: #FFD700;
+        padding: 14px 22px;
+        border-radius: 14px;
+        font-weight: 900; font-size: 16px; letter-spacing: 2.5px;
         margin: 28px 0 16px 0; text-transform: uppercase;
-        border-left: 6px solid #000;
-        box-shadow: 0 6px 16px rgba(255,215,0,0.25);
+        border: 1.5px solid rgba(255,215,0,0.45);
+        border-left: 5px solid #FFD700;
+        box-shadow:
+            0 8px 22px rgba(0,0,0,0.25),
+            inset 0 1px 0 rgba(255,215,0,0.18);
         display: flex; align-items: center; gap: 12px;
-        animation: shimmer 3s linear infinite;
     }
-    @keyframes shimmer {
-        0% { background-position: 0% 50%; }
-        100% { background-position: 200% 50%; }
+    .section-header::after {
+        content: ""; position: absolute; inset: 0;
+        background: radial-gradient(circle at top right, rgba(255,215,0,0.10) 0%, transparent 60%);
+        pointer-events: none;
     }
+    .section-header > * { position: relative; z-index: 1; }
     .section-header .section-icon {
-        font-size: 22px;
-        background: #000; color: #FFD700;
-        width: 36px; height: 36px;
-        border-radius: 50%; display: flex;
-        align-items: center; justify-content: center;
+        font-size: 18px;
+        background: linear-gradient(135deg, #FFD700 0%, #FFA500 100%);
+        color: #000;
+        width: 38px; height: 38px;
+        border-radius: 10px;
+        display: flex; align-items: center; justify-content: center;
+        box-shadow:
+            0 4px 10px rgba(255,215,0,0.45),
+            inset 0 1px 0 rgba(255,255,255,0.45);
+        transform: rotate(-4deg);
     }
 
     /* === FILTER BAR === */
@@ -1108,9 +1105,83 @@ st.markdown("""
 
     /* === FOOTER === */
     .dashboard-footer {
-        text-align: center; color: #999; font-size: 11px;
-        margin-top: 32px; padding: 20px 0;
-        border-top: 1px solid #e0e0e0;
+        text-align: center;
+        margin: 36px 0 8px 0;
+        padding: 0;
+    }
+    .footer-card {
+        background: linear-gradient(135deg, #0a0a0a 0%, #1a1a1a 100%);
+        border: 1.5px solid rgba(255,215,0,0.4);
+        border-radius: 18px;
+        padding: 22px 24px;
+        box-shadow:
+            0 10px 28px rgba(0,0,0,0.25),
+            inset 0 1px 0 rgba(255,215,0,0.1);
+        position: relative;
+        overflow: hidden;
+    }
+    .footer-card::before {
+        content: ""; position: absolute; top: -50%; right: -10%;
+        width: 300px; height: 300px;
+        background: radial-gradient(circle, rgba(255,215,0,0.10) 0%, transparent 60%);
+        pointer-events: none;
+    }
+    .footer-brand {
+        display: inline-flex; align-items: center; gap: 12px;
+        position: relative; z-index: 1;
+    }
+    .footer-logo {
+        font-size: 30px; line-height: 1;
+        background: linear-gradient(135deg, #FFD700 0%, #FFA500 100%);
+        width: 50px; height: 50px;
+        border-radius: 14px;
+        display: inline-flex; align-items: center; justify-content: center;
+        box-shadow: 0 6px 14px rgba(255,215,0,0.35);
+        color: #000;
+        transform: rotate(-6deg);
+    }
+    .footer-brand-text { text-align: left; }
+    .footer-brand-name {
+        color: #FFD700; font-size: 16px; font-weight: 900;
+        letter-spacing: 3px; line-height: 1.1;
+    }
+    .footer-brand-sub {
+        color: #aaa; font-size: 10px; font-weight: 700;
+        letter-spacing: 1.5px; text-transform: uppercase;
+        margin-top: 3px;
+    }
+    .footer-divider {
+        height: 1px;
+        background: linear-gradient(90deg, transparent, rgba(255,215,0,0.4), transparent);
+        margin: 16px 0 14px 0;
+        position: relative; z-index: 1;
+    }
+    .footer-meta {
+        display: flex; flex-wrap: wrap; justify-content: center; gap: 8px 14px;
+        margin-bottom: 14px;
+        position: relative; z-index: 1;
+    }
+    .footer-meta-item {
+        color: #ccc; font-size: 11px; font-weight: 600;
+        padding: 4px 12px;
+        background: rgba(255,215,0,0.08);
+        border: 1px solid rgba(255,215,0,0.2);
+        border-radius: 999px;
+        letter-spacing: 0.3px;
+    }
+    .footer-credit {
+        color: #888; font-size: 11px; font-weight: 600;
+        letter-spacing: 0.5px;
+        position: relative; z-index: 1;
+    }
+    .footer-heart {
+        display: inline-block;
+        animation: heartBeat 1.4s ease-in-out infinite;
+    }
+    @keyframes heartBeat {
+        0%, 100% { transform: scale(1); }
+        25%      { transform: scale(1.18); }
+        75%      { transform: scale(1.10); }
     }
 
     /* === ANIMATIONS & POLISH === */
@@ -1184,20 +1255,16 @@ st.markdown("""
     /* The unit badge lives INSIDE .kpi-value, so it inherits the transparent
        text fill used for the gradient number and renders as a solid dark bar.
        Reset fill + clip explicitly so PCS / CASE / PART stay readable. */
+    /* Unified unit badge — gold pill with black text across all 4 cards.
+       The base .kpi-unit rule above applies; this just reinforces the fill
+       reset so the gradient-text .kpi-value doesn't bleed through. */
     .kpi-value .kpi-unit {
-        background: #FFF3C4 !important;
-        border: 1px solid #FFD700 !important;
+        background: #FFD700 !important;
+        border: 1px solid rgba(0,0,0,0.1) !important;
         -webkit-background-clip: border-box !important;
         background-clip: border-box !important;
-        -webkit-text-fill-color: #7a5c00 !important;
-        color: #7a5c00 !important;
-    }
-    .kpi-container.kpi-black .kpi-value .kpi-unit,
-    .kpi-card.kpi-black .kpi-value .kpi-unit {
-        background: rgba(255,215,0,0.16) !important;
-        border-color: rgba(255,215,0,0.6) !important;
-        -webkit-text-fill-color: #FFD700 !important;
-        color: #FFD700 !important;
+        -webkit-text-fill-color: #000 !important;
+        color: #000 !important;
     }
 
     /* === KPI container: gradient border + glow on hover === */
@@ -1257,15 +1324,7 @@ st.markdown("""
     }
 
     /* Section headers: shimmer background */
-    .section-header {
-        position: relative; overflow: hidden;
-        background: linear-gradient(90deg, #FFD700 0%, #FFC107 50%, #FFD700 100%) !important;
-        background-size: 200% 100% !important;
-        animation: shimmer 4s linear infinite;
-    }
-    .section-header > * {
-        position: relative; z-index: 1;
-    }
+    /* section-header duplicate removed — unified rule above applies */
 
     /* Sidebar info cards: slide in */
     .info-card {
@@ -1790,9 +1849,9 @@ st.markdown("""
 
         /* Live indicator & clock box - compact */
         .live-indicator {
-            padding: 6px 10px !important;
-            font-size: 10px !important;
-            letter-spacing: 1px !important;
+            padding: 7px 12px !important;
+            font-size: 11px !important;
+            letter-spacing: 1.5px !important;
             margin-top: 8px !important;
         }
 
@@ -2579,9 +2638,18 @@ if "14 Days" in page:
         box-shadow: none !important;
     }
     .search-card [data-testid="stTextInputRootElement"] { margin: 0 !important; }
+.search-card-label {
+    color: #7a5c00;
+    font-size: 10px;
+    font-weight: 800;
+    letter-spacing: 1.5px;
+    text-transform: uppercase;
+    margin-bottom: 6px;
+}
 </style>
 <div class="search-spacer"></div>
 <div class="search-card">
+    <div class="search-card-label">🔍 SEARCH PART NO / SUPPLIER / COMMENT</div>
 """,
         unsafe_allow_html=True,
     )
@@ -2589,7 +2657,7 @@ if "14 Days" in page:
         "🔍 Search Part No / Supplier / Comment",
         placeholder="Type to search... (e.g., VE101, KSV, scratch)",
         key="search_14d",
-        label_visibility="visible",
+        label_visibility="collapsed",
     )
     st.markdown("</div>", unsafe_allow_html=True)
     if search_query:
@@ -4147,9 +4215,25 @@ else:
 # ============================================================
 # FOOTER
 # ============================================================
+import datetime as _ft_dt
+_ft_year = _ft_dt.date.today().year
 st.markdown(f"""
 <div class="dashboard-footer">
-    � 3K Battery Co., Ltd. | QA Defects Dashboard v2.0 Professional<br>
-    <span style="color:#FFD700;">Built with ❤️ by Kanom AI for K-Kream</span>
+    <div class="footer-card">
+        <div class="footer-brand">
+            <div class="footer-logo">⚡</div>
+            <div class="footer-brand-text">
+                <div class="footer-brand-name">3K BATTERY</div>
+                <div class="footer-brand-sub">QA Defects Dashboard v3.0</div>
+            </div>
+        </div>
+        <div class="footer-divider"></div>
+        <div class="footer-meta">
+            <div class="footer-meta-item">📊 Live sync from GitHub</div>
+            <div class="footer-meta-item">🔒 Secure · Private App</div>
+            <div class="footer-meta-item">© {_ft_year} 3K Battery Co., Ltd.</div>
+        </div>
+        <div class="footer-credit">Built with <span class="footer-heart">❤️</span> by Kanom AI for K-Kream</div>
+    </div>
 </div>
 """, unsafe_allow_html=True)
