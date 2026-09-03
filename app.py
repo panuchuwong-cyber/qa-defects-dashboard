@@ -757,7 +757,16 @@ st.markdown("""
         letter-spacing: 2.5px; text-transform: uppercase;
         margin-bottom: 10px; margin-top: 4px;
     }
-        .kpi-unit {
+    .kpi-value {
+        color: #FFD700; font-size: 32px; font-weight: 900;
+        line-height: 1; margin: 4px 0 8px 0;
+        font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+        white-space: nowrap;
+        display: flex;
+        align-items: center;
+        gap: 6px;
+    }
+    .kpi-unit {
         font-size: 13px; color: #000; margin-left: 6px;
         font-weight: 800;
         background: #FFD700; padding: 3px 10px; border-radius: 8px;
@@ -1208,7 +1217,13 @@ st.markdown("""
         from { opacity: 0; transform: translateY(8px); }
         to   { opacity: 1; transform: translateY(0); }
     }
-        /* Subtle icon bobbing */
+    .kpi-value {
+        animation: countUp 0.6s cubic-bezier(0.16, 1, 0.3, 1);
+        display: flex; align-items: center; justify-content: center;
+        gap: 6px;
+    }
+
+    /* Subtle icon bobbing */
     @keyframes iconBob {
         0%, 100% { transform: translateY(0); }
         50%      { transform: translateY(-3px); }
@@ -1223,17 +1238,23 @@ st.markdown("""
         font-size: 32px !important;
         font-weight: 900 !important;
         letter-spacing: -1px;
-        background: linear-gradient(135deg, #FFD700 0%, #FFC107 100%);
+        background: linear-gradient(135deg, #C79000 0%, #8a6300 100%);
         -webkit-background-clip: text;
         -webkit-text-fill-color: transparent;
         background-clip: text;
-        color: transparent;
         animation: countUp 0.6s cubic-bezier(0.16, 1, 0.3, 1);
         display: flex; align-items: baseline; justify-content: flex-start;
         gap: 6px;
     }
     .kpi-container.kpi-black .kpi-value,
-    .kpi-card.kpi-black     /* The unit badge lives INSIDE .kpi-value, so it inherits the transparent
+    .kpi-card.kpi-black .kpi-value {
+        color: #FFD700 !important;
+        background: none !important;
+        -webkit-background-clip: unset !important;
+        background-clip: unset !important;
+        -webkit-text-fill-color: #FFD700 !important;
+    }
+    /* The unit badge lives INSIDE .kpi-value, so it inherits the transparent
        text fill used for the gradient number and renders as a solid dark bar.
        Reset fill + clip explicitly so PCS / CASE / PART stay readable. */
     /* Unified unit badge — gold pill with black text across all 4 cards.
