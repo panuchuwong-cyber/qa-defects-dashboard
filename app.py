@@ -703,6 +703,45 @@ st.markdown("""
     }
     .insight-banner-detail b { font-weight: 800; }
 
+    /* === STATS TILES (validation summary) === */
+    .stats-tile {
+        text-align: center;
+        padding: 14px 8px;
+        border-radius: 10px;
+        margin-bottom: 8px;
+        transition: transform 0.2s;
+    }
+    .stats-tile:hover { transform: translateY(-2px); }
+    .stats-tile-label {
+        font-size: 10px;
+        font-weight: 800;
+        letter-spacing: 1.5px;
+        opacity: 0.85;
+        margin-bottom: 4px;
+        text-transform: uppercase;
+    }
+    .stats-tile-value {
+        font-size: 28px;
+        font-weight: 900;
+        line-height: 1;
+        font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+    }
+    .stats-total {
+        background: linear-gradient(135deg, #000000 0%, #333333 100%);
+        color: #FFD700;
+        border: 2px solid #FFD700;
+    }
+    .stats-valid {
+        background: linear-gradient(135deg, #2E7D32 0%, #4CAF50 100%);
+        color: #ffffff;
+        border: 2px solid #66BB6A;
+    }
+    .stats-invalid {
+        background: linear-gradient(135deg, #C62828 0%, #F44336 100%);
+        color: #ffffff;
+        border: 2px solid #EF5350;
+    }
+
     /* Severity color variants */
     .insight-critical {
         color: #B71C1C;
@@ -1522,6 +1561,41 @@ st.markdown("""
                 "stats"
                 "live" !important;
             gap: 12px !important;
+        }
+
+        /* === INSIGHT BANNER mobile === */
+        .insight-banner {
+            padding: 12px 14px !important;
+            gap: 12px !important;
+            margin: 12px 0 !important;
+            border-left-width: 4px !important;
+        }
+        .insight-banner-icon {
+            width: 40px !important;
+            height: 40px !important;
+            font-size: 20px !important;
+        }
+        .insight-banner-title {
+            font-size: 12px !important;
+            letter-spacing: 0.3px !important;
+        }
+        .insight-banner-detail {
+            font-size: 10px !important;
+        }
+
+        /* === STATS TILES mobile === */
+        .stats-tile {
+            padding: 10px 6px !important;
+            margin-bottom: 4px !important;
+            border-radius: 8px !important;
+        }
+        .stats-tile-label {
+            font-size: 8px !important;
+            letter-spacing: 1px !important;
+            margin-bottom: 3px !important;
+        }
+        .stats-tile-value {
+            font-size: 22px !important;
         }
         .hero-title {
             font-size: 18px !important;
@@ -2979,7 +3053,17 @@ elif "Data Entry" in page:
                         continue
 
                 if df_uploaded is None or df_uploaded.empty:
-                    st.error("❌ Could not read Excel file. Make sure it has data.")
+                    st.markdown(
+                        '<div class="insight-banner insight-critical">'
+                        '<div class="insight-banner-icon">📄</div>'
+                        '<div class="insight-banner-body">'
+                        '<div class="insight-banner-title">Could not read Excel file</div>'
+                        '<div class="insight-banner-detail">'
+                        'Make sure the file has data and follows the template format.<br>'
+                        'Use <b>QA_Defects_Template.xlsx</b> for the correct structure.'
+                        '</div></div></div>',
+                        unsafe_allow_html=True
+                    )
                 else:
                     # Validate required columns
                     required_cols = ["Date", "Supplier", "Group Part", "Problem Mode", "Part No", "Qty"]
@@ -3028,37 +3112,53 @@ elif "Data Entry" in page:
                     col_v1, col_v2, col_v3 = st.columns(3)
                     with col_v1:
                         st.markdown(
-                            f'<div style="background:#000; color:#FFD700; padding:14px; '
-                            f'border-radius:10px; text-align:center;">'
-                            f'<div style="font-size:11px; opacity:0.8;">TOTAL ROWS</div>'
-                            f'<div style="font-size:28px; font-weight:900;">{len(df_uploaded)}</div>'
+                            f'<div class="stats-tile stats-total">'
+                            f'<div class="stats-tile-label">TOTAL ROWS</div>'
+                            f'<div class="stats-tile-value">{len(df_uploaded)}</div>'
                             f'</div>',
                             unsafe_allow_html=True
                         )
                     with col_v2:
                         st.markdown(
-                            f'<div style="background:#4CAF50; color:white; padding:14px; '
-                            f'border-radius:10px; text-align:center;">'
-                            f'<div style="font-size:11px; opacity:0.9;">VALID ✓</div>'
-                            f'<div style="font-size:28px; font-weight:900;">{len(valid_records)}</div>'
+                            f'<div class="stats-tile stats-valid">'
+                            f'<div class="stats-tile-label">VALID ✓</div>'
+                            f'<div class="stats-tile-value">{len(valid_records)}</div>'
                             f'</div>',
                             unsafe_allow_html=True
                         )
                     with col_v3:
                         st.markdown(
-                            f'<div style="background:#F44336; color:white; padding:14px; '
-                            f'border-radius:10px; text-align:center;">'
-                            f'<div style="font-size:11px; opacity:0.9;">INVALID ✗</div>'
-                            f'<div style="font-size:28px; font-weight:900;">{len(invalid_records)}</div>'
+                            f'<div class="stats-tile stats-invalid">'
+                            f'<div class="stats-tile-label">INVALID ✗</div>'
+                            f'<div class="stats-tile-value">{len(invalid_records)}</div>'
                             f'</div>',
                             unsafe_allow_html=True
                         )
 
-                    # Show column warnings
+                    # Show column warnings as styled banners
                     if missing_cols:
-                        st.warning(f"⚠️ Missing columns: {', '.join(missing_cols)}")
+                        st.markdown(
+                            f'<div class="insight-banner insight-critical">'
+                            f'<div class="insight-banner-icon">⚠️</div>'
+                            f'<div class="insight-banner-body">'
+                            f'<div class="insight-banner-title">Missing columns detected</div>'
+                            f'<div class="insight-banner-detail">'
+                            f'Your file is missing required columns: <b>{", ".join(missing_cols)}</b><br>'
+                            f'Please use <b>QA_Defects_Template.xlsx</b> for the correct format.'
+                            f'</div></div></div>',
+                            unsafe_allow_html=True
+                        )
                     if extra_cols:
-                        st.info(f"�️ Extra columns ignored: {', '.join(extra_cols)}")
+                        st.markdown(
+                            f'<div class="insight-banner insight-info">'
+                            f'<div class="insight-banner-icon">ℹ️</div>'
+                            f'<div class="insight-banner-body">'
+                            f'<div class="insight-banner-title">Extra columns ignored</div>'
+                            f'<div class="insight-banner-detail">'
+                            f'Columns not used: <b>{", ".join(extra_cols)}</b>'
+                            f'</div></div></div>',
+                            unsafe_allow_html=True
+                        )
 
                     # Preview table
                     st.markdown("<br>", unsafe_allow_html=True)
@@ -3249,8 +3349,28 @@ elif "Data Entry" in page:
                                 )
 
             except Exception as e:
-                st.error(f"❌ Error reading file: {str(e)}")
-                st.info("� Make sure you're uploading the QA_Defects_Template.xlsx file")
+                st.markdown(
+                    f'<div class="insight-banner insight-critical">'
+                    f'<div class="insight-banner-icon">⚠️</div>'
+                    f'<div class="insight-banner-body">'
+                    f'<div class="insight-banner-title">Error reading file</div>'
+                    f'<div class="insight-banner-detail">'
+                    f'<b>{str(e)}</b><br><br>'
+                    f'Make sure you are uploading the correct template file.'
+                    f'</div></div></div>',
+                    unsafe_allow_html=True
+                )
+                st.markdown(
+                    '<div class="insight-banner insight-info">'
+                    '<div class="insight-banner-icon">💡</div>'
+                    '<div class="insight-banner-body">'
+                    '<div class="insight-banner-title">Use the correct template</div>'
+                    '<div class="insight-banner-detail">'
+                    'Download <b>QA_Defects_Template.xlsx</b> from the page below, '
+                    'fill in your data, then upload it here.'
+                    '</div></div></div>',
+                    unsafe_allow_html=True
+                )
 
         # Footer for upload mode
         st.markdown("<br>", unsafe_allow_html=True)
