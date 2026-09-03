@@ -750,29 +750,31 @@ st.markdown("""
     }
     .kpi-container:hover .kpi-icon { opacity: 0.25; }
     .kpi-label {
-        color: #FFD700; font-size: 12px; font-weight: 800;
+        color: #FFE680; font-size: 12px; font-weight: 800;
         letter-spacing: 2.5px; text-transform: uppercase;
         margin-bottom: 10px; margin-top: 4px;
+        opacity: 0.95;
     }
     .kpi-value {
-        color: #FFD700; font-size: 32px; font-weight: 900;
+        color: #FFFFFF; font-size: 38px; font-weight: 900;
         line-height: 1; margin: 4px 0 8px 0;
         font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
         white-space: nowrap;
         display: flex;
         align-items: center;
         gap: 6px;
+        text-shadow: 0 2px 8px rgba(255,215,0,0.3);
     }
     .kpi-unit {
-        font-size: 13px; color: #000; margin-left: 6px;
+        font-size: 14px; color: #000; margin-left: 6px;
         font-weight: 800;
-        background: #FFD700; padding: 2px 8px; border-radius: 8px;
+        background: #FFD700; padding: 3px 10px; border-radius: 8px;
         text-shadow: none;
         letter-spacing: 0.5px;
     }
     .kpi-trend {
-        font-size: 11px; font-weight: 800;
-        padding: 6px 14px; border-radius: 14px;
+        font-size: 13px; font-weight: 800;
+        padding: 7px 16px; border-radius: 14px;
         display: inline-flex; align-items: center; gap: 4px;
         align-self: flex-start;
         margin-top: 14px;
