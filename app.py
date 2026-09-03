@@ -2989,6 +2989,71 @@ if "14 Days" in page:
             use_container_width=True, hide_index=True, height=280
         )
 
+    
+    # === SUPPLY CHAIN METRICS (Phase 2: Mock data) ===
+    try:
+        from utils.mock_supply import mock_otif, mock_scars, get_supplier_scores
+
+        otif = mock_otif(window_days=14)
+        scars = mock_scars()
+
+        st.markdown(
+            '<div class="section-header">'
+            '<div class="section-icon">📦</div>'
+            'SUPPLY CHAIN METRICS (OTIF & SCAR)'
+            '</div>',
+            unsafe_allow_html=True
+        )
+
+        col_o1, col_o2, col_o3 = st.columns(3, gap="small")
+        with col_o1:
+            st.markdown(f'''
+            <div class="kpi-container kpi-yellow kpi-card">
+                <div class="kpi-label">📦 OTIF</div>
+                <div class="kpi-value">{otif["otif_pct"]}<span class="kpi-unit">%</span></div>
+                <div class="kpi-trend trend-down">✓ On-Time In-Full ({otif["total_orders"]} orders)</div>
+            </div>
+            ''', unsafe_allow_html=True)
+        with col_o2:
+            st.markdown(f'''
+            <div class="kpi-container kpi-black kpi-card">
+                <div class="kpi-label">⏰ ON-TIME</div>
+                <div class="kpi-value">{otif["on_time_pct"]}<span class="kpi-unit">%</span></div>
+                <div class="kpi-trend trend-down">{otif["total_orders"]-otif["late_orders"]}/{otif["total_orders"]} delivered on-time</div>
+            </div>
+            ''', unsafe_allow_html=True)
+        with col_o3:
+            st.markdown(f'''
+            <div class="kpi-container kpi-black kpi-card">
+                <div class="kpi-label">📊 IN-FULL</div>
+                <div class="kpi-value">{otif["in_full_pct"]}<span class="kpi-unit">%</span></div>
+                <div class="kpi-trend trend-down">{otif["total_orders"]-otif["short_orders"]}/{otif["total_orders"]} full qty</div>
+            </div>
+            ''', unsafe_allow_html=True)
+
+        # SCAR Table
+        st.markdown(
+            '<div class="section-header">'
+            '<div class="section-icon">🚨</div>'
+            f'OPEN SCARs (Supplier Corrective Action Requests) — {len(scars)} open'
+            '</div>',
+            unsafe_allow_html=True
+        )
+
+        scar_df = pd.DataFrame(scars)
+        st.dataframe(
+            scar_df,
+            use_container_width=True, hide_index=True, height=200,
+            column_config={
+                "priority": st.column_config.TextColumn("Priority", help="High/Medium/Low"),
+                "status": st.column_config.TextColumn("Status"),
+                "open_date": st.column_config.DateColumn("Opened"),
+                "due_date": st.column_config.DateColumn("Due"),
+            }
+        )
+    except Exception as e:
+        st.warning(f"Supply chain metrics unavailable: {e}")
+
     # === SUPPLIER GROUP CARDS (gradient buttons via inline CSS) ===
     st.markdown('<div class="section-header">🗂️ SELECTION SUPPLIER GROUP (CLICK TO FILTER)</div>', unsafe_allow_html=True)
 
