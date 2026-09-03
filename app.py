@@ -1248,8 +1248,10 @@ st.markdown("""
     }
     .kpi-container.kpi-black .kpi-value,
     .kpi-card.kpi-black .kpi-value {
+        color: #FFD700 !important;
         background: linear-gradient(135deg, #FFD700 0%, #FFC107 100%);
         -webkit-background-clip: text;
+        background-clip: text;
         -webkit-text-fill-color: transparent;
     }
     /* The unit badge lives INSIDE .kpi-value, so it inherits the transparent
