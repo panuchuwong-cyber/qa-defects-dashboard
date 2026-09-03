@@ -2526,6 +2526,22 @@ if "14 Days" in page:
     </div>
     ''', unsafe_allow_html=True)
 
+    # === EXTENDED KPIs: PPM + Escape Rate ===
+    # PPM (Parts Per Million) = defect qty / total received qty * 1M
+    # Industry-standard quality metric. For demo we use a synthetic baseline
+    # of 100k parts received (real value would come from supplier delivery data).
+    ppm_value = round((total_qty / 100000) * 1_000_000, 1)
+
+    # Escape Rate = % of defects detected late (>7 days after occurrence).
+    # Approximated by the proportion of qty outside the last 3 days of the window.
+    if not filtered.empty and total_qty > 0:
+        max_date = filtered["Date"].max()
+        fresh_window = max_date - pd.Timedelta(days=3)
+        fresh_qty = filtered[filtered["Date"] >= fresh_window]["Qty"].sum()
+        escape_rate = round((1 - fresh_qty / total_qty) * 100, 1)
+    else:
+        escape_rate = 0.0
+
     # === KPI ROW (2x2 on mobile, 4-across on desktop via CSS) ===
     kpi_row1_left, kpi_row1_right = st.columns(2, gap="small")
     kpi_row2_left, kpi_row2_right = st.columns(2, gap="small")
@@ -2574,6 +2590,35 @@ if "14 Days" in page:
             <div class="kpi-label">⚙ UNIQUE PARTS</div>
             <div class="kpi-value">{unique_parts}<span class="kpi-unit">PART</span></div>
             <div class="kpi-trend trend-{parts_arrow}">{arrow_icon} {abs(parts_pct):.1f}% vs prev 7d</div>
+        </div>
+        """, unsafe_allow_html=True)
+
+    # === KPI ROW 3: PPM + Escape Rate (industry-standard quality metrics) ===
+    kpi_row3_left, kpi_row3_right = st.columns(2, gap="small")
+
+    with kpi_row3_left:
+        # PPM: lower is better
+        ppm_arrow = "up" if ppm_value > 50 else ("down" if ppm_value < 20 else "neutral")
+        ppm_icon = {"up": "▲", "down": "▼", "neutral": "—"}[ppm_arrow]
+        st.markdown(f"""
+        <div class="kpi-container kpi-card">
+            <div class="kpi-icon">⚠️</div>
+            <div class="kpi-label">⚠️ PPM</div>
+            <div class="kpi-value">{ppm_value:,.1f}<span class="kpi-unit">/M</span></div>
+            <div class="kpi-trend trend-{ppm_arrow}">{ppm_icon} parts per million</div>
+        </div>
+        """, unsafe_allow_html=True)
+
+    with kpi_row3_right:
+        # Escape Rate: lower is better
+        esc_arrow = "up" if escape_rate > 50 else ("down" if escape_rate < 20 else "neutral")
+        esc_icon = {"up": "▲", "down": "▼", "neutral": "—"}[esc_arrow]
+        st.markdown(f"""
+        <div class="kpi-container kpi-card">
+            <div class="kpi-icon">🔍</div>
+            <div class="kpi-label">🔍 ESCAPE RATE</div>
+            <div class="kpi-value">{escape_rate}<span class="kpi-unit">%</span></div>
+            <div class="kpi-trend trend-{esc_arrow}">{esc_icon} defects detected late</div>
         </div>
         """, unsafe_allow_html=True)
 
