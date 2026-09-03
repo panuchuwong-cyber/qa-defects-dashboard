@@ -408,7 +408,7 @@ st.markdown("""
     }
     .hero-title {
         color: #FFD700;
-        font-size: 22px;
+        font-size: 24px;
         font-weight: 900;
         letter-spacing: 2px;
         line-height: 1.15;
@@ -416,7 +416,7 @@ st.markdown("""
     }
     .hero-subtitle {
         color: #cccccc;
-        font-size: 10px;
+        font-size: 11px;
         letter-spacing: 1.5px;
         text-transform: uppercase;
         margin-top: 6px;
@@ -426,9 +426,9 @@ st.markdown("""
         display: inline-block;
         background: linear-gradient(135deg, #FFD700 0%, #FFA500 100%);
         color: #000;
-        padding: 5px 12px;
+        padding: 6px 14px;
         border-radius: 12px;
-        font-size: 9px;
+        font-size: 11px;
         font-weight: 900;
         letter-spacing: 1.5px;
         margin-top: 10px;
@@ -452,21 +452,21 @@ st.markdown("""
     }
     .hero-date-label {
         color: #FFD700;
-        font-size: 8px;
+        font-size: 10px;
         font-weight: 800;
         letter-spacing: 2px;
         text-transform: uppercase;
     }
     .hero-date-val {
         color: #ffffff;
-        font-size: 13px;
+        font-size: 15px;
         font-weight: 800;
         font-family: 'Courier New', monospace;
         letter-spacing: 0.5px;
     }
     .hero-date-divider {
         color: rgba(255,215,0,0.5);
-        font-size: 9px;
+        font-size: 10px;
         letter-spacing: 1px;
         margin: 2px 0;
         text-align: right;
@@ -495,18 +495,18 @@ st.markdown("""
         box-shadow: 0 4px 12px rgba(255,215,0,0.2);
     }
     .hero-stat-icon {
-        font-size: 14px;
+        font-size: 16px;
     }
     .hero-stat-value {
         color: #FFD700;
-        font-size: 16px;
+        font-size: 18px;
         font-weight: 900;
         line-height: 1;
         font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
     }
     .hero-stat-label {
         color: #ffffff;
-        font-size: 8px;
+        font-size: 10px;
         font-weight: 700;
         letter-spacing: 1px;
         text-transform: uppercase;
@@ -524,7 +524,7 @@ st.markdown("""
     }
     .hero-stat-clock-val {
         color: #000;
-        font-size: 12px;
+        font-size: 13px;
         font-weight: 900;
         font-family: 'Courier New', monospace;
         letter-spacing: 0.5px;
@@ -535,9 +535,9 @@ st.markdown("""
         background: linear-gradient(90deg, rgba(255,215,0,0.12) 0%, rgba(0,0,0,0.3) 100%);
         border: 1px solid rgba(255,215,0,0.4);
         border-radius: 8px;
-        padding: 6px 12px;
+        padding: 7px 12px;
         color: #FFD700;
-        font-size: 10px;
+        font-size: 11px;
         font-weight: 800;
         letter-spacing: 1.5px;
         display: flex;
@@ -689,12 +689,12 @@ st.markdown("""
     }
     .kpi-container:hover .kpi-icon { opacity: 0.25; }
     .kpi-label {
-        color: #555; font-size: 10px; font-weight: 800;
-        letter-spacing: 3px; text-transform: uppercase;
+        color: #444; font-size: 11px; font-weight: 800;
+        letter-spacing: 2px; text-transform: uppercase;
         margin-bottom: 10px; margin-top: 4px;
     }
     .kpi-value {
-        color: #000; font-size: 32px; font-weight: 900;
+        color: #000; font-size: 34px; font-weight: 900;
         line-height: 1; margin: 4px 0 8px 0;
         font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
         white-space: nowrap;
@@ -703,13 +703,14 @@ st.markdown("""
         gap: 6px;
     }
     .kpi-unit {
-        font-size: 13px; color: #FFD700; margin-left: 6px;
-        font-weight: 700;
-        background: #000; padding: 2px 8px; border-radius: 10px;
+        font-size: 14px; color: #FFD700; margin-left: 8px;
+        font-weight: 800;
+        background: #000; padding: 3px 10px; border-radius: 10px;
         text-shadow: none;
+        border: 1.5px solid #FFD700;
     }
     .kpi-trend {
-        font-size: 11px; font-weight: 700;
+        font-size: 12px; font-weight: 700;
         padding: 6px 14px; border-radius: 14px;
         display: inline-flex; align-items: center; gap: 4px;
         align-self: flex-start;
@@ -769,17 +770,56 @@ st.markdown("""
     .insight-banner-body { flex: 1; min-width: 0; }
     .insight-banner-title {
         font-weight: 900;
-        font-size: 14px;
+        font-size: 15px;
         letter-spacing: 0.5px;
         margin-bottom: 4px;
         line-height: 1.3;
     }
     .insight-banner-detail {
-        font-size: 11px;
+        font-size: 12px;
         line-height: 1.4;
         opacity: 0.85;
     }
     .insight-banner-detail b { font-weight: 800; }
+
+    /* === STATS TILES (validation summary) === */
+    .stats-tile {
+        text-align: center;
+        padding: 14px 8px;
+        border-radius: 10px;
+        margin-bottom: 8px;
+        transition: transform 0.2s;
+    }
+    .stats-tile:hover { transform: translateY(-2px); }
+    .stats-tile-label {
+        font-size: 11px;
+        font-weight: 800;
+        letter-spacing: 1.5px;
+        opacity: 0.85;
+        margin-bottom: 4px;
+        text-transform: uppercase;
+    }
+    .stats-tile-value {
+        font-size: 30px;
+        font-weight: 900;
+        line-height: 1;
+        font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+    }
+    .stats-total {
+        background: linear-gradient(135deg, #000000 0%, #333333 100%);
+        color: #FFD700;
+        border: 2px solid #FFD700;
+    }
+    .stats-valid {
+        background: linear-gradient(135deg, #2E7D32 0%, #4CAF50 100%);
+        color: #ffffff;
+        border: 2px solid #66BB6A;
+    }
+    .stats-invalid {
+        background: linear-gradient(135deg, #C62828 0%, #F44336 100%);
+        color: #ffffff;
+        border: 2px solid #EF5350;
+    }
 
     /* Severity color variants */
     .insight-critical {
@@ -829,7 +869,7 @@ st.markdown("""
         background: linear-gradient(90deg, #FFD700 0%, #FFC107 50%, #FFD700 100%);
         background-size: 200% 100%;
         color: #000; padding: 14px 22px; border-radius: 12px;
-        font-weight: 900; font-size: 16px; letter-spacing: 2px;
+        font-weight: 900; font-size: 17px; letter-spacing: 2px;
         margin: 28px 0 16px 0; text-transform: uppercase;
         border-left: 6px solid #000;
         box-shadow: 0 6px 16px rgba(255,215,0,0.25);
@@ -843,7 +883,7 @@ st.markdown("""
     .section-header .section-icon {
         font-size: 22px;
         background: #000; color: #FFD700;
-        width: 36px; height: 36px;
+        width: 38px; height: 38px;
         border-radius: 50%; display: flex;
         align-items: center; justify-content: center;
     }
@@ -1624,15 +1664,15 @@ st.markdown("""
             gap: 12px !important;
         }
         .hero-title {
-            font-size: 18px !important;
+            font-size: 20px !important;
             letter-spacing: 1.5px !important;
         }
         .hero-subtitle {
-            font-size: 9px !important;
+            font-size: 10px !important;
         }
         .hero-badge {
-            font-size: 8px !important;
-            padding: 4px 10px !important;
+            font-size: 10px !important;
+            padding: 5px 12px !important;
             margin-top: 8px !important;
         }
         .hero-right {
@@ -1658,14 +1698,49 @@ st.markdown("""
             padding: 6px 4px !important;
             gap: 1px !important;
         }
-        .hero-stat-icon { font-size: 12px !important; }
-        .hero-stat-value { font-size: 13px !important; }
-        .hero-stat-label { font-size: 7px !important; letter-spacing: 0.5px !important; }
-        .hero-stat-clock-val { font-size: 10px !important; }
+        .hero-stat-icon { font-size: 14px !important; }
+        .hero-stat-value { font-size: 15px !important; }
+        .hero-stat-label { font-size: 9px !important; letter-spacing: 0.6px !important; }
+        .hero-stat-clock-val { font-size: 11px !important; }
         .hero-live {
-            font-size: 9px !important;
-            padding: 5px 10px !important;
+            font-size: 10px !important;
+            padding: 6px 10px !important;
             letter-spacing: 1px !important;
+        }
+
+        /* === INSIGHT BANNER mobile === */
+        .insight-banner {
+            padding: 12px 14px !important;
+            gap: 12px !important;
+            margin: 12px 0 !important;
+            border-left-width: 4px !important;
+        }
+        .insight-banner-icon {
+            width: 44px !important;
+            height: 44px !important;
+            font-size: 22px !important;
+        }
+        .insight-banner-title {
+            font-size: 13px !important;
+            letter-spacing: 0.3px !important;
+        }
+        .insight-banner-detail {
+            font-size: 11px !important;
+        }
+
+        /* === STATS TILES mobile === */
+        .stats-tile {
+            padding: 10px 6px !important;
+            margin-bottom: 4px !important;
+            border-radius: 8px !important;
+        }
+        .stats-tile-label {
+            font-size: 10px !important;
+            letter-spacing: 1px !important;
+            margin-bottom: 3px !important;
+        }
+        .stats-tile-value {
+            font-size: 24px !important;
         }
 
         /* Stack header columns vertically */
@@ -1759,27 +1834,28 @@ st.markdown("""
             right: 10px !important;
         }
         .kpi-label {
-            font-size: 9px !important;
-            letter-spacing: 1.5px !important;
+            font-size: 10px !important;
+            letter-spacing: 1.2px !important;
             margin-bottom: 6px !important;
         }
         .kpi-value {
             font-size: 24px !important;
         }
         .kpi-unit {
-            font-size: 9px !important;
-            padding: 1px 6px !important;
-            border-radius: 6px !important;
+            font-size: 10px !important;
+            padding: 2px 7px !important;
+            border-radius: 7px !important;
             margin-left: 4px !important;
             font-weight: 800 !important;
-            line-height: 1.4 !important;
+            line-height: 1.3 !important;
             display: inline-block !important;
             white-space: nowrap !important;
             letter-spacing: 0.3px !important;
+            border: 1px solid #FFD700 !important;
         }
         .kpi-trend {
-            font-size: 9px !important;
-            padding: 4px 8px !important;
+            font-size: 10px !important;
+            padding: 4px 9px !important;
             margin-top: 8px !important;
             letter-spacing: 0.3px !important;
         }
@@ -1876,14 +1952,21 @@ st.markdown("""
 
     /* Very small phones (≤420px) */
     @media (max-width: 420px) {
-        .dashboard-header h1 { font-size: 16px !important; }
-        .dashboard-header .subtitle { font-size: 9px !important; }
-        .info-card-value { font-size: 14px !important; }
-        .info-card-label { font-size: 7px !important; }
+        .hero-title { font-size: 18px !important; }
+        .hero-subtitle { font-size: 9px !important; }
+        .hero-stat-icon { font-size: 12px !important; }
+        .hero-stat-value { font-size: 13px !important; }
+        .hero-stat-label { font-size: 8px !important; }
+        .hero-stat-clock-val { font-size: 10px !important; }
         .kpi-value { font-size: 21px !important; }
-        .kpi-label { font-size: 8px !important; }
+        .kpi-label { font-size: 9px !important; }
+        .kpi-unit { font-size: 9px !important; padding: 1px 6px !important; }
         .kpi-card { padding: 12px 10px !important; min-height: 120px !important; }
         .trend-card-title { font-size: 11px !important; }
+        .insight-banner-title { font-size: 12px !important; }
+        .insight-banner-detail { font-size: 10px !important; }
+        .stats-tile-value { font-size: 20px !important; }
+        .stats-tile-label { font-size: 9px !important; }
     }
 
     /* ===================================================== */
