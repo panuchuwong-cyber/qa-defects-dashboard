@@ -665,6 +665,82 @@ st.markdown("""
         border: 1px solid rgba(0,0,0,0.1);
     }
 
+    /* === INSIGHT BANNER (smart insights) === */
+    .insight-banner {
+        display: flex;
+        align-items: center;
+        gap: 16px;
+        padding: 16px 20px;
+        margin: 16px 0;
+        border-radius: 12px;
+        border-left: 6px solid currentColor;
+        box-shadow: 0 4px 14px rgba(0,0,0,0.08);
+        transition: transform 0.2s ease;
+    }
+    .insight-banner:hover { transform: translateX(2px); }
+    .insight-banner-icon {
+        font-size: 28px;
+        flex-shrink: 0;
+        width: 50px; height: 50px;
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        background: rgba(255,255,255,0.5);
+    }
+    .insight-banner-body { flex: 1; min-width: 0; }
+    .insight-banner-title {
+        font-weight: 900;
+        font-size: 14px;
+        letter-spacing: 0.5px;
+        margin-bottom: 4px;
+        line-height: 1.3;
+    }
+    .insight-banner-detail {
+        font-size: 11px;
+        line-height: 1.4;
+        opacity: 0.85;
+    }
+    .insight-banner-detail b { font-weight: 800; }
+
+    /* Severity color variants */
+    .insight-critical {
+        color: #B71C1C;
+        background: linear-gradient(135deg, rgba(255,107,107,0.12) 0%, rgba(255,107,107,0.04) 100%);
+        border-left-color: #B71C1C;
+    }
+    .insight-critical .insight-banner-icon {
+        background: rgba(183,28,28,0.15);
+        color: #B71C1C;
+    }
+    .insight-warning {
+        color: #E65100;
+        background: linear-gradient(135deg, rgba(255,152,0,0.12) 0%, rgba(255,152,0,0.04) 100%);
+        border-left-color: #E65100;
+    }
+    .insight-warning .insight-banner-icon {
+        background: rgba(230,81,0,0.15);
+        color: #E65100;
+    }
+    .insight-good {
+        color: #1B5E20;
+        background: linear-gradient(135deg, rgba(76,175,80,0.12) 0%, rgba(76,175,80,0.04) 100%);
+        border-left-color: #1B5E20;
+    }
+    .insight-good .insight-banner-icon {
+        background: rgba(27,94,32,0.15);
+        color: #1B5E20;
+    }
+    .insight-info {
+        color: #555;
+        background: linear-gradient(135deg, rgba(0,0,0,0.04) 0%, rgba(0,0,0,0.02) 100%);
+        border-left-color: #777;
+    }
+    .insight-info .insight-banner-icon {
+        background: rgba(0,0,0,0.08);
+        color: #555;
+    }
+
     /* === SECTION HEADER === */
     .section-header {
         background: linear-gradient(90deg, #FFD700 0%, #FFC107 50%, #FFD700 100%);
@@ -2232,16 +2308,34 @@ if "14 Days" in page:
             trend_color = "#555"
             trend_bg = "rgba(0,0,0,0.05)"
 
+        # Determine severity class
+        if qty_pct > 20:
+            severity = "insight-critical"
+            trend_msg = f"Defects spiked {qty_pct:.1f}% vs previous 7 days"
+            icon = "🚨"
+        elif qty_pct > 0:
+            severity = "insight-warning"
+            trend_msg = f"Defects up {qty_pct:.1f}% vs previous 7 days"
+            icon = "📈"
+        elif qty_pct < -10:
+            severity = "insight-good"
+            trend_msg = f"Defects down {abs(qty_pct):.1f}% — great improvement!"
+            icon = "✅"
+        elif qty_pct < 0:
+            severity = "insight-good"
+            trend_msg = f"Defects down {abs(qty_pct):.1f}% vs previous 7 days"
+            icon = "📉"
+        else:
+            severity = "insight-info"
+            trend_msg = "Defects stable vs previous 7 days"
+            icon = "➡️"
+
         st.markdown(
-            f'<div style="background:{trend_bg}; border-left:6px solid {trend_color}; '
-            f'border-radius:10px; padding:16px 20px; margin:20px 0; '
-            f'display:flex; align-items:center; gap:16px; '
-            f'box-shadow:0 4px 12px rgba(0,0,0,0.06);">'
-            f'<div style="font-size:24px;">💡</div>'
-            f'<div style="flex:1;">'
-            f'<div style="font-weight:900; color:{trend_color}; font-size:15px; '
-            f'letter-spacing:0.5px; margin-bottom:6px;">{trend_msg}</div>'
-            f'<div style="color:#555; font-size:12px;">'
+            f'<div class="insight-banner {severity}">'
+            f'<div class="insight-banner-icon">{icon}</div>'
+            f'<div class="insight-banner-body">'
+            f'<div class="insight-banner-title">{trend_msg}</div>'
+            f'<div class="insight-banner-detail">'
             f'🏭 Worst supplier: <b>{worst_supplier}</b> ({worst_qty:,} PCS)  ·  '
             f'⚠️ Top mode: <b>{worst_mode}</b>'
             f'</div></div></div>',
@@ -2249,23 +2343,22 @@ if "14 Days" in page:
         )
 
     # === QUICK ACTIONS BAR ===
-    qa1, qa2, qa3, qa4 = st.columns(4)
+    st.markdown(
+        '<div class="section-header">'
+        '<div class="section-icon">⚡</div>'
+        'QUICK ACTIONS'
+        '</div>',
+        unsafe_allow_html=True
+    )
+
+    qa1, qa2 = st.columns(2)
     with qa1:
-        if st.button("🔄 REFRESH DATA", use_container_width=True, key="qa_refresh"):
+        if st.button("🔄 REFRESH DATA", use_container_width=True, key="qa_refresh",
+                     type="secondary"):
             st.cache_data.clear()
             st.rerun()
-    with qa2:
-        if st.button("📊 EXPORT CSV", use_container_width=True, key="qa_export_csv"):
-            csv = filtered.to_csv(index=False).encode("utf-8")
-            st.download_button(
-                "📥 Download",
-                data=csv,
-                file_name=f"QA_Defects_{datetime.now().strftime('%Y%m%d_%H%M')}.csv",
-                mime="text/csv",
-                key="qa_dl_csv"
-            )
-    with qa3:
-        if st.button("📋 COPY SUMMARY", use_container_width=True, key="qa_copy"):
+        if st.button("📋 COPY SUMMARY", use_container_width=True, key="qa_copy",
+                     type="secondary"):
             summary = (
                 f"3K Battery QA Defects Summary\n"
                 f"Period: {min_date.strftime('%Y-%m-%d')} to {max_date.strftime('%Y-%m-%d')}\n"
@@ -2275,13 +2368,26 @@ if "14 Days" in page:
                 f"Unique Parts: {filtered['Part No'].nunique()}"
             )
             st.code(summary, language="text")
-    with qa4:
+    with qa2:
+        # Export CSV button (uses download_button which is its own widget)
+        csv = filtered.to_csv(index=False).encode("utf-8")
+        st.download_button(
+            "📊 EXPORT CSV",
+            data=csv,
+            file_name=f"QA_Defects_{datetime.now().strftime('%Y%m%d_%H%M')}.csv",
+            mime="text/csv",
+            use_container_width=True,
+            key="qa_dl_csv"
+        )
+        # Sync status indicator
         st.markdown(
-            f'<div style="background:white; border:2px solid #FFD700; border-radius:10px; '
+            f'<div style="background:white; border:2px solid #4CAF50; border-radius:10px; '
             f'padding:14px; text-align:center; min-height:50px; display:flex; '
-            f'align-items:center; justify-content:center;">'
-            f'<span class="status-dot status-ok"></span>'
-            f'<span style="font-weight:800; letter-spacing:1px;">SYNCED</span>'
+            f'align-items:center; justify-content:center; gap:8px; font-weight:800; '
+            f'letter-spacing:1px; color:#1B5E20;">'
+            f'<span style="width:10px; height:10px; background:#4CAF50; border-radius:50%; '
+            f'box-shadow:0 0 8px #4CAF50;"></span>'
+            f'<span>SYNCED · GITHUB</span>'
             f'</div>',
             unsafe_allow_html=True
         )
