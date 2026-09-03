@@ -743,6 +743,22 @@ st.markdown("""
     .kpi-black::before {
         background: linear-gradient(90deg, #000000 0%, #333333 100%);
     }
+    /* Dark card color overrides */
+    .kpi-black {
+        background: linear-gradient(145deg, #000000 0%, #1a1a1a 100%) !important;
+        border: 2px solid #FFD700 !important;
+    }
+    .kpi-black .kpi-value { color: #FFD700 !important; }
+    .kpi-black .kpi-label { color: #cccccc !important; }
+    .kpi-black .kpi-icon {
+        opacity: 0.25 !important;
+        filter: drop-shadow(0 0 6px rgba(255,215,0,0.3));
+    }
+    .kpi-black .kpi-unit {
+        background: #FFD700 !important;
+        color: #000 !important;
+        border-color: #000 !important;
+    }
     .kpi-icon {
         position: absolute; top: 18px; right: 18px;
         font-size: 28px; opacity: 0.12;
