@@ -757,16 +757,7 @@ st.markdown("""
         letter-spacing: 2.5px; text-transform: uppercase;
         margin-bottom: 10px; margin-top: 4px;
     }
-    .kpi-value {
-        color: #FFD700; font-size: 32px; font-weight: 900;
-        line-height: 1; margin: 4px 0 8px 0;
-        font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
-        white-space: nowrap;
-        display: flex;
-        align-items: center;
-        gap: 6px;
-    }
-    .kpi-unit {
+        .kpi-unit {
         font-size: 13px; color: #000; margin-left: 6px;
         font-weight: 800;
         background: #FFD700; padding: 3px 10px; border-radius: 8px;
@@ -1217,13 +1208,7 @@ st.markdown("""
         from { opacity: 0; transform: translateY(8px); }
         to   { opacity: 1; transform: translateY(0); }
     }
-    .kpi-value {
-        animation: countUp 0.6s cubic-bezier(0.16, 1, 0.3, 1);
-        display: flex; align-items: center; justify-content: center;
-        gap: 6px;
-    }
-
-    /* Subtle icon bobbing */
+        /* Subtle icon bobbing */
     @keyframes iconBob {
         0%, 100% { transform: translateY(0); }
         50%      { transform: translateY(-3px); }
