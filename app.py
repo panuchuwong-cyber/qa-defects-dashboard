@@ -703,72 +703,6 @@ st.markdown("""
     }
     .insight-banner-detail b { font-weight: 800; }
 
-    /* === STATS TILES (validation summary) === */
-    .stats-tile {
-        text-align: center;
-        padding: 14px 8px;
-        border-radius: 10px;
-        margin-bottom: 8px;
-        transition: transform 0.2s;
-    }
-    .stats-tile:hover { transform: translateY(-2px); }
-    .stats-tile-label {
-        font-size: 10px;
-        font-weight: 800;
-        letter-spacing: 1.5px;
-        opacity: 0.85;
-        margin-bottom: 4px;
-        text-transform: uppercase;
-    }
-    .stats-tile-value {
-        font-size: 28px;
-        font-weight: 900;
-        line-height: 1;
-        font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
-    }
-    .stats-total {
-        background: linear-gradient(135deg, #000000 0%, #333333 100%);
-        color: #FFD700;
-        border: 2px solid #FFD700;
-    }
-    .stats-valid {
-        background: linear-gradient(135deg, #2E7D32 0%, #4CAF50 100%);
-        color: #ffffff;
-        border: 2px solid #66BB6A;
-    }
-    .stats-invalid {
-        background: linear-gradient(135deg, #C62828 0%, #F44336 100%);
-        color: #ffffff;
-        border: 2px solid #EF5350;
-    }
-
-    /* === UPLOAD ZONE (file drop area) === */
-    .upload-zone {
-        background: linear-gradient(135deg, rgba(255,215,0,0.05) 0%, rgba(255,215,0,0.02) 100%);
-        border: 2px dashed rgba(255,215,0,0.5);
-        border-radius: 14px;
-        padding: 16px;
-        margin-bottom: 8px;
-        transition: all 0.2s ease;
-    }
-    .upload-zone:hover {
-        border-color: #FFD700;
-        background: linear-gradient(135deg, rgba(255,215,0,0.1) 0%, rgba(255,215,0,0.04) 100%);
-        box-shadow: 0 4px 16px rgba(255,215,0,0.15);
-    }
-    .upload-zone [data-testid="stFileUploaderDropzone"] {
-        background: transparent !important;
-        border: none !important;
-        padding: 8px !important;
-    }
-    .upload-zone [data-testid="stFileUploaderDropzone"] div {
-        font-weight: 700 !important;
-        color: #333 !important;
-    }
-    .upload-zone section[data-testid="stFileUploaderDropzone"] {
-        background: rgba(255,215,0,0.05) !important;
-    }
-
     /* Severity color variants */
     .insight-critical {
         color: #B71C1C;
@@ -1076,20 +1010,37 @@ st.markdown("""
         font-size: 32px !important;
         font-weight: 900 !important;
         letter-spacing: -1px;
-        background: linear-gradient(135deg, #FFD700 0%, #FFA500 50%, #FFD700 100%);
-        background-size: 200% 100%;
+        background: linear-gradient(135deg, #C79000 0%, #8a6300 100%);
         -webkit-background-clip: text;
         -webkit-text-fill-color: transparent;
         background-clip: text;
-        animation: countUp 0.6s cubic-bezier(0.16, 1, 0.3, 1),
-                   shimmer 4s linear infinite;
-        display: flex; align-items: center; justify-content: center;
+        animation: countUp 0.6s cubic-bezier(0.16, 1, 0.3, 1);
+        display: flex; align-items: baseline; justify-content: flex-start;
         gap: 6px;
     }
-    .kpi-container.kpi-black .kpi-value {
+    .kpi-container.kpi-black .kpi-value,
+    .kpi-card.kpi-black .kpi-value {
         background: linear-gradient(135deg, #FFD700 0%, #FFC107 100%);
         -webkit-background-clip: text;
         -webkit-text-fill-color: transparent;
+    }
+    /* The unit badge lives INSIDE .kpi-value, so it inherits the transparent
+       text fill used for the gradient number and renders as a solid dark bar.
+       Reset fill + clip explicitly so PCS / CASE / PART stay readable. */
+    .kpi-value .kpi-unit {
+        background: #FFF3C4 !important;
+        border: 1px solid #FFD700 !important;
+        -webkit-background-clip: border-box !important;
+        background-clip: border-box !important;
+        -webkit-text-fill-color: #7a5c00 !important;
+        color: #7a5c00 !important;
+    }
+    .kpi-container.kpi-black .kpi-value .kpi-unit,
+    .kpi-card.kpi-black .kpi-value .kpi-unit {
+        background: rgba(255,215,0,0.16) !important;
+        border-color: rgba(255,215,0,0.6) !important;
+        -webkit-text-fill-color: #FFD700 !important;
+        color: #FFD700 !important;
     }
 
     /* KPI container: gradient border + glow on hover */
@@ -1589,67 +1540,6 @@ st.markdown("""
                 "live" !important;
             gap: 12px !important;
         }
-
-        /* === INSIGHT BANNER mobile === */
-        .insight-banner {
-            padding: 12px 14px !important;
-            gap: 12px !important;
-            margin: 12px 0 !important;
-            border-left-width: 4px !important;
-        }
-        .insight-banner-icon {
-            width: 40px !important;
-            height: 40px !important;
-            font-size: 20px !important;
-        }
-        .insight-banner-title {
-            font-size: 12px !important;
-            letter-spacing: 0.3px !important;
-        }
-        .insight-banner-detail {
-            font-size: 10px !important;
-        }
-
-        /* === STATS TILES mobile === */
-        .stats-tile {
-            padding: 10px 6px !important;
-            margin-bottom: 4px !important;
-            border-radius: 8px !important;
-        }
-        .stats-tile-label {
-            font-size: 8px !important;
-            letter-spacing: 1px !important;
-            margin-bottom: 3px !important;
-        }
-        .stats-tile-value {
-            font-size: 22px !important;
-        }
-        /* Stats columns: stack vertically on mobile so each tile is full-width */
-        div[data-testid="stHorizontalBlock"]:has(.stats-tile) {
-            flex-direction: column !important;
-        }
-        div[data-testid="stHorizontalBlock"]:has(.stats-tile) > div[data-testid="stColumn"] {
-            flex: 1 1 100% !important;
-            min-width: 100% !important;
-            max-width: 100% !important;
-            width: 100% !important;
-            margin-bottom: 6px !important;
-        }
-        div[data-testid="stHorizontalBlock"]:has(.stats-tile) .stats-tile {
-            display: flex !important;
-            align-items: center !important;
-            justify-content: space-between !important;
-            padding: 12px 16px !important;
-            text-align: left !important;
-        }
-        div[data-testid="stHorizontalBlock"]:has(.stats-tile) .stats-tile-label {
-            margin-bottom: 0 !important;
-            font-size: 11px !important;
-            letter-spacing: 1.5px !important;
-        }
-        div[data-testid="stHorizontalBlock"]:has(.stats-tile) .stats-tile-value {
-            font-size: 22px !important;
-        }
         .hero-title {
             font-size: 18px !important;
             letter-spacing: 1.5px !important;
@@ -1771,14 +1661,6 @@ st.markdown("""
             letter-spacing: 1px !important;
             margin-top: 8px !important;
         }
-        div[style*="margin-top: 14px"][style*="background: rgba(255,215,0,0.06)"] {
-            margin-top: 8px !important;
-            padding: 8px !important;
-        }
-        div[style*="margin-top: 14px"][style*="background: rgba(255,215,0,0.06)"]
-            div[id="kanom-clock"] {
-            font-size: 14px !important;
-        }
 
         /* === KPI CARDS (now 2x2 via Python st.columns(2) rows) === */
         /* Target the inner kpi-card directly without :has() */
@@ -1802,19 +1684,15 @@ st.markdown("""
             font-size: 24px !important;
         }
         .kpi-unit {
-            font-size: 11px !important;
-            color: #FFD700 !important;
-            background: #000 !important;
-            padding: 2px 8px !important;
-            border-radius: 8px !important;
-            margin-left: 5px !important;
+            font-size: 9px !important;
+            padding: 1px 6px !important;
+            border-radius: 6px !important;
+            margin-left: 4px !important;
             font-weight: 800 !important;
-            line-height: 1.3 !important;
+            line-height: 1.4 !important;
             display: inline-block !important;
             white-space: nowrap !important;
-            letter-spacing: 0.4px !important;
-            vertical-align: middle !important;
-            border: 1px solid #FFD700 !important;
+            letter-spacing: 0.3px !important;
         }
         .kpi-trend {
             font-size: 9px !important;
@@ -1844,16 +1722,42 @@ st.markdown("""
             height: 170px !important;
         }
         /* Remove iframe body margin so charts pack tightly */
-        iframe[title="streamlit.components.v1.html"] {
-            display: block !important;
-            margin-bottom: 0 !important;
-            height: 385px !important;  /* tight fit for 2 stacked charts (170px each) + gap + padding */
+        /* Charts live in ONE iframe PER chart inside st.columns, so each
+           iframe must keep its own height — forcing a fixed height here is
+           what left the big empty gap under the trend charts.
+           NOTE: Streamlit 1.50 titles these iframes "st.iframe", NOT
+           "streamlit.components.v1.html", so target the tag directly. */
+        iframe { display: block !important; margin-bottom: 0 !important; }
+        div[data-testid="stIFrame"],
+        [data-testid="stCustomComponentV1"] { margin-bottom: 0 !important; }
+        /* Streamlit adds a 4px bottom margin per column; with charts stacked
+           1-up on mobile that margin repeats and reads as dead space. */
+        div[data-testid="stColumn"] { margin-bottom: 0 !important; }
+        div[data-testid="stElementContainer"] { margin-bottom: 0 !important; }
+
+        /* --- GLOBAL: every column row wraps 2-up on phones, EXCEPT rows that
+           hold a chart iframe / dataframe / text input, which go full width. */
+        div[data-testid="stHorizontalBlock"] {
+            flex-wrap: wrap !important;
+            gap: 8px !important;
+            row-gap: 8px !important;
         }
-        /* Remove the body default top/bottom space inside the iframe */
-        iframe[title="streamlit.components.v1.html"] body {
-            margin: 0 !important;
-            padding: 0 !important;
+        div[data-testid="stHorizontalBlock"] > div[data-testid="stColumn"] {
+            flex: 1 1 calc(50% - 4px) !important;
+            min-width: calc(50% - 4px) !important;
+            width: calc(50% - 4px) !important;
         }
+        div[data-testid="stHorizontalBlock"]:has(iframe) > div[data-testid="stColumn"],
+        div[data-testid="stHorizontalBlock"]:has([data-testid="stDataFrame"]) > div[data-testid="stColumn"],
+        div[data-testid="stHorizontalBlock"]:has([data-testid="stTextInput"]) > div[data-testid="stColumn"] {
+            flex: 1 1 100% !important;
+            min-width: 100% !important;
+            width: 100% !important;
+        }
+        /* Tighten Streamlit's default vertical rhythm on phones */
+        div[data-testid="stVerticalBlock"] { gap: 0.5rem !important; }
+        div[data-testid="stVerticalBlockBorderWrapper"] { gap: 0.5rem !important; }
+        div[data-testid="element-container"] { margin-bottom: 0 !important; }
 
         /* === Bottom 2-col grids (mode + suppliers) stack === */
         div[data-testid="stHorizontalBlock"]:has(.resp-row-2col) {
@@ -2215,6 +2119,10 @@ n_suppliers = filtered["Supplier"].nunique() if "Supplier" in filtered.columns e
 n_groups    = filtered["Group Part"].nunique() if "Group Part" in filtered.columns else 0
 n_modes     = filtered["Problem Mode"].nunique() if "Problem Mode" in filtered.columns else 0
 
+# Streamlit sanitises inline <script>, so a JS clock never ticks here.
+# Render the timestamp server-side instead of showing a dead "--:--:--".
+now_hm = datetime.now().strftime("%H:%M")
+
 st.markdown(f"""
 <div class="hero-header">
     <div class="hero-left">
@@ -2251,8 +2159,8 @@ st.markdown(f"""
         </div>
         <div class="hero-stat hero-stat-clock">
             <span class="hero-stat-icon">⏰</span>
-            <span class="hero-stat-label">Current Time</span>
-            <span id="kanom-clock" class="hero-stat-clock-val">--:--:--</span>
+            <span class="hero-stat-label">Updated</span>
+            <span class="hero-stat-clock-val">{now_hm}</span>
         </div>
     </div>
     <div class="hero-live">
@@ -2260,19 +2168,6 @@ st.markdown(f"""
         <span>LIVE DATA · Auto-synced from GitHub</span>
     </div>
 </div>
-<script>
-(function() {{
-    const el = document.getElementById('kanom-clock');
-    if (!el) return;
-    function tick() {{
-        const d = new Date();
-        const pad = (n) => String(n).padStart(2, '0');
-        el.textContent = pad(d.getHours()) + ':' + pad(d.getMinutes()) + ':' + pad(d.getSeconds());
-    }}
-    tick();
-    setInterval(tick, 1000);
-}})();
-</script>
 """, unsafe_allow_html=True)
 
 # ============================================================
@@ -2554,91 +2449,102 @@ if "14 Days" in page:
         unsafe_allow_html=True
     )
 
-    trend_html = f"""
-    <div class="trend-grid">
-        <div class="trend-card">
-            <div class="trend-card-head">
-                <div class="trend-dot trend-dot-gold"></div>
-                <div class="trend-card-title">Q'TY (PCS) TREND</div>
-            </div>
-            <div class="trend-canvas-wrap">
-                <canvas id="kpiQtyChart"></canvas>
-            </div>
+    trend_card_css = """
+    <style>
+      html, body { margin:0; padding:0; }
+      .tc-card {
+        background:#fff; border:2px solid #111; border-radius:14px;
+        padding:12px 12px 6px 12px; box-shadow:0 4px 14px rgba(0,0,0,0.08);
+        font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;
+      }
+      .tc-head { display:flex; align-items:center; gap:8px; margin-bottom:6px; }
+      .tc-dot { width:10px; height:10px; border-radius:50%; flex-shrink:0; }
+      .tc-title { color:#000; font-weight:900; font-size:12px; letter-spacing:1px; }
+      .tc-body { width:100%; height:210px; }
+      @media (max-width: 768px) {
+        .tc-card { padding:10px 10px 4px 10px; border-radius:12px; }
+        .tc-title { font-size:11px; }
+        /* Body height stays 210px at every breakpoint so the fixed Streamlit
+           iframe height fits the card exactly — a shorter card here is what
+           left ~56px of dead white space under each chart. */
+      }
+    </style>
+    """
+
+    def _trend_card(canvas_id, title, dot_color, labels_js, data_js,
+                    border, bg, point, point_border, axis_title):
+        return trend_card_css + f"""
+        <div class="tc-card">
+          <div class="tc-head">
+            <div class="tc-dot" style="background:{dot_color};"></div>
+            <div class="tc-title">{title}</div>
+          </div>
+          <div class="tc-body"><canvas id="{canvas_id}"></canvas></div>
         </div>
-        <div class="trend-card">
-            <div class="trend-card-head">
-                <div class="trend-dot trend-dot-black"></div>
-                <div class="trend-card-title">CASE TREND</div>
-            </div>
-            <div class="trend-canvas-wrap">
-                <canvas id="kpiCaseChart"></canvas>
-            </div>
-        </div>
-    </div>
-    <script src="{CHARTJS_CDN}"></script>
-    <script>
-    (function() {{
-        function makeChart(id, labels, data, borderColor, bgColor, pointColor, pointBorder) {{
-            const canvas = document.getElementById(id);
-            if (!canvas) return null;
-            // Resize canvas to fit parent (handles mobile width changes)
-            function fit() {{
-                const parent = canvas.parentElement;
-                const w = parent.clientWidth;
+        <script src="{CHARTJS_CDN}"></script>
+        <script>
+        (function() {{
+            const canvas = document.getElementById('{canvas_id}');
+            if (!canvas) return;
+            const fit = () => {{
+                const w = canvas.parentElement.clientWidth;
                 if (w <= 0) return false;
                 canvas.width = w;
-                canvas.height = 200;
+                canvas.height = canvas.parentElement.clientHeight;
                 return true;
-            }}
-            if (!fit()) {{
-                requestAnimationFrame(function() {{ fit(); new Chart(canvas, getConfig()); }});
-                return null;
-            }}
-            function getConfig() {{
-                return {{
-                    type: 'line',
-                    data: {{
-                        labels: labels,
-                        datasets: [{{
-                            data: data, borderColor: borderColor, backgroundColor: bgColor,
-                            borderWidth: 2.5, tension: 0.35, fill: true,
-                            pointRadius: 5, pointHoverRadius: 7,
-                            pointBackgroundColor: pointColor, pointBorderColor: pointBorder,
-                            pointBorderWidth: 2
-                        }}]
-                    }},
-                    options: {{
-                        responsive: false, maintainAspectRatio: false, animation: false,
-                        plugins: {{ legend: {{ display: false }} }},
-                        scales: {{
-                            y: {{ beginAtZero: true, ticks: {{ font: {{ size: 10 }}, stepSize: 1, precision: 0 }},
-                                  title: {{ display: true, text: id.includes('Qty') ? 'QTY' : 'CASE', font: {{ size: 10, weight: 'bold' }} }},
-                                  grid: {{ color: '#f0f0f0', drawBorder: false }} }},
-                            x: {{ ticks: {{ font: {{ size: 10 }}, maxRotation: 0, autoSkip: true, maxTicksLimit: 7 }},
-                                  grid: {{ display: false }} }}
-                        }}
+            }};
+            fit();
+            const chart = new Chart(canvas, {{
+                type: 'line',
+                data: {{
+                    labels: {labels_js},
+                    datasets: [{{
+                        data: {data_js},
+                        borderColor: '{border}', backgroundColor: '{bg}',
+                        borderWidth: 2.5, tension: 0.35, fill: true,
+                        pointRadius: 4, pointHoverRadius: 7,
+                        pointBackgroundColor: '{point}', pointBorderColor: '{point_border}',
+                        pointBorderWidth: 2
+                    }}]
+                }},
+                options: {{
+                    responsive: false, maintainAspectRatio: false, animation: false,
+                    layout: {{ padding: {{ top: 4, right: 6 }} }},
+                    plugins: {{ legend: {{ display: false }} }},
+                    scales: {{
+                        y: {{ beginAtZero: true,
+                              ticks: {{ font: {{ size: 10 }}, precision: 0, maxTicksLimit: 6 }},
+                              title: {{ display: true, text: '{axis_title}',
+                                        font: {{ size: 10, weight: 'bold' }} }},
+                              grid: {{ color: '#f1f1f1' }} }},
+                        x: {{ ticks: {{ font: {{ size: 10 }}, maxRotation: 0,
+                                       autoSkip: true, maxTicksLimit: 6 }},
+                              grid: {{ display: false }} }}
                     }}
-                }};
-            }}
-            const c = new Chart(canvas, getConfig());
-            window.addEventListener('resize', function() {{
-                fit();
-                c.resize();
+                }}
             }});
-            return c;
-        }}
-        const c1 = makeChart('kpiQtyChart', {labels}, {qty_data}, '#000000', 'rgba(255,215,0,0.35)', '#FFD700', '#000000');
-        const c2 = makeChart('kpiCaseChart', {labels}, {case_data}, '#FFD700', 'rgba(0,0,0,0.12)', '#000000', '#FFD700');
-        // Re-fit after mobile browser settles (address-bar collapse etc.)
-        setTimeout(function() {{
-            if (c1) {{ c1.canvas.parentElement && (c1.canvas.width = c1.canvas.parentElement.clientWidth); c1.resize(); }}
-            if (c2) {{ c2.canvas.parentElement && (c2.canvas.width = c2.canvas.parentElement.clientWidth); c2.resize(); }}
-        }}, 350);
-    }})();
-    </script>
-    """
-    # Render chart in component iframe (height fits content via CSS)
-    st.components.v1.html(trend_html, height=680, scrolling=False)
+            const refit = () => {{ fit(); chart.resize(); }};
+            window.addEventListener('resize', refit);
+            setTimeout(refit, 350);
+        }})();
+        </script>
+        """
+
+    # Two separate iframes -> Streamlit columns handle desktop side-by-side
+    # AND mobile stacking, with no dead space from a fixed tall iframe.
+    tc1, tc2 = st.columns(2, gap="small")
+    with tc1:
+        st.components.v1.html(
+            _trend_card("kpiQtyChart", "Q'TY (PCS) TREND", "#FFD700", labels, qty_data,
+                        "#000000", "rgba(255,215,0,0.35)", "#FFD700", "#000000", "QTY"),
+            height=250,
+        )
+    with tc2:
+        st.components.v1.html(
+            _trend_card("kpiCaseChart", "CASE TREND", "#111111", labels, case_data,
+                        "#FFD700", "rgba(0,0,0,0.12)", "#000000", "#FFD700", "CASE"),
+            height=250,
+        )
 
     # === PROBLEM MODE + TOP 5 SUPPLIERS ===
     col_l, col_r = st.columns(2)
@@ -2795,11 +2701,34 @@ if "14 Days" in page:
         div[data-testid="stHorizontalBlock"] button[key^="grp_"]:active {
             transform: translateY(0) !important;
         }
-        /* Also force column widths to be equal */
-        div[data-testid="stHorizontalBlock"] > div[data-testid="stColumn"] {
-            flex: 1 1 0 !important;
-            min-width: 0 !important;
-            width: calc(100% / 6) !important;
+        /* Equal column widths — 6-up on desktop, 2-up on phones.
+           The old unscoped `width: 100%/6` also hit every OTHER column row
+           on the page and squashed them to 16% on mobile. */
+        @media (min-width: 769px) {
+            div[data-testid="stHorizontalBlock"]:has(button[key^="grp_"])
+                > div[data-testid="stColumn"] {
+                flex: 1 1 0 !important;
+                min-width: 0 !important;
+                width: calc(100% / 6) !important;
+            }
+        }
+        @media (max-width: 768px) {
+            div[data-testid="stHorizontalBlock"]:has(button[key^="grp_"])
+                > div[data-testid="stColumn"] {
+                flex: 1 1 calc(50% - 4px) !important;
+                min-width: calc(50% - 4px) !important;
+                width: calc(50% - 4px) !important;
+            }
+            div[data-testid="stHorizontalBlock"] button[key^="grp_"] {
+                height: 74px !important;
+                min-height: 74px !important;
+                max-height: 74px !important;
+                font-size: 10px !important;
+                line-height: 1.35 !important;
+                padding: 8px 4px !important;
+                letter-spacing: 0.3px !important;
+                border-radius: 12px !important;
+            }
         }
     </style>
     """, unsafe_allow_html=True)
@@ -3075,55 +3004,48 @@ elif "Data Entry" in page:
     # ============================================================
     if entry_mode == "📤 Upload Excel File":
         st.markdown(
-            '<div class="section-header">'
-            '<div class="section-icon">📤</div>'
-            'UPLOAD EXCEL FILE'
-            '</div>',
+            '<div style="background: linear-gradient(135deg, #FFD700 0%, #FFC107 100%);'
+            'color: #000; padding: 20px; border-radius: 12px; margin-bottom: 16px;'
+            'border: 2px solid #000; box-shadow: 0 4px 16px rgba(255,215,0,0.3);">'
+            '<b style="font-size: 15px;">📤 UPLOAD EXCEL — Fastest way to add multiple records</b><br>'
+            '<span style="color: #333; font-size: 12px;">'
+            'Drag & drop your edited Excel file (.xlsx) → preview → sync to dashboard'
+            '</span></div>',
             unsafe_allow_html=True
         )
 
-        # Wrap uploader in styled drop zone
-        st.markdown('<div class="upload-zone">', unsafe_allow_html=True)
         uploaded_file = st.file_uploader(
-            "Drop your .xlsx file here or click to browse",
+            "📁 Choose Excel file (.xlsx)",
             type=["xlsx"],
             help="Upload the QA_Defects_Template.xlsx file after editing",
-            key="excel_uploader",
-            label_visibility="visible"
-        )
-        st.markdown('</div>', unsafe_allow_html=True)
-        st.markdown(
-            '<div style="text-align:center; color:#888; font-size:10px; '
-            'margin-top:-8px; margin-bottom:16px; letter-spacing:0.5px;">'
-            '⚡ Drag & drop .xlsx · Preview before sync · 1-click publish to GitHub'
-            '</div>',
-            unsafe_allow_html=True
+            key="excel_uploader"
         )
 
         if uploaded_file is not None:
             try:
-                # Try to read Excel (try multiple sheet names)
+                # Detect where the real header row lives. The 14-day / full-year
+                # templates put it on row 1; the legacy QA_Defects_Template.xlsx
+                # has a title in row 1 and the header in row 4. Try both and
+                # pick the one that contains the required columns.
                 df_uploaded = None
                 sheet_used = None
-                for sheet_name in ["Defects Data", "Sheet1", 0]:
-                    try:
-                        df_uploaded = pd.read_excel(uploaded_file, sheet_name=sheet_name, header=3)
-                        sheet_used = sheet_name
+                for header_row in (0, 3):
+                    for sheet_name in ["Defects Data", "Sheet1", 0]:
+                        try:
+                            cand = pd.read_excel(uploaded_file, sheet_name=sheet_name, header=header_row)
+                            if all(c in cand.columns for c in ["Date", "Supplier", "Part No"]):
+                                df_uploaded = cand
+                                sheet_used = sheet_name
+                                break
+                        except Exception:
+                            continue
+                    if df_uploaded is not None:
                         break
-                    except Exception:
-                        continue
 
                 if df_uploaded is None or df_uploaded.empty:
-                    st.markdown(
-                        '<div class="insight-banner insight-critical">'
-                        '<div class="insight-banner-icon">📄</div>'
-                        '<div class="insight-banner-body">'
-                        '<div class="insight-banner-title">Could not read Excel file</div>'
-                        '<div class="insight-banner-detail">'
-                        'Make sure the file has data and follows the template format.<br>'
-                        'Use <b>QA_Defects_Template.xlsx</b> for the correct structure.'
-                        '</div></div></div>',
-                        unsafe_allow_html=True
+                    st.error(
+                        "❌ Could not read Excel file. Make sure it has columns: "
+                        "Date, Supplier, Group Part, Problem Mode, Part No, Qty."
                     )
                 else:
                     # Validate required columns
@@ -3173,53 +3095,37 @@ elif "Data Entry" in page:
                     col_v1, col_v2, col_v3 = st.columns(3)
                     with col_v1:
                         st.markdown(
-                            f'<div class="stats-tile stats-total">'
-                            f'<div class="stats-tile-label">TOTAL ROWS</div>'
-                            f'<div class="stats-tile-value">{len(df_uploaded)}</div>'
+                            f'<div style="background:#000; color:#FFD700; padding:14px; '
+                            f'border-radius:10px; text-align:center;">'
+                            f'<div style="font-size:11px; opacity:0.8;">TOTAL ROWS</div>'
+                            f'<div style="font-size:28px; font-weight:900;">{len(df_uploaded)}</div>'
                             f'</div>',
                             unsafe_allow_html=True
                         )
                     with col_v2:
                         st.markdown(
-                            f'<div class="stats-tile stats-valid">'
-                            f'<div class="stats-tile-label">VALID ✓</div>'
-                            f'<div class="stats-tile-value">{len(valid_records)}</div>'
+                            f'<div style="background:#4CAF50; color:white; padding:14px; '
+                            f'border-radius:10px; text-align:center;">'
+                            f'<div style="font-size:11px; opacity:0.9;">VALID ✓</div>'
+                            f'<div style="font-size:28px; font-weight:900;">{len(valid_records)}</div>'
                             f'</div>',
                             unsafe_allow_html=True
                         )
                     with col_v3:
                         st.markdown(
-                            f'<div class="stats-tile stats-invalid">'
-                            f'<div class="stats-tile-label">INVALID ✗</div>'
-                            f'<div class="stats-tile-value">{len(invalid_records)}</div>'
+                            f'<div style="background:#F44336; color:white; padding:14px; '
+                            f'border-radius:10px; text-align:center;">'
+                            f'<div style="font-size:11px; opacity:0.9;">INVALID ✗</div>'
+                            f'<div style="font-size:28px; font-weight:900;">{len(invalid_records)}</div>'
                             f'</div>',
                             unsafe_allow_html=True
                         )
 
-                    # Show column warnings as styled banners
+                    # Show column warnings
                     if missing_cols:
-                        st.markdown(
-                            f'<div class="insight-banner insight-critical">'
-                            f'<div class="insight-banner-icon">⚠️</div>'
-                            f'<div class="insight-banner-body">'
-                            f'<div class="insight-banner-title">Missing columns detected</div>'
-                            f'<div class="insight-banner-detail">'
-                            f'Your file is missing required columns: <b>{", ".join(missing_cols)}</b><br>'
-                            f'Please use <b>QA_Defects_Template.xlsx</b> for the correct format.'
-                            f'</div></div></div>',
-                            unsafe_allow_html=True
-                        )
+                        st.warning(f"⚠️ Missing columns: {', '.join(missing_cols)}")
                     if extra_cols:
-                        st.markdown(
-                            f'<div class="insight-banner insight-info">'
-                            f'<div class="insight-banner-icon">ℹ️</div>'
-                            f'<div class="insight-banner-body">'
-                            f'<div class="insight-banner-title">Extra columns ignored</div>'
-                            f'<div class="insight-banner-detail">'
-                            f'Columns not used: <b>{", ".join(extra_cols)}</b>'
-                            f'</div></div></div>',
-                            unsafe_allow_html=True
-                        )
+                        st.info(f"�️ Extra columns ignored: {', '.join(extra_cols)}")
 
                     # Preview table
                     st.markdown("<br>", unsafe_allow_html=True)
@@ -3410,28 +3316,8 @@ elif "Data Entry" in page:
                                 )
 
             except Exception as e:
-                st.markdown(
-                    f'<div class="insight-banner insight-critical">'
-                    f'<div class="insight-banner-icon">⚠️</div>'
-                    f'<div class="insight-banner-body">'
-                    f'<div class="insight-banner-title">Error reading file</div>'
-                    f'<div class="insight-banner-detail">'
-                    f'<b>{str(e)}</b><br><br>'
-                    f'Make sure you are uploading the correct template file.'
-                    f'</div></div></div>',
-                    unsafe_allow_html=True
-                )
-                st.markdown(
-                    '<div class="insight-banner insight-info">'
-                    '<div class="insight-banner-icon">💡</div>'
-                    '<div class="insight-banner-body">'
-                    '<div class="insight-banner-title">Use the correct template</div>'
-                    '<div class="insight-banner-detail">'
-                    'Download <b>QA_Defects_Template.xlsx</b> from the page below, '
-                    'fill in your data, then upload it here.'
-                    '</div></div></div>',
-                    unsafe_allow_html=True
-                )
+                st.error(f"❌ Error reading file: {str(e)}")
+                st.info("� Make sure you're uploading the QA_Defects_Template.xlsx file")
 
         # Footer for upload mode
         st.markdown("<br>", unsafe_allow_html=True)
@@ -3835,64 +3721,88 @@ else:
     fy25_data = [3.2, 4.8, 2.5, 6.1, 5.5, 0, 0, 0, 0, 0, 0, 0]
     fy26_data = [0, 0, 0, 0, 8.4, 0, 0, 0, 0, 0, 0, 0]
 
-    chart_compare = f"""
-    <div style="display:grid; grid-template-columns: 1fr 1fr; gap: 16px;">
-        <div style="background: white; border: 2px solid #000; border-radius: 12px; padding: 16px; box-shadow: 0 4px 12px rgba(0,0,0,0.08);">
-            <div style="color: #000; font-weight: 900; font-size: 13px; letter-spacing: 1px; margin-bottom: 12px;">
-                📊 PPM BY MONTH (FY25 vs FY26)
-            </div>
-            <div style="width:100%; height:280px;">
-                <canvas id="ppmChart"></canvas>
-            </div>
+    fy_card_css = """
+    <style>
+      html, body { margin:0; padding:0; }
+      .fy-card {
+        background:#fff; border:2px solid #111; border-radius:14px;
+        padding:12px 12px 6px 12px; box-shadow:0 4px 14px rgba(0,0,0,0.08);
+        font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;
+      }
+      .fy-title { color:#000; font-weight:900; font-size:12px;
+                  letter-spacing:1px; margin-bottom:8px; }
+      .fy-body { width:100%; height:250px; }
+      @media (max-width: 768px) {
+        .fy-card { padding:10px 10px 4px 10px; border-radius:12px; }
+        .fy-title { font-size:11px; margin-bottom:6px; }
+        /* Body height stays 250px at every breakpoint — see .tc-body note. */
+      }
+    </style>
+    """
+
+    def _fy_card(canvas_id, title, axis_title):
+        return fy_card_css + f"""
+        <div class="fy-card">
+          <div class="fy-title">{title}</div>
+          <div class="fy-body"><canvas id="{canvas_id}"></canvas></div>
         </div>
-        <div style="background: white; border: 2px solid #000; border-radius: 12px; padding: 16px; box-shadow: 0 4px 12px rgba(0,0,0,0.08);">
-            <div style="color: #000; font-weight: 900; font-size: 13px; letter-spacing: 1px; margin-bottom: 12px;">
-                📋 CASE BY MONTH (FY25 vs FY26)
-            </div>
-            <div style="width:100%; height:280px;">
-                <canvas id="caseChart"></canvas>
-            </div>
-        </div>
-    </div>
-    <script src="{CHARTJS_CDN}"></script>
-    <script>
-    (function() {{
-        const makeChart = (id, data) => {{
-            const canvas = document.getElementById(id);
-            canvas.width = canvas.parentElement.clientWidth - 8;
-            canvas.height = 280;
-            return new Chart(canvas, {{
+        <script src="{CHARTJS_CDN}"></script>
+        <script>
+        (function() {{
+            const canvas = document.getElementById('{canvas_id}');
+            if (!canvas) return;
+            const fit = () => {{
+                const w = canvas.parentElement.clientWidth;
+                if (w <= 0) return false;
+                canvas.width = w;
+                canvas.height = canvas.parentElement.clientHeight;
+                return true;
+            }};
+            fit();
+            const chart = new Chart(canvas, {{
                 type: 'bar',
                 data: {{
                     labels: {months},
                     datasets: [
-                        {{ label: 'FY25', data: data.fy25, backgroundColor: '#FFD700',
+                        {{ label: 'FY25', data: {fy25_data}, backgroundColor: '#FFD700',
                            borderColor: '#000', borderWidth: 1.5, borderRadius: 4,
-                           categoryPercentage: 0.7, barPercentage: 0.85 }},
-                        {{ label: 'FY26', data: data.fy26, backgroundColor: '#000000',
+                           categoryPercentage: 0.75, barPercentage: 0.9 }},
+                        {{ label: 'FY26', data: {fy26_data}, backgroundColor: '#000000',
                            borderColor: '#FFD700', borderWidth: 1.5, borderRadius: 4,
-                           categoryPercentage: 0.7, barPercentage: 0.85 }}
+                           categoryPercentage: 0.75, barPercentage: 0.9 }}
                     ]
                 }},
                 options: {{
                     responsive: false, maintainAspectRatio: false, animation: false,
-                    plugins: {{ legend: {{ position: 'bottom', labels: {{ font: {{ size: 12, weight: 'bold' }}, padding: 12 }} }} }},
+                    plugins: {{ legend: {{ position: 'bottom',
+                        labels: {{ font: {{ size: 11, weight: 'bold' }},
+                                   padding: 10, boxWidth: 12 }} }} }},
                     scales: {{
                         y: {{ beginAtZero: true,
-                              title: {{ display: true, text: id.includes('ppm') ? 'PPM' : 'CASE', font: {{ size: 11, weight: 'bold' }} }},
-                              ticks: {{ font: {{ size: 10 }} }}, grid: {{ color: '#f0f0f0' }} }},
-                        x: {{ ticks: {{ font: {{ size: 10 }} }}, grid: {{ display: false }} }}
+                              title: {{ display: true, text: '{axis_title}',
+                                        font: {{ size: 10, weight: 'bold' }} }},
+                              ticks: {{ font: {{ size: 10 }}, maxTicksLimit: 6 }},
+                              grid: {{ color: '#f1f1f1' }} }},
+                        x: {{ ticks: {{ font: {{ size: 9 }}, maxRotation: 0,
+                                       autoSkip: true, maxTicksLimit: 12 }},
+                              grid: {{ display: false }} }}
                     }}
                 }}
             }});
-        }};
-        const c1 = makeChart('ppmChart', {{ fy25: {fy25_data}, fy26: {fy26_data} }});
-        const c2 = makeChart('caseChart', {{ fy25: {fy25_data}, fy26: {fy26_data} }});
-        window.addEventListener('resize', () => {{ c1.resize(); c2.resize(); }});
-    }})();
-    </script>
-    """
-    st.components.v1.html(chart_compare, height=400)
+            const refit = () => {{ fit(); chart.resize(); }};
+            window.addEventListener('resize', refit);
+            setTimeout(refit, 350);
+        }})();
+        </script>
+        """
+
+    fy1, fy2 = st.columns(2, gap="small")
+    with fy1:
+        st.components.v1.html(_fy_card("ppmChart", "📊 PPM BY MONTH (FY25 vs FY26)", "PPM"),
+                              height=300)
+    with fy2:
+        st.components.v1.html(_fy_card("caseChart", "📋 CASE BY MONTH (FY25 vs FY26)", "CASE"),
+                              height=300)
 
     # === FY COMPARISON TABLES ===
     col_l, col_r = st.columns(2)
