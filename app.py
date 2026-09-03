@@ -20,175 +20,224 @@ def check_password():
     if "authenticated" not in st.session_state:
         st.session_state.authenticated = False
     if not st.session_state.authenticated:
-        logo_html = """
-        <style>
-        body { background: #0a0a0a; }
-        .login-wrap {
-            max-width: 440px; margin: 60px auto; padding: 40px 36px 36px;
-            background: linear-gradient(145deg, #1a1a1a 0%, #000000 100%);
-            border: 2px solid #FFD700; border-radius: 24px;
-            text-align: center;
-            box-shadow:
-                0 20px 60px rgba(255,215,0,0.25),
-                inset 0 1px 0 rgba(255,215,0,0.2);
-            position: relative; overflow: hidden;
-        }
-        .login-wrap::before {
-            content: ""; position: absolute; top: -50%; left: -50%;
-            width: 200%; height: 200%;
-            background: radial-gradient(circle, rgba(255,215,0,0.08) 0%, transparent 60%);
-            animation: rotateGlow 12s linear infinite;
-            pointer-events: none;
-        }
-        @keyframes rotateGlow {
-            from { transform: rotate(0deg); }
-            to   { transform: rotate(360deg); }
-        }
-        .login-wrap::after {
-            content: "";
-            position: absolute;
-            inset: -2px;
-            border-radius: 24px;
-            background: linear-gradient(
-                45deg,
-                transparent 0%,
-                rgba(255,215,0,0.5) 50%,
-                transparent 100%
-            );
-            background-size: 300% 300%;
-            animation: borderGlow 4s linear infinite;
-            z-index: 0;
-            pointer-events: none;
-            -webkit-mask:
-                linear-gradient(#000 0 0) content-box,
-                linear-gradient(#000 0 0);
-            -webkit-mask-composite: xor;
-            mask-composite: exclude;
-            padding: 2px;
-        }
-        @keyframes borderGlow {
-            0%   { background-position: 0% 50%; }
-            100% { background-position: 300% 50%; }
-        }
-        .login-logo {
-            position: relative; z-index: 1;
-            margin-bottom: 16px;
-            display: inline-block;
-        }
-        .login-logo img {
-            border-radius: 18px;
-            box-shadow: 0 8px 28px rgba(255,215,0,0.45);
-            transition: transform 0.3s ease;
-        }
-        .login-logo img:hover {
-            transform: scale(1.05) rotate(-2deg);
-        }
-        .login-badge {
-            position: relative; z-index: 1;
-            display: inline-block;
-            background: linear-gradient(135deg, #FFD700 0%, #FFA500 100%);
-            color: #000;
-            padding: 5px 14px;
-            border-radius: 14px;
-            font-size: 10px;
-            font-weight: 900;
-            letter-spacing: 2px;
-            margin-bottom: 18px;
-            box-shadow: 0 4px 14px rgba(255,215,0,0.4);
-        }
-        .login-icon { font-size: 48px; margin-bottom: 16px; position: relative; z-index: 1; }
-        .login-title {
-            position: relative; z-index: 1;
-            color: #FFD700; font-size: 32px; font-weight: 900;
-            letter-spacing: 5px; margin-bottom: 6px;
-            text-shadow: 0 2px 16px rgba(255,215,0,0.4);
-        }
-        .login-sub {
-            position: relative; z-index: 1;
-            color: #cccccc; font-size: 11px; margin-bottom: 32px;
-            letter-spacing: 2px; text-transform: uppercase;
-            font-weight: 600;
-        }
-        .login-form { position: relative; z-index: 1; }
+        # Premium login page — glass card with animated shine + status chips.
+        # Brand renamed from "3K BATTERY QA" to "3K BATTERY SQA" (Supplier Quality Assurance).
+        _login_css = """
+<style>
+    /* Page background — radial vignette with subtle gold tint */
+    .stApp { background: radial-gradient(ellipse at top, #1a1a1a 0%, #050505 80%) !important; }
+    .login-bg-layer {
+        position: fixed; inset: 0; z-index: 0; pointer-events: none;
+        background-image:
+            radial-gradient(circle at 18% 28%, rgba(255,215,0,0.08) 0%, transparent 50%),
+            radial-gradient(circle at 82% 72%, rgba(255,165,0,0.06) 0%, transparent 50%),
+            radial-gradient(circle at 50% 95%, rgba(255,215,0,0.04) 0%, transparent 50%);
+    }
 
-        /* === PASSWORD INPUT === */
-        .login-form input[type="password"],
-        .login-form input[type="text"] {
-            background: #0a0a0a !important;
-            border: 2px solid #FFD700 !important;
-            border-radius: 10px !important;
-            color: #FFD700 !important;
-            font-size: 15px !important;
-            font-weight: 600 !important;
-            letter-spacing: 2px !important;
-            padding: 12px 16px !important;
-            text-align: center !important;
-            transition: all 0.3s ease !important;
-        }
-        .login-form input[type="password"]:focus,
-        .login-form input[type="text"]:focus {
-            border-color: #FFC107 !important;
-            box-shadow: 0 0 0 3px rgba(255,215,0,0.25) !important;
-            outline: none !important;
-        }
-        .login-form input::placeholder {
-            color: #666 !important;
-            letter-spacing: 1px !important;
-        }
+    /* Login card */
+    .login-wrap {
+        position: relative; z-index: 1;
+        max-width: 440px; margin: 60px auto; padding: 44px 40px 32px 40px;
+        background: linear-gradient(145deg, #1a1a1a 0%, #0a0a0a 100%);
+        border: 2px solid #FFD700; border-radius: 24px;
+        box-shadow:
+            0 30px 80px rgba(0,0,0,0.6),
+            0 0 0 1px rgba(255,215,0,0.18),
+            inset 0 1px 0 rgba(255,215,0,0.22);
+        overflow: hidden;
+    }
+    .login-wrap::before {
+        content: ""; position: absolute; top: 0; left: -150%;
+        width: 50%; height: 100%;
+        background: linear-gradient(120deg, transparent, rgba(255,215,0,0.10), transparent);
+        animation: loginShine 6s ease-in-out infinite;
+        pointer-events: none;
+    }
+    .login-wrap::after {
+        content: ""; position: absolute; top: -40%; right: -20%;
+        width: 260px; height: 260px;
+        background: radial-gradient(circle, rgba(255,215,0,0.10) 0%, transparent 60%);
+        pointer-events: none;
+    }
+    @keyframes loginShine {
+        0%, 100% { left: -150%; }
+        55%      { left: 150%; }
+    }
 
-        /* === ACCESS BUTTON — YELLOW & BLACK THEME === */
-        div[data-testid="stButton"] button[kind="primary"] {
-            background: linear-gradient(135deg, #FFD700 0%, #FFC107 50%, #FFD700 100%) !important;
-            background-size: 200% 100% !important;
-            color: #000000 !important;
-            font-weight: 900 !important;
-            font-size: 15px !important;
-            letter-spacing: 2px !important;
-            text-transform: uppercase !important;
-            border: 2px solid #000000 !important;
-            border-radius: 10px !important;
-            padding: 14px 24px !important;
-            margin-top: 14px !important;
-            box-shadow: 0 6px 20px rgba(255,215,0,0.35),
-                        inset 0 1px 0 rgba(255,255,255,0.3) !important;
-            animation: btnShimmer 3s linear infinite !important;
-            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1) !important;
-            position: relative !important;
-            overflow: hidden !important;
-        }
-        div[data-testid="stButton"] button[kind="primary"]:hover {
-            background: #000000 !important;
-            color: #FFD700 !important;
-            border-color: #FFD700 !important;
-            box-shadow: 0 8px 28px rgba(255,215,0,0.55),
-                        inset 0 0 0 2px rgba(255,215,0,0.2) !important;
-            transform: translateY(-2px) !important;
-        }
-        div[data-testid="stButton"] button[kind="primary"]:active {
-            transform: translateY(0) !important;
-            box-shadow: 0 4px 12px rgba(255,215,0,0.4) !important;
-        }
-        @keyframes btnShimmer {
-            0%   { background-position: 0% 50%; }
-            100% { background-position: 200% 50%; }
-        }
-        </style>
-        <div class="login-wrap">
-            <div class="login-logo">
-                <img src="__LOGO_URL__" width="140">
-            </div>
-            <div class="login-badge">⚡ SQA · v2.0</div>
-            <div class="login-title">3K BATTERY SQA</div>
-            <div class="login-sub">Supplier Quality Assurance · Defect Monitoring System</div>
-        </div>
-        """.replace("__LOGO_URL__", LOGO_URL)
-        st.markdown(logo_html, unsafe_allow_html=True)
+    /* Logo frame — rotated gold gradient tile with bolt glyph */
+    .login-logo {
+        width: 110px; height: 110px; margin: 0 auto 18px auto;
+        border-radius: 24px;
+        background: linear-gradient(135deg, #FFD700 0%, #FFA500 100%);
+        display: flex; align-items: center; justify-content: center;
+        box-shadow:
+            0 12px 28px rgba(255,215,0,0.4),
+            inset 0 1px 0 rgba(255,255,255,0.5);
+        transform: rotate(-4deg);
+        transition: transform 0.3s ease;
+        position: relative; z-index: 2;
+    }
+    .login-logo:hover { transform: rotate(4deg) scale(1.05); }
+    .login-logo span {
+        color: #000; font-size: 54px; line-height: 1;
+        text-shadow: 0 2px 4px rgba(0,0,0,0.25);
+    }
+
+    /* Title block */
+    .login-eyebrow {
+        display: inline-block;
+        background: rgba(255,215,0,0.15); color: #FFD700;
+        font-size: 10px; font-weight: 800; letter-spacing: 3px;
+        padding: 4px 12px; border-radius: 999px;
+        border: 1px solid rgba(255,215,0,0.35);
+        margin: 0 0 12px 0; text-transform: uppercase;
+    }
+    .login-title {
+        color: #FFD700; font-size: 30px; font-weight: 900;
+        letter-spacing: 4px; margin: 0 0 6px 0;
+        text-shadow: 0 2px 12px rgba(255,215,0,0.4);
+    }
+    .login-sub {
+        color: #aaa; font-size: 11px; font-weight: 700;
+        letter-spacing: 2.5px; text-transform: uppercase;
+        margin: 0 0 24px 0;
+    }
+
+    /* Status chip row */
+    .login-chips {
+        display: flex; justify-content: center; gap: 8px; flex-wrap: wrap;
+        margin-bottom: 22px;
+    }
+    .login-chip {
+        display: inline-flex; align-items: center; gap: 5px;
+        background: rgba(255,255,255,0.05);
+        border: 1px solid rgba(255,215,0,0.22);
+        color: #ddd; font-size: 10px; font-weight: 700;
+        padding: 4px 10px; border-radius: 999px;
+        letter-spacing: 0.5px;
+    }
+    .login-chip-dot {
+        width: 6px; height: 6px; border-radius: 50%;
+        background: #4CAF50;
+        box-shadow: 0 0 6px #4CAF50;
+        animation: loginPulse 1.8s ease-in-out infinite;
+    }
+    @keyframes loginPulse {
+        0%, 100% { opacity: 1; transform: scale(1); }
+        50%      { opacity: 0.5; transform: scale(1.3); }
+    }
+
+    /* Password input */
+    .login-form input[type="password"],
+    .login-form input[type="text"] {
+        background: rgba(0,0,0,0.55) !important;
+        border: 1.5px solid #FFD700 !important;
+        border-radius: 12px !important;
+        color: #FFD700 !important;
+        font-size: 16px !important;
+        font-weight: 700 !important;
+        letter-spacing: 4px !important;
+        padding: 14px 18px !important;
+        text-align: center !important;
+        transition: border-color .2s ease, box-shadow .2s ease !important;
+    }
+    .login-form input[type="password"]:focus,
+    .login-form input[type="text"]:focus {
+        border-color: #FFC107 !important;
+        box-shadow: 0 0 0 4px rgba(255,215,0,0.18) !important;
+    }
+    .login-form input::placeholder {
+        color: #777 !important;
+        letter-spacing: 1.5px !important;
+        font-weight: 500 !important;
+    }
+
+    /* Access button */
+    div[data-testid="stButton"] button[kind="primary"] {
+        background: linear-gradient(135deg, #FFD700 0%, #FFA500 100%) !important;
+        color: #000 !important; font-weight: 900 !important;
+        border: 2px solid #000 !important; border-radius: 12px !important;
+        padding: 14px 28px !important; letter-spacing: 2.5px !important;
+        margin-top: 16px !important;
+        box-shadow:
+            0 8px 20px rgba(255,215,0,0.35),
+            inset 0 1px 0 rgba(255,255,255,0.45) !important;
+        position: relative !important;
+        overflow: hidden !important;
+    }
+    div[data-testid="stButton"] button[kind="primary"]:hover {
+        transform: translateY(-2px) !important;
+        box-shadow: 0 14px 28px rgba(255,215,0,0.45) !important;
+    }
+    div[data-testid="stButton"] button[kind="primary"]::after {
+        content: ""; position: absolute; top: 0; left: -100%;
+        width: 60%; height: 100%;
+        background: linear-gradient(120deg, transparent, rgba(255,255,255,0.4), transparent);
+        animation: btnShine 3s ease-in-out infinite;
+    }
+    @keyframes btnShine {
+        0%, 100% { left: -100%; }
+        60%      { left: 200%; }
+    }
+
+    /* Footer in card */
+    .login-footer {
+        margin-top: 22px; padding-top: 16px;
+        border-top: 1px solid rgba(255,215,0,0.18);
+        text-align: center;
+    }
+    .login-footer-text {
+        color: #888; font-size: 10px; font-weight: 600;
+        letter-spacing: 1.5px; text-transform: uppercase;
+    }
+    .login-footer-heart {
+        color: #FFD700;
+        animation: heartBeat 1.4s ease-in-out infinite;
+        display: inline-block;
+    }
+    @keyframes heartBeat {
+        0%, 100% { transform: scale(1); }
+        25%      { transform: scale(1.18); }
+        75%      { transform: scale(1.10); }
+    }
+
+    /* Mobile shrink */
+    @media (max-width: 480px) {
+        .login-wrap { margin: 30px 16px; padding: 36px 24px 28px 24px; }
+        .login-title { font-size: 25px; letter-spacing: 3px; }
+        .login-logo { width: 92px; height: 92px; }
+        .login-logo span { font-size: 44px; }
+    }
+</style>
+"""
+        st.markdown(_login_css, unsafe_allow_html=True)
+        st.markdown('<div class="login-bg-layer"></div>', unsafe_allow_html=True)
+
+        # Card body — single DOM block keeps chips, form, and footer together
+        st.markdown(
+            """
+<div class="login-wrap">
+    <div class="login-logo"><span>⚡</span></div>
+    <div class="login-eyebrow">SQA · SUPPLIER QUALITY</div>
+    <div class="login-title">3K BATTERY SQA</div>
+    <div class="login-sub">Supplier Quality Assurance Dashboard</div>
+    <div class="login-chips">
+        <span class="login-chip"><span class="login-chip-dot"></span>LIVE SYNC</span>
+        <span class="login-chip">🔒 PRIVATE APP</span>
+        <span class="login-chip">v3.0 PRO</span>
+    </div>
+    <div class="login-form">
+""",
+            unsafe_allow_html=True,
+        )
         col = st.columns([1, 2, 1])
         with col[1]:
-            st.markdown('<div class="login-form">', unsafe_allow_html=True)
-            password = st.text_input("🔑 Password", type="password",
-                                     label_visibility="collapsed",
-                                     placeholder="Enter access password")
+            password = st.text_input(
+                "🔑 Password",
+                type="password",
+                label_visibility="collapsed",
+                placeholder="Enter access password",
+            )
             if st.button("⚡ ACCESS DASHBOARD", use_container_width=True, type="primary"):
                 try:
                     correct = st.secrets["password"]
@@ -199,7 +248,18 @@ def check_password():
                     st.rerun()
                 else:
                     st.error("❌ Incorrect password")
-            st.markdown('</div>', unsafe_allow_html=True)
+        st.markdown(
+            """
+    </div>
+    <div class="login-footer">
+        <div class="login-footer-text">
+            Built with <span class="login-footer-heart">❤️</span> by Kanom AI for K-Kream
+        </div>
+    </div>
+</div>
+""",
+            unsafe_allow_html=True,
+        )
         st.stop()
 
 check_password()
@@ -220,7 +280,7 @@ if not st.session_state.splash_shown:
             '<div style="color:#FFD700; font-size:32px; font-weight:900; '
             'letter-spacing:6px; margin-bottom:12px;">3K BATTERY</div>'
             '<div style="color:#fff; font-size:14px; letter-spacing:3px; '
-            'font-weight:700; margin-bottom:24px;">SQA DEFECTS DASHBOARD</div>'
+            'font-weight:700; margin-bottom:24px;">QA DEFECTS DASHBOARD</div>'
             '<div style="width:200px; height:4px; background:rgba(255,215,0,0.2); '
             'border-radius:2px; overflow:hidden;">'
             '<div style="width:100%; height:100%; background:linear-gradient(90deg, #FFD700, #FFC107); '
@@ -541,25 +601,22 @@ st.markdown("""
     }
     .hero-live {
         grid-area: live;
-        background: linear-gradient(135deg, #000000 0%, #1a1a1a 100%);
-        border: 1.5px solid #FFD700;
-        border-radius: 999px;
-        padding: 7px 18px;
+        background: linear-gradient(90deg, rgba(255,215,0,0.12) 0%, rgba(0,0,0,0.3) 100%);
+        border: 1px solid rgba(255,215,0,0.4);
+        border-radius: 8px;
+        padding: 6px 12px;
         color: #FFD700;
         font-size: 10px;
         font-weight: 800;
-        letter-spacing: 2.5px;
-        display: inline-flex;
+        letter-spacing: 1.5px;
+        display: flex;
         align-items: center;
         justify-content: center;
-        gap: 9px;
+        gap: 8px;
         position: relative; z-index: 1;
-        box-shadow: 0 0 0 3px rgba(255,215,0,0.08), 0 6px 14px rgba(0,0,0,0.25);
-        width: fit-content;
-        justify-self: start;
     }
     .hero-live-pulse {
-        width: 9px; height: 9px;
+        width: 8px; height: 8px;
         background: #4CAF50;
         border-radius: 50%;
         box-shadow: 0 0 0 0 rgba(76,175,80,0.7);
@@ -607,19 +664,19 @@ st.markdown("""
     }
     .info-card-value {
         color: #FFD700;
-        font-size: 22px;
+        font-size: 20px;
         font-weight: 900;
         line-height: 1.1;
         font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
     }
     .info-card-label {
         color: #ffffff;
-        font-size: 10px;
+        font-size: 9px;
         font-weight: 700;
-        letter-spacing: 1px;
+        letter-spacing: 1.2px;
         text-transform: uppercase;
         margin-top: 4px;
-        opacity: 0.95;
+        opacity: 0.9;
     }
     .live-indicator {
         margin-top: 6px;
@@ -677,19 +734,15 @@ st.markdown("""
         background: linear-gradient(90deg, #000000 0%, #333333 100%);
     }
     .kpi-icon {
-        position: absolute; top: 14px; right: 14px;
-        font-size: 28px; opacity: 0.25;
-        color: #FFD700;
-        filter: drop-shadow(0 0 8px rgba(255,215,0,0.45));
-        transition: opacity 0.3s, transform 0.3s;
+        position: absolute; top: 18px; right: 18px;
+        font-size: 28px; opacity: 0.12;
+        transition: opacity 0.3s;
     }
-    .kpi-container:hover .kpi-icon { opacity: 0.45; transform: scale(1.06); }
-    
+    .kpi-container:hover .kpi-icon { opacity: 0.25; }
     .kpi-label {
-        color: #FFD700; font-size: 12px; font-weight: 800;
-        letter-spacing: 2.5px; text-transform: uppercase;
+        color: #555; font-size: 10px; font-weight: 800;
+        letter-spacing: 3px; text-transform: uppercase;
         margin-bottom: 10px; margin-top: 4px;
-        opacity: 0.95;
     }
     .kpi-value {
         color: #000; font-size: 32px; font-weight: 900;
@@ -701,23 +754,17 @@ st.markdown("""
         gap: 6px;
     }
     .kpi-unit {
-        font-size: 12px; color: #FFD700; margin-left: 6px;
-        font-weight: 800;
-        background: rgba(255,215,0,0.18);
-        border: 1px solid rgba(255,215,0,0.45);
-        padding: 3px 9px; border-radius: 8px;
+        font-size: 13px; color: #FFD700; margin-left: 6px;
+        font-weight: 700;
+        background: #000; padding: 2px 8px; border-radius: 10px;
         text-shadow: none;
-        letter-spacing: 0.5px;
-        white-space: nowrap;
-        -webkit-text-fill-color: #FFD700;
     }
     .kpi-trend {
-        font-size: 12px; font-weight: 800;
-        padding: 7px 14px; border-radius: 14px;
+        font-size: 11px; font-weight: 700;
+        padding: 6px 14px; border-radius: 14px;
         display: inline-flex; align-items: center; gap: 4px;
         align-self: flex-start;
         margin-top: 14px;
-        letter-spacing: 0.3px;
     }
     .trend-up {
         color: #B71C1C; background: rgba(255,107,107,0.12);
@@ -768,14 +815,14 @@ st.markdown("""
     .insight-banner-body { flex: 1; min-width: 0; }
     .insight-banner-title {
         font-weight: 900;
-        font-size: 17px;
-        letter-spacing: 0.2px;
-        margin-bottom: 5px;
+        font-size: 14px;
+        letter-spacing: 0.5px;
+        margin-bottom: 4px;
         line-height: 1.3;
     }
     .insight-banner-detail {
-        font-size: 13px;
-        line-height: 1.5;
+        font-size: 11px;
+        line-height: 1.4;
         opacity: 0.85;
     }
     .insight-banner-detail b { font-weight: 800; }
@@ -820,41 +867,27 @@ st.markdown("""
 
     /* === SECTION HEADER === */
     .section-header {
-        background: linear-gradient(135deg, #000000 0%, #1f1f1f 100%);
-        color: #FFD700;
-        padding: 14px 22px;
-        border-radius: 14px;
-        font-weight: 900; font-size: 15px; letter-spacing: 2.5px;
+        background: linear-gradient(90deg, #FFD700 0%, #FFC107 50%, #FFD700 100%);
+        background-size: 200% 100%;
+        color: #000; padding: 14px 22px; border-radius: 12px;
+        font-weight: 900; font-size: 16px; letter-spacing: 2px;
         margin: 28px 0 16px 0; text-transform: uppercase;
-        border: 1.5px solid rgba(255,215,0,0.45);
-        border-left: 5px solid #FFD700;
-        box-shadow:
-            0 8px 22px rgba(0,0,0,0.25),
-            inset 0 1px 0 rgba(255,215,0,0.15);
+        border-left: 6px solid #000;
+        box-shadow: 0 6px 16px rgba(255,215,0,0.25);
         display: flex; align-items: center; gap: 12px;
-        position: relative;
-        overflow: hidden;
+        animation: shimmer 3s linear infinite;
     }
-    .section-header::after {
-        content: ""; position: absolute; inset: 0;
-        background: radial-gradient(circle at top right, rgba(255,215,0,0.10) 0%, transparent 60%);
-        pointer-events: none;
+    @keyframes shimmer {
+        0% { background-position: 0% 50%; }
+        100% { background-position: 200% 50%; }
     }
-    .section-header > * { position: relative; z-index: 1; }
     .section-header .section-icon {
-        font-size: 18px;
-        background: linear-gradient(135deg, #FFD700 0%, #FFA500 100%);
-        color: #000;
-        width: 38px; height: 38px;
-        border-radius: 10px;
-        display: flex; align-items: center; justify-content: center;
-        box-shadow:
-            0 4px 10px rgba(255,215,0,0.45),
-            inset 0 1px 0 rgba(255,255,255,0.45);
-        transform: rotate(-4deg);
-        transition: transform .3s ease;
+        font-size: 22px;
+        background: #000; color: #FFD700;
+        width: 36px; height: 36px;
+        border-radius: 50%; display: flex;
+        align-items: center; justify-content: center;
     }
-    .section-header:hover .section-icon { transform: rotate(4deg) scale(1.08); }
 
     /* === FILTER BAR === */
     .filter-bar {
@@ -926,101 +959,31 @@ st.markdown("""
     /* === SEARCH BAR === */
     .search-container {
         position: relative;
-        margin: 24px 0 20px 0;
-    }
-    .search-wrapper {
-        background: white;
-        border: 2px solid rgba(255,215,0,0.5);
-        border-radius: 14px;
-        padding: 6px;
-        box-shadow: 0 4px 14px rgba(0,0,0,0.06);
-        transition: all 0.3s ease;
-    }
-    .search-wrapper:focus-within {
-        border-color: #FFD700;
-        box-shadow: 0 4px 14px rgba(0,0,0,0.08), 0 0 0 4px rgba(255,215,0,0.15);
+        margin-bottom: 20px;
     }
     .search-input {
-        background: #fafafa;
-        border: 1.5px solid rgba(255,215,0,0.4);
-        border-radius: 10px;
-        padding: 12px 16px 12px 44px;
+        background: white;
+        border: 2px solid #FFD700;
+        border-radius: 12px;
+        padding: 14px 20px 14px 48px;
         font-size: 14px;
         font-weight: 600;
         width: 100%;
         transition: all 0.3s ease;
-        color: #000;
+        box-shadow: 0 2px 8px rgba(0,0,0,0.05);
     }
     .search-input:focus {
         outline: none;
-        background: white;
-        border-color: #FFD700;
-        box-shadow: 0 0 0 3px rgba(255,215,0,0.2);
+        border-color: #FFC107;
+        box-shadow: 0 0 0 4px rgba(255,215,0,0.25);
     }
     .search-icon {
         position: absolute;
-        left: 14px;
+        left: 16px;
         top: 50%;
         transform: translateY(-50%);
         color: #FFD700;
-        font-size: 16px;
-        pointer-events: none;
-    }
-    .search-header {
-        display: flex;
-        align-items: center;
-        gap: 8px;
-        margin-bottom: 8px;
-        padding: 0 4px;
-    }
-    .search-header-icon {
-        background: linear-gradient(135deg, #FFD700 0%, #FFA500 100%);
-        color: #000;
-        width: 28px; height: 28px;
-        border-radius: 50%;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        font-size: 13px;
-        box-shadow: 0 2px 6px rgba(255,215,0,0.3);
-    }
-    .search-header-label {
-        color: #555;
-        font-size: 11px;
-        font-weight: 800;
-        letter-spacing: 1.5px;
-        text-transform: uppercase;
-    }
-
-    /* === SYNC INDICATOR === */
-    .sync-indicator {
-        background: white;
-        border: 2px solid #4CAF50;
-        border-radius: 10px;
-        padding: 14px;
-        text-align: center;
-        min-height: 50px;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        gap: 8px;
-        font-weight: 800;
-        font-size: 12px;
-        letter-spacing: 1px;
-        color: #1B5E20;
-        margin-bottom: 6px;
-    }
-    .sync-dot {
-        width: 10px; height: 10px;
-        background: #4CAF50;
-        border-radius: 50%;
-        box-shadow: 0 0 8px #4CAF50;
-        animation: syncPulse 2s ease-in-out infinite;
-        flex-shrink: 0;
-    }
-    @keyframes syncPulse {
-        0%, 100% { box-shadow: 0 0 8px #4CAF50; transform: scale(1); }
-        50%      { box-shadow: 0 0 14px #4CAF50; transform: scale(1.15); }
+        font-size: 18px;
     }
 
     /* === GLASSMORPHISM CARD === */
@@ -1090,23 +1053,8 @@ st.markdown("""
 
     /* === DATAFRAME === */
     .stDataFrame {
-        border: 1.5px solid rgba(255,215,0,0.55) !important;
-        border-radius: 12px !important;
-        overflow: hidden;
-        box-shadow: 0 6px 18px rgba(0,0,0,0.12);
-        background: white;
-    }
-    /* Premium table look — keep these declarative so they survive Streamlit
-       inline-style overrides on body cells; the JS observer in the topbar
-       component handles zebra+hover at the parent DOM level. */
-    .stDataFrame {
-        border: 1.5px solid rgba(255,215,0,0.55) !important;
-        border-radius: 12px !important;
-        overflow: hidden;
-        box-shadow: 0 6px 18px rgba(0,0,0,0.12);
-    }
-    .stDataFrame thead th {
-        padding: 12px 10px !important;
+        border: 2px solid #FFD700 !important; border-radius: 12px !important;
+        overflow: hidden; box-shadow: 0 2px 8px rgba(0,0,0,0.05);
     }
 
     /* === BUTTONS === */
@@ -1120,90 +1068,16 @@ st.markdown("""
     .info-box {
         background: linear-gradient(135deg, #000 0%, #1a1a1a 100%);
         color: #FFD700; padding: 14px 18px; border-radius: 12px;
-        font-size: 13px; margin-top: 24px;
+        font-size: 12px; margin-top: 24px;
         border: 1px solid #FFD700;
-        line-height: 1.6;
     }
     .info-box b { color: #FFD700; }
 
     /* === FOOTER === */
     .dashboard-footer {
-        text-align: center;
-        margin: 40px 0 8px 0;
-        padding: 0;
-    }
-    .footer-card {
-        background: linear-gradient(135deg, #0a0a0a 0%, #1a1a1a 100%);
-        border: 1.5px solid rgba(255,215,0,0.4);
-        border-radius: 18px;
-        padding: 22px 24px;
-        box-shadow: 0 10px 28px rgba(0,0,0,0.25), inset 0 1px 0 rgba(255,215,0,0.1);
-        position: relative;
-        overflow: hidden;
-    }
-    .footer-card::before {
-        content: ""; position: absolute; top: -50%; right: -10%;
-        width: 300px; height: 300px;
-        background: radial-gradient(circle, rgba(255,215,0,0.10) 0%, transparent 60%);
-        pointer-events: none;
-    }
-    .footer-brand {
-        display: inline-flex; align-items: center; gap: 12px;
-        position: relative; z-index: 1;
-    }
-    .footer-logo {
-        font-size: 32px; line-height: 1;
-        background: linear-gradient(135deg, #FFD700 0%, #FFA500 100%);
-        width: 52px; height: 52px;
-        border-radius: 14px;
-        display: inline-flex; align-items: center; justify-content: center;
-        box-shadow: 0 6px 14px rgba(255,215,0,0.35);
-        color: #000;
-        transform: rotate(-6deg);
-    }
-    .footer-brand-text { text-align: left; }
-    .footer-brand-name {
-        color: #FFD700; font-size: 18px; font-weight: 900;
-        letter-spacing: 3px; line-height: 1.1;
-    }
-    .footer-brand-sub {
-        color: #aaa; font-size: 11px; font-weight: 700;
-        letter-spacing: 1.5px; text-transform: uppercase;
-        margin-top: 3px;
-    }
-    .footer-divider {
-        height: 1px;
-        background: linear-gradient(90deg, transparent, rgba(255,215,0,0.4), transparent);
-        margin: 16px 0 14px 0;
-        position: relative; z-index: 1;
-    }
-    .footer-meta {
-        display: flex; flex-wrap: wrap; justify-content: center; gap: 8px 14px;
-        margin-bottom: 14px;
-        position: relative; z-index: 1;
-    }
-    .footer-meta-item {
-        color: #ccc; font-size: 11px; font-weight: 600;
-        padding: 4px 12px;
-        background: rgba(255,215,0,0.08);
-        border: 1px solid rgba(255,215,0,0.2);
-        border-radius: 999px;
-        letter-spacing: 0.3px;
-    }
-    .footer-credit {
-        color: #888; font-size: 11px; font-weight: 600;
-        letter-spacing: 0.5px;
-        position: relative; z-index: 1;
-    }
-    .footer-heart {
-        display: inline-block;
-        animation: heartBeat 1.4s ease-in-out infinite;
-    }
-    @keyframes heartBeat {
-        0%, 100% { transform: scale(1); }
-        25%      { transform: scale(1.18); }
-        50%      { transform: scale(1); }
-        75%      { transform: scale(1.10); }
+        text-align: center; color: #999; font-size: 11px;
+        margin-top: 32px; padding: 20px 0;
+        border-top: 1px solid #e0e0e0;
     }
 
     /* === ANIMATIONS & POLISH === */
@@ -1260,13 +1134,11 @@ st.markdown("""
         font-size: 32px !important;
         font-weight: 900 !important;
         letter-spacing: -1px;
-        background: linear-gradient(135deg, #FFD700 0%, #FFA500 50%, #FFD700 100%);
-        background-size: 200% 100%;
+        background: linear-gradient(135deg, #C79000 0%, #8a6300 100%);
         -webkit-background-clip: text;
         -webkit-text-fill-color: transparent;
         background-clip: text;
-        animation: countUp 0.6s cubic-bezier(0.16, 1, 0.3, 1),
-                   shimmer 5s linear infinite;
+        animation: countUp 0.6s cubic-bezier(0.16, 1, 0.3, 1);
         display: flex; align-items: baseline; justify-content: flex-start;
         gap: 6px;
     }
@@ -1279,46 +1151,38 @@ st.markdown("""
     /* The unit badge lives INSIDE .kpi-value, so it inherits the transparent
        text fill used for the gradient number and renders as a solid dark bar.
        Reset fill + clip explicitly so PCS / CASE / PART stay readable. */
-    /* Unit badge sits INSIDE .kpi-value and inherits the transparent text
-       fill from the gradient number — reset it to a solid yellow-tinted
-       glass pill that reads on both light and dark cards. */
     .kpi-value .kpi-unit {
-        background: rgba(255,215,0,0.18) !important;
-        border: 1px solid rgba(255,215,0,0.55) !important;
+        background: #FFF3C4 !important;
+        border: 1px solid #FFD700 !important;
         -webkit-background-clip: border-box !important;
         background-clip: border-box !important;
+        -webkit-text-fill-color: #7a5c00 !important;
+        color: #7a5c00 !important;
+    }
+    .kpi-container.kpi-black .kpi-value .kpi-unit,
+    .kpi-card.kpi-black .kpi-value .kpi-unit {
+        background: rgba(255,215,0,0.16) !important;
+        border-color: rgba(255,215,0,0.6) !important;
         -webkit-text-fill-color: #FFD700 !important;
         color: #FFD700 !important;
-        backdrop-filter: blur(6px);
     }
 
-
-    /* KPI container — premium black-gold with glossy corner highlight */
+    /* KPI container: gradient border + glow on hover */
     .kpi-container {
-        position: relative; padding: 20px 18px;
-        background: linear-gradient(135deg, #0e0e0e 0%, #1c1c1c 60%, #232323 100%);
-        border-radius: 16px;
-        text-align: left;
-        border: 1.5px solid rgba(255,215,0,0.55);
-        box-shadow: 0 8px 24px rgba(0,0,0,0.28), inset 0 1px 0 rgba(255,215,0,0.18);
+        position: relative; padding: 18px;
+        background: linear-gradient(135deg, #fff 0%, #fafafa 100%);
+        border-radius: 14px;
+        text-align: center;
+        border: 2px solid #FFD700;
+        box-shadow: 0 4px 16px rgba(0,0,0,0.06);
         overflow: hidden;
-        transition: transform .3s ease, box-shadow .3s ease, border-color .3s ease;
     }
     .kpi-container::before {
         content: ""; position: absolute; top: 0; left: 0;
-        width: 100%; height: 3px;
-        background: linear-gradient(90deg, #FFD700 0%, #FFA500 50%, #FFD700 100%);
-    }
-    .kpi-container::after {
-        content: ""; position: absolute; top: -40%; right: -30%;
-        width: 180px; height: 180px;
-        background: radial-gradient(circle, rgba(255,215,0,0.12) 0%, transparent 60%);
-        pointer-events: none;
-    }
-    .kpi-container:hover {
-        transform: translateY(-3px);
-        border-color: #FFD700;
-        box-shadow: 0 14px 32px rgba(255,215,0,0.18), inset 0 1px 0 rgba(255,215,0,0.28);
+        width: 100%; height: 4px;
+        background: linear-gradient(90deg, #FFD700 0%, #FFC107 50%, #FFD700 100%);
+        background-size: 200% 100%;
+        animation: shimmer 3s linear infinite;
     }
     .kpi-container.kpi-black {
         background: linear-gradient(135deg, #0a0a0a 0%, #1f1f1f 100%);
@@ -1383,7 +1247,12 @@ st.markdown("""
     }
 
     /* Section headers: shimmer background */
-
+    .section-header {
+        position: relative; overflow: hidden;
+        background: linear-gradient(90deg, #FFD700 0%, #FFC107 50%, #FFD700 100%) !important;
+        background-size: 200% 100% !important;
+        animation: shimmer 4s linear infinite;
+    }
     .section-header > * {
         position: relative; z-index: 1;
     }
@@ -1886,12 +1755,6 @@ st.markdown("""
             font-size: 13px !important;
         }
 
-        /* Insight banner */
-        .insight-banner { padding: 14px 16px !important; margin: 12px 0 !important; gap: 12px !important; }
-        .insight-banner-icon { width: 44px !important; height: 44px !important; font-size: 22px !important; }
-        .insight-banner-title { font-size: 14px !important; line-height: 1.3 !important; }
-        .insight-banner-detail { font-size: 11.5px !important; line-height: 1.55 !important; }
-
         /* Info stack - keep 3 cols but smaller */
         .info-stack {
             gap: 6px !important;
@@ -1907,19 +1770,19 @@ st.markdown("""
             margin-bottom: 2px !important;
         }
         .info-card-value {
-            font-size: 18px !important;
+            font-size: 16px !important;
         }
         .info-card-label {
-            font-size: 10px !important;
+            font-size: 8px !important;
             letter-spacing: 0.8px !important;
             margin-top: 2px !important;
         }
 
         /* Live indicator & clock box - compact */
         .live-indicator {
-            padding: 7px 12px !important;
-            font-size: 11px !important;
-            letter-spacing: 1.5px !important;
+            padding: 6px 10px !important;
+            font-size: 10px !important;
+            letter-spacing: 1px !important;
             margin-top: 8px !important;
         }
 
@@ -1945,8 +1808,8 @@ st.markdown("""
             font-size: 24px !important;
         }
         .kpi-unit {
-            font-size: 11px !important;
-            padding: 2px 7px !important;
+            font-size: 9px !important;
+            padding: 1px 6px !important;
             border-radius: 6px !important;
             margin-left: 4px !important;
             font-weight: 800 !important;
@@ -1956,8 +1819,8 @@ st.markdown("""
             letter-spacing: 0.3px !important;
         }
         .kpi-trend {
-            font-size: 11px !important;
-            padding: 4px 9px !important;
+            font-size: 9px !important;
+            padding: 4px 8px !important;
             margin-top: 8px !important;
             letter-spacing: 0.3px !important;
         }
@@ -2056,10 +1919,10 @@ st.markdown("""
     @media (max-width: 420px) {
         .dashboard-header h1 { font-size: 16px !important; }
         .dashboard-header .subtitle { font-size: 9px !important; }
-        .info-card-value { font-size: 17px !important; }
-        .info-card-label { font-size: 9px !important; }
+        .info-card-value { font-size: 14px !important; }
+        .info-card-label { font-size: 7px !important; }
         .kpi-value { font-size: 21px !important; }
-        .kpi-label { font-size: 10px !important; }
+        .kpi-label { font-size: 8px !important; }
         .kpi-card { padding: 12px 10px !important; min-height: 120px !important; }
         .trend-card-title { font-size: 11px !important; }
     }
@@ -2262,7 +2125,7 @@ with st.sidebar:
         '⚡ 3K BATTERY</div>'
         '<div style="color:#999; font-size:10px; font-weight:600; '
         'letter-spacing:2.5px; margin-top:8px; line-height:1.2;">'
-        'SQA DEFECTS DASHBOARD</div>',
+        'QA DEFECTS DASHBOARD</div>'
         '</div>',
         unsafe_allow_html=True
     )
@@ -2286,19 +2149,7 @@ with st.sidebar:
     ]
     for full_label, icon, gradient, text_color in nav_items:
         is_active = (st.session_state.current_page == full_label)
-        # Active marker: a thin yellow ribbon on the left side of the button.
-        if is_active:
-            st.markdown(
-                f'<div style="margin: 4px 0 6px 0; height: 0; '
-                f'border-left: 4px solid #FFD700; border-top: 1px solid transparent;"></div>',
-                unsafe_allow_html=True,
-            )
-        else:
-            st.markdown(
-                '<div style="margin: 4px 0 6px 0; height: 0; '
-                'border-left: 4px solid transparent;"></div>',
-                unsafe_allow_html=True,
-            )
+        active_border = "3px solid #FFD700" if is_active else "2px solid transparent"
         if st.button(
             f"{icon}  {full_label.replace(icon + ' ', '')}",
             key=f"nav_{full_label}",
@@ -2676,29 +2527,23 @@ if "14 Days" in page:
         )
         # Sync status indicator
         st.markdown(
-            f'<div class="sync-indicator">'
-            f'<span class="sync-dot"></span>'
+            f'<div style="background:white; border:2px solid #4CAF50; border-radius:10px; '
+            f'padding:14px; text-align:center; min-height:50px; display:flex; '
+            f'align-items:center; justify-content:center; gap:8px; font-weight:800; '
+            f'letter-spacing:1px; color:#1B5E20;">'
+            f'<span style="width:10px; height:10px; background:#4CAF50; border-radius:50%; '
+            f'box-shadow:0 0 8px #4CAF50;"></span>'
             f'<span>SYNCED · GITHUB</span>'
             f'</div>',
             unsafe_allow_html=True
         )
 
     # === SEARCH BAR ===
-    st.markdown(
-        '<div class="search-header">'
-        '<div class="search-header-icon">🔍</div>'
-        '<div class="search-header-label">Search Records</div>'
-        '</div>',
-        unsafe_allow_html=True
-    )
-    st.markdown('<div class="search-wrapper">', unsafe_allow_html=True)
     search_query = st.text_input(
-        "Search Part No / Supplier / Comment",
+        "🔍 Search Part No / Supplier / Comment",
         placeholder="Type to search... (e.g., VE101, KSV, scratch)",
-        key="search_14d",
-        label_visibility="collapsed"
+        key="search_14d"
     )
-    st.markdown('</div>', unsafe_allow_html=True)
     if search_query:
         mask = (
             filtered["Part No"].astype(str).str.contains(search_query, case=False, na=False) |
@@ -2732,23 +2577,9 @@ if "14 Days" in page:
     <style>
       html, body { margin:0; padding:0; }
       .tc-card {
-        background: linear-gradient(135deg, #ffffff 0%, #fffbe6 100%);
-        border: 1px solid rgba(255,215,0,0.5);
-        border-radius: 14px;
-        padding: 12px 12px 6px 12px;
-        box-shadow:
-            0 4px 14px rgba(0,0,0,0.08),
-            inset 0 1px 0 rgba(255,255,255,0.8);
-        backdrop-filter: blur(8px);
-        font-family: -apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;
-        transition: transform .25s ease, box-shadow .25s ease, border-color .25s ease;
-      }
-      .tc-card:hover {
-        transform: translateY(-2px);
-        border-color: #FFD700;
-        box-shadow:
-            0 10px 24px rgba(255,215,0,0.15),
-            inset 0 1px 0 rgba(255,255,255,0.8);
+        background:#fff; border:2px solid #111; border-radius:14px;
+        padding:12px 12px 6px 12px; box-shadow:0 4px 14px rgba(0,0,0,0.08);
+        font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;
       }
       .tc-head { display:flex; align-items:center; gap:8px; margin-bottom:6px; }
       .tc-dot { width:10px; height:10px; border-radius:50%; flex-shrink:0; }
@@ -2765,10 +2596,7 @@ if "14 Days" in page:
     """
 
     def _trend_card(canvas_id, title, dot_color, labels_js, data_js,
-                    border, bg, point, point_border, axis_title,
-                    inject_table_styling=False):
-        # Convert Python True/False to JS true/false so it can be embedded in JS.
-        _its = "true" if inject_table_styling else "false"
+                    border, bg, point, point_border, axis_title):
         return trend_card_css + f"""
         <div class="tc-card">
           <div class="tc-head">
@@ -2822,38 +2650,6 @@ if "14 Days" in page:
             const refit = () => {{ fit(); chart.resize(); }};
             window.addEventListener('resize', refit);
             setTimeout(refit, 350);
-            // === Premium table styling — runs from the first chart iframe so we
-            // have access to the parent document via window.parent.document.
-            // Idempotent: only injects once.
-            if ({_its} && window.parent && window.parent !== window) {{
-                try {{
-                    const HEAD = window.parent.document.head;
-                    if (!HEAD.querySelector('#kanom-table-style')) {{
-                        const s = window.parent.document.createElement('style');
-                        s.id = 'kanom-table-style';
-                        s.textContent = `
-                          .stDataFrame thead th {{
-                            background: linear-gradient(135deg, #0e0e0e 0%, #1f1f1f 100%) !important;
-                            color: #FFD700 !important;
-                            font-weight: 800 !important;
-                            letter-spacing: 0.8px !important;
-                            text-transform: uppercase !important;
-                            font-size: 11px !important;
-                            border-bottom: 2.5px solid #FFD700 !important;
-                            padding: 12px 10px !important;
-                          }}
-                          .stDataFrame tbody tr:nth-of-type(even) td {{
-                            background: rgba(255,243,196,0.55) !important;
-                          }}
-                          .stDataFrame tbody tr:hover td {{
-                            background: rgba(255,215,0,0.22) !important;
-                          }}
-                        `;
-                        HEAD.appendChild(s);
-                        // zebra is now declarative via :nth-of-type; no JS observer needed
-                    }}
-                }} catch (e) {{ /* ignore */ }}
-            }}
         }})();
         </script>
         """
@@ -2864,8 +2660,7 @@ if "14 Days" in page:
     with tc1:
         st.components.v1.html(
             _trend_card("kpiQtyChart", "Q'TY (PCS) TREND", "#FFD700", labels, qty_data,
-                        "#000000", "rgba(255,215,0,0.35)", "#FFD700", "#000000", "QTY",
-                        inject_table_styling=True),
+                        "#000000", "rgba(255,215,0,0.35)", "#FFD700", "#000000", "QTY"),
             height=250,
         )
     with tc2:
@@ -4054,23 +3849,9 @@ else:
     <style>
       html, body { margin:0; padding:0; }
       .fy-card {
-        background: linear-gradient(135deg, #ffffff 0%, #fffbe6 100%);
-        border: 1px solid rgba(255,215,0,0.5);
-        border-radius: 14px;
-        padding: 12px 12px 6px 12px;
-        box-shadow:
-            0 4px 14px rgba(0,0,0,0.08),
-            inset 0 1px 0 rgba(255,255,255,0.8);
-        backdrop-filter: blur(8px);
-        font-family: -apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;
-        transition: transform .25s ease, box-shadow .25s ease, border-color .25s ease;
-      }
-      .fy-card:hover {
-        transform: translateY(-2px);
-        border-color: #FFD700;
-        box-shadow:
-            0 10px 24px rgba(255,215,0,0.15),
-            inset 0 1px 0 rgba(255,255,255,0.8);
+        background:#fff; border:2px solid #111; border-radius:14px;
+        padding:12px 12px 6px 12px; box-shadow:0 4px 14px rgba(0,0,0,0.08);
+        font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;
       }
       .fy-title { color:#000; font-weight:900; font-size:12px;
                   letter-spacing:1px; margin-bottom:8px; }
@@ -4080,62 +3861,7 @@ else:
         .fy-title { font-size:11px; margin-bottom:6px; }
         /* Body height stays 250px at every breakpoint — see .tc-body note. */
       }
-    
-<script>
-(function() {
-  const STYLE_ID = 'kanom-premium-table';
-  if (document.getElementById(STYLE_ID)) return;
-  const styleEl = document.createElement('style');
-  styleEl.id = STYLE_ID;
-  document.head.appendChild(styleEl);
-
-  const HEADER_BG = 'linear-gradient(135deg, #0e0e0e 0%, #1f1f1f 100%)';
-  const HEADER_FG = '#FFD700';
-  const ZEBRA_BG  = 'rgba(255,243,196,0.55)';
-  const HOVER_BG  = 'rgba(255,215,0,0.22)';
-
-  const styleCell = (cell, bg) => {
-    cell.style.background = bg;
-    cell.style.transition = 'background 0.2s ease';
-  };
-  const styleHeader = (th) => {
-    th.style.background = HEADER_BG;
-    th.style.color = HEADER_FG;
-    th.style.fontWeight = '800';
-    th.style.letterSpacing = '0.8px';
-    th.style.textTransform = 'uppercase';
-    th.style.fontSize = '11px';
-    th.style.borderBottom = '2.5px solid #FFD700';
-    th.style.padding = '12px 10px';
-  };
-
-  const paint = () => {
-    document.querySelectorAll('.stDataFrame').forEach(df => {
-      const ths = df.querySelectorAll('th[role="columnheader"]');
-      ths.forEach(styleHeader);
-      const rows = df.querySelectorAll('tbody tr[role="row"]');
-      rows.forEach((row, i) => {
-        const cells = row.querySelectorAll('td[role="gridcell"]');
-        const bg = (i % 2 === 1) ? ZEBRA_BG : '';
-        cells.forEach(c => styleCell(c, bg));
-        row.addEventListener('mouseenter', () => {
-          cells.forEach(c => styleCell(c, HOVER_BG));
-        }, {passive: true});
-        row.addEventListener('mouseleave', () => {
-          cells.forEach(c => styleCell(c, bg));
-        }, {passive: true});
-      });
-    });
-  };
-
-  // run on initial load + after Streamlit rerenders (it swaps tbody contents)
-  paint();
-  const obs = new MutationObserver(() => paint());
-  obs.observe(document.body, {childList: true, subtree: true});
-})();
-</script>
-
-</style>
+    </style>
     """
 
     def _fy_card(canvas_id, title, axis_title):
@@ -4373,26 +4099,9 @@ else:
 # ============================================================
 # FOOTER
 # ============================================================
-# === FOOTER ===
-import datetime as _dt
-_year = _dt.date.today().year
 st.markdown(f"""
 <div class="dashboard-footer">
-    <div class="footer-card">
-        <div class="footer-brand">
-            <span class="footer-logo">⚡</span>
-            <div class="footer-brand-text">
-                <div class="footer-brand-name">3K BATTERY</div>
-                <div class="footer-brand-sub">QA Defects Dashboard · v3.0</div>
-            </div>
-        </div>
-        <div class="footer-divider"></div>
-        <div class="footer-meta">
-            <div class="footer-meta-item">📊 Live sync from GitHub</div>
-            <div class="footer-meta-item">🔒 Secure · Private App</div>
-            <div class="footer-meta-item">© {_year} 3K Battery Co., Ltd.</div>
-        </div>
-        <div class="footer-credit">Built with <span class="footer-heart">❤️</span> by Kanom AI for K-Kream</div>
-    </div>
+    � 3K Battery Co., Ltd. | QA Defects Dashboard v2.0 Professional<br>
+    <span style="color:#FFD700;">Built with ❤️ by Kanom AI for K-Kream</span>
 </div>
 """, unsafe_allow_html=True)
