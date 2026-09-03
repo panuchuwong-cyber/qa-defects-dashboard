@@ -815,9 +815,9 @@ st.markdown("""
     }
     .insight-banner:hover { transform: translateX(2px); }
     .insight-banner-icon {
-        font-size: 28px;
+        font-size: 32px;
         flex-shrink: 0;
-        width: 50px; height: 50px;
+        width: 56px; height: 56px;
         border-radius: 50%;
         display: flex;
         align-items: center;
@@ -827,15 +827,18 @@ st.markdown("""
     .insight-banner-body { flex: 1; min-width: 0; }
     .insight-banner-title {
         font-weight: 900;
-        font-size: 14px;
-        letter-spacing: 0.5px;
-        margin-bottom: 4px;
+        font-size: 16px;
+        letter-spacing: 0.3px;
+        margin-bottom: 6px;
         line-height: 1.3;
+        color: #0a0a0a;
     }
     .insight-banner-detail {
-        font-size: 11px;
-        line-height: 1.4;
-        opacity: 0.85;
+        font-size: 13px;
+        line-height: 1.5;
+        opacity: 0.9;
+        color: #374151;
+        font-weight: 500;
     }
     .insight-banner-detail b { font-weight: 800; }
 
@@ -2568,7 +2571,7 @@ if "14 Days" in page:
         "🔍 Search Part No / Supplier / Comment",
         placeholder="Type to search... (e.g., VE101, KSV, scratch)",
         key="search_14d",
-        label_visibility="collapsed",
+        label_visibility="visible",
     )
     st.markdown("</div>", unsafe_allow_html=True)
     if search_query:
