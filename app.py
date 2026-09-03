@@ -635,36 +635,6 @@ st.markdown("""
         50%      { box-shadow: 0 0 0 8px rgba(76,175,80,0); transform: scale(1.1); }
     }
 
-    /* === STATUS LEGEND (color coding reference) === */
-    .status-legend {
-        display: flex;
-        gap: 12px;
-        padding: 8px 12px;
-        background: rgba(255,255,255,0.04);
-        border: 1px solid rgba(255,255,255,0.08);
-        border-radius: 8px;
-        font-size: 10px;
-        font-weight: 700;
-        letter-spacing: 0.5px;
-        align-items: center;
-        flex-wrap: wrap;
-        grid-area: live;
-    }
-    .status-legend-item {
-        display: inline-flex;
-        align-items: center;
-        gap: 4px;
-        white-space: nowrap;
-    }
-    .status-dot {
-        width: 8px; height: 8px;
-        border-radius: 50%;
-        display: inline-block;
-    }
-    .status-dot-good { background: var(--status-good); }
-    .status-dot-warn { background: var(--status-warn); }
-    .status-dot-bad  { background: var(--status-bad); }
-
     /* === DATE RANGE CHIP === */
     .date-chip {
         background: linear-gradient(135deg, #FFD700 0%, #FFA500 100%);
@@ -871,17 +841,17 @@ st.markdown("""
         letter-spacing: 0.3px;
     }
     .trend-up {
-        color: var(--status-bad); background: rgba(183,28,28,0.12);
-        border: 1px solid rgba(183,28,28,0.25);
+        color: #B71C1C; background: rgba(255,107,107,0.12);
+        border: 1px solid rgba(255,107,107,0.2);
         animation: trendPulseRed 2s ease-in-out infinite;
     }
     @keyframes trendPulseRed {
-        0%, 100% { box-shadow: 0 0 0 0 rgba(183,28,28,0); }
-        50%      { box-shadow: 0 0 0 6px rgba(183,28,28,0.15); }
+        0%, 100% { box-shadow: 0 0 0 0 rgba(255,107,107,0); }
+        50%      { box-shadow: 0 0 0 6px rgba(255,107,107,0.15); }
     }
     .trend-down {
-        color: var(--status-good); background: rgba(76,175,80,0.12);
-        border: 1px solid rgba(76,175,80,0.25);
+        color: #1B5E20; background: rgba(76,175,80,0.12);
+        border: 1px solid rgba(76,175,80,0.2);
         animation: trendPulseGreen 2s ease-in-out infinite;
     }
     @keyframes trendPulseGreen {
@@ -936,31 +906,31 @@ st.markdown("""
 
     /* Severity color variants */
     .insight-critical {
-        color: var(--status-bad);
-        background: linear-gradient(135deg, rgba(183,28,28,0.12) 0%, rgba(183,28,28,0.04) 100%);
-        border-left-color: var(--status-bad);
+        color: #B71C1C;
+        background: linear-gradient(135deg, rgba(255,107,107,0.12) 0%, rgba(255,107,107,0.04) 100%);
+        border-left-color: #B71C1C;
     }
     .insight-critical .insight-banner-icon {
         background: rgba(183,28,28,0.15);
-        color: var(--status-bad);
+        color: #B71C1C;
     }
     .insight-warning {
-        color: var(--status-warn);
-        background: linear-gradient(135deg, rgba(230,81,0,0.12) 0%, rgba(230,81,0,0.04) 100%);
-        border-left-color: var(--status-warn);
+        color: #E65100;
+        background: linear-gradient(135deg, rgba(255,152,0,0.12) 0%, rgba(255,152,0,0.04) 100%);
+        border-left-color: #E65100;
     }
     .insight-warning .insight-banner-icon {
         background: rgba(230,81,0,0.15);
-        color: var(--status-warn);
+        color: #E65100;
     }
     .insight-good {
-        color: var(--status-good);
-        background: linear-gradient(135deg, rgba(27,94,32,0.12) 0%, rgba(27,94,32,0.04) 100%);
-        border-left-color: var(--status-good);
+        color: #1B5E20;
+        background: linear-gradient(135deg, rgba(76,175,80,0.12) 0%, rgba(76,175,80,0.04) 100%);
+        border-left-color: #1B5E20;
     }
     .insight-good .insight-banner-icon {
         background: rgba(27,94,32,0.15);
-        color: var(--status-good);
+        color: #1B5E20;
     }
     .insight-info {
         color: #555;
@@ -2523,16 +2493,18 @@ if "14 Days" in page:
     case_data = daily["Case"].tolist()
 
     # === DECISION BANNER — top-of-dashboard status in 1 second ===
+    # Note: uses qty_pct only (worst_supplier / worst_mode are computed later
+    # in SMART INSIGHTS, so referencing them here would NameError).
     if qty_pct > 20:
         decision_level = "critical"
         decision_icon = "🔴"
         decision_title = "CRITICAL — Action Required"
-        decision_msg = f"Defects spiked {qty_pct:.1f}% vs last week. Supplier {worst_supplier} needs immediate review."
+        decision_msg = f"Defects spiked {qty_pct:.1f}% vs last week. Review supplier data below."
     elif qty_pct > 5:
         decision_level = "watch"
         decision_icon = "🟡"
         decision_title = "WATCH — Monitor Closely"
-        decision_msg = f"Defects up {qty_pct:.1f}% vs last week. Investigate {worst_mode} trend."
+        decision_msg = f"Defects up {qty_pct:.1f}% vs last week. Investigate the trend."
     elif qty_pct < -10:
         decision_level = "great"
         decision_icon = "🟢"
