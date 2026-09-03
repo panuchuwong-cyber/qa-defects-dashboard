@@ -742,6 +742,33 @@ st.markdown("""
         border: 2px solid #EF5350;
     }
 
+    /* === UPLOAD ZONE (file drop area) === */
+    .upload-zone {
+        background: linear-gradient(135deg, rgba(255,215,0,0.05) 0%, rgba(255,215,0,0.02) 100%);
+        border: 2px dashed rgba(255,215,0,0.5);
+        border-radius: 14px;
+        padding: 16px;
+        margin-bottom: 8px;
+        transition: all 0.2s ease;
+    }
+    .upload-zone:hover {
+        border-color: #FFD700;
+        background: linear-gradient(135deg, rgba(255,215,0,0.1) 0%, rgba(255,215,0,0.04) 100%);
+        box-shadow: 0 4px 16px rgba(255,215,0,0.15);
+    }
+    .upload-zone [data-testid="stFileUploaderDropzone"] {
+        background: transparent !important;
+        border: none !important;
+        padding: 8px !important;
+    }
+    .upload-zone [data-testid="stFileUploaderDropzone"] div {
+        font-weight: 700 !important;
+        color: #333 !important;
+    }
+    .upload-zone section[data-testid="stFileUploaderDropzone"] {
+        background: rgba(255,215,0,0.05) !important;
+    }
+
     /* Severity color variants */
     .insight-critical {
         color: #B71C1C;
@@ -1595,6 +1622,32 @@ st.markdown("""
             margin-bottom: 3px !important;
         }
         .stats-tile-value {
+            font-size: 22px !important;
+        }
+        /* Stats columns: stack vertically on mobile so each tile is full-width */
+        div[data-testid="stHorizontalBlock"]:has(.stats-tile) {
+            flex-direction: column !important;
+        }
+        div[data-testid="stHorizontalBlock"]:has(.stats-tile) > div[data-testid="stColumn"] {
+            flex: 1 1 100% !important;
+            min-width: 100% !important;
+            max-width: 100% !important;
+            width: 100% !important;
+            margin-bottom: 6px !important;
+        }
+        div[data-testid="stHorizontalBlock"]:has(.stats-tile) .stats-tile {
+            display: flex !important;
+            align-items: center !important;
+            justify-content: space-between !important;
+            padding: 12px 16px !important;
+            text-align: left !important;
+        }
+        div[data-testid="stHorizontalBlock"]:has(.stats-tile) .stats-tile-label {
+            margin-bottom: 0 !important;
+            font-size: 11px !important;
+            letter-spacing: 1.5px !important;
+        }
+        div[data-testid="stHorizontalBlock"]:has(.stats-tile) .stats-tile-value {
             font-size: 22px !important;
         }
         .hero-title {
@@ -3022,21 +3075,29 @@ elif "Data Entry" in page:
     # ============================================================
     if entry_mode == "📤 Upload Excel File":
         st.markdown(
-            '<div style="background: linear-gradient(135deg, #FFD700 0%, #FFC107 100%);'
-            'color: #000; padding: 20px; border-radius: 12px; margin-bottom: 16px;'
-            'border: 2px solid #000; box-shadow: 0 4px 16px rgba(255,215,0,0.3);">'
-            '<b style="font-size: 15px;">📤 UPLOAD EXCEL — Fastest way to add multiple records</b><br>'
-            '<span style="color: #333; font-size: 12px;">'
-            'Drag & drop your edited Excel file (.xlsx) → preview → sync to dashboard'
-            '</span></div>',
+            '<div class="section-header">'
+            '<div class="section-icon">📤</div>'
+            'UPLOAD EXCEL FILE'
+            '</div>',
             unsafe_allow_html=True
         )
 
+        # Wrap uploader in styled drop zone
+        st.markdown('<div class="upload-zone">', unsafe_allow_html=True)
         uploaded_file = st.file_uploader(
-            "📁 Choose Excel file (.xlsx)",
+            "Drop your .xlsx file here or click to browse",
             type=["xlsx"],
             help="Upload the QA_Defects_Template.xlsx file after editing",
-            key="excel_uploader"
+            key="excel_uploader",
+            label_visibility="visible"
+        )
+        st.markdown('</div>', unsafe_allow_html=True)
+        st.markdown(
+            '<div style="text-align:center; color:#888; font-size:10px; '
+            'margin-top:-8px; margin-bottom:16px; letter-spacing:0.5px;">'
+            '⚡ Drag & drop .xlsx · Preview before sync · 1-click publish to GitHub'
+            '</div>',
+            unsafe_allow_html=True
         )
 
         if uploaded_file is not None:
