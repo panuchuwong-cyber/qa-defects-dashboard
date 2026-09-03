@@ -24,26 +24,90 @@ def check_password():
         <style>
         body { background: #0a0a0a; }
         .login-wrap {
-            max-width: 420px; margin: 90px auto; padding: 48px 36px;
+            max-width: 440px; margin: 60px auto; padding: 40px 36px 36px;
             background: linear-gradient(145deg, #1a1a1a 0%, #000000 100%);
-            border: 2px solid #FFD700; border-radius: 20px;
-            text-align: center; box-shadow: 0 12px 48px rgba(255,215,0,0.25);
+            border: 2px solid #FFD700; border-radius: 24px;
+            text-align: center;
+            box-shadow:
+                0 20px 60px rgba(255,215,0,0.25),
+                inset 0 1px 0 rgba(255,215,0,0.2);
             position: relative; overflow: hidden;
         }
         .login-wrap::before {
             content: ""; position: absolute; top: -50%; left: -50%;
             width: 200%; height: 200%;
-            background: radial-gradient(circle, rgba(255,215,0,0.05) 0%, transparent 70%);
+            background: radial-gradient(circle, rgba(255,215,0,0.08) 0%, transparent 60%);
+            animation: rotateGlow 12s linear infinite;
+            pointer-events: none;
         }
-        .login-icon { font-size: 48px; margin-bottom: 16px; }
+        @keyframes rotateGlow {
+            from { transform: rotate(0deg); }
+            to   { transform: rotate(360deg); }
+        }
+        .login-wrap::after {
+            content: "";
+            position: absolute;
+            inset: -2px;
+            border-radius: 24px;
+            background: linear-gradient(
+                45deg,
+                transparent 0%,
+                rgba(255,215,0,0.5) 50%,
+                transparent 100%
+            );
+            background-size: 300% 300%;
+            animation: borderGlow 4s linear infinite;
+            z-index: 0;
+            pointer-events: none;
+            -webkit-mask:
+                linear-gradient(#000 0 0) content-box,
+                linear-gradient(#000 0 0);
+            -webkit-mask-composite: xor;
+            mask-composite: exclude;
+            padding: 2px;
+        }
+        @keyframes borderGlow {
+            0%   { background-position: 0% 50%; }
+            100% { background-position: 300% 50%; }
+        }
+        .login-logo {
+            position: relative; z-index: 1;
+            margin-bottom: 16px;
+            display: inline-block;
+        }
+        .login-logo img {
+            border-radius: 18px;
+            box-shadow: 0 8px 28px rgba(255,215,0,0.45);
+            transition: transform 0.3s ease;
+        }
+        .login-logo img:hover {
+            transform: scale(1.05) rotate(-2deg);
+        }
+        .login-badge {
+            position: relative; z-index: 1;
+            display: inline-block;
+            background: linear-gradient(135deg, #FFD700 0%, #FFA500 100%);
+            color: #000;
+            padding: 5px 14px;
+            border-radius: 14px;
+            font-size: 10px;
+            font-weight: 900;
+            letter-spacing: 2px;
+            margin-bottom: 18px;
+            box-shadow: 0 4px 14px rgba(255,215,0,0.4);
+        }
+        .login-icon { font-size: 48px; margin-bottom: 16px; position: relative; z-index: 1; }
         .login-title {
-            color: #FFD700; font-size: 26px; font-weight: 900;
-            letter-spacing: 3px; margin-bottom: 4px;
-            text-shadow: 0 2px 8px rgba(255,215,0,0.4);
+            position: relative; z-index: 1;
+            color: #FFD700; font-size: 32px; font-weight: 900;
+            letter-spacing: 5px; margin-bottom: 6px;
+            text-shadow: 0 2px 16px rgba(255,215,0,0.4);
         }
         .login-sub {
-            color: #999; font-size: 11px; margin-bottom: 32px;
+            position: relative; z-index: 1;
+            color: #cccccc; font-size: 11px; margin-bottom: 32px;
             letter-spacing: 2px; text-transform: uppercase;
+            font-weight: 600;
         }
         .login-form { position: relative; z-index: 1; }
 
@@ -110,12 +174,12 @@ def check_password():
         }
         </style>
         <div class="login-wrap">
-            <div style="margin-bottom:20px;">
-                <img src="__LOGO_URL__" width="140"
-                     style="border-radius:14px;box-shadow:0 6px 20px rgba(255,215,0,0.4);">
+            <div class="login-logo">
+                <img src="__LOGO_URL__" width="140">
             </div>
-            <div class="login-title">3K BATTERY QA</div>
-            <div class="login-sub">Defect Monitoring System v2.0</div>
+            <div class="login-badge">⚡ SQA · v2.0</div>
+            <div class="login-title">3K BATTERY SQA</div>
+            <div class="login-sub">Supplier Quality Assurance · Defect Monitoring System</div>
         </div>
         """.replace("__LOGO_URL__", LOGO_URL)
         st.markdown(logo_html, unsafe_allow_html=True)
@@ -156,7 +220,7 @@ if not st.session_state.splash_shown:
             '<div style="color:#FFD700; font-size:32px; font-weight:900; '
             'letter-spacing:6px; margin-bottom:12px;">3K BATTERY</div>'
             '<div style="color:#fff; font-size:14px; letter-spacing:3px; '
-            'font-weight:700; margin-bottom:24px;">QA DEFECTS DASHBOARD</div>'
+            'font-weight:700; margin-bottom:24px;">SQA DEFECTS DASHBOARD</div>'
             '<div style="width:200px; height:4px; background:rgba(255,215,0,0.2); '
             'border-radius:2px; overflow:hidden;">'
             '<div style="width:100%; height:100%; background:linear-gradient(90deg, #FFD700, #FFC107); '
@@ -2198,7 +2262,7 @@ with st.sidebar:
         '⚡ 3K BATTERY</div>'
         '<div style="color:#999; font-size:10px; font-weight:600; '
         'letter-spacing:2.5px; margin-top:8px; line-height:1.2;">'
-        'QA DEFECTS DASHBOARD</div>'
+        'SQA DEFECTS DASHBOARD</div>',
         '</div>',
         unsafe_allow_html=True
     )
