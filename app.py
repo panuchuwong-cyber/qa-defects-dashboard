@@ -206,6 +206,29 @@ st.markdown("""
     [data-testid="stSidebarNav"] { display: none; }
     footer { visibility: hidden; }
     header[data-testid="stHeader"] { background: transparent; }
+    html { scroll-behavior: smooth; }
+    ::selection {
+        background: #FFD700;
+        color: #000;
+    }
+    /* Scrollbar styling */
+    ::-webkit-scrollbar { width: 8px; height: 8px; }
+    ::-webkit-scrollbar-track { background: #f5f5f5; }
+    ::-webkit-scrollbar-thumb {
+        background: linear-gradient(180deg, #FFD700 0%, #FFA500 100%);
+        border-radius: 4px;
+    }
+    ::-webkit-scrollbar-thumb:hover {
+        background: linear-gradient(180deg, #FFA500 0%, #FFD700 100%);
+    }
+    /* DataFrame styling */
+    [data-testid="stDataFrame"] table tbody tr:nth-child(even) {
+        background: rgba(255,215,0,0.04) !important;
+    }
+    [data-testid="stDataFrame"] table tbody tr:hover {
+        background: rgba(255,215,0,0.12) !important;
+        transition: background 0.2s ease;
+    }
 
     /* === SIDEBAR === */
     [data-testid="stSidebar"] {
@@ -330,7 +353,10 @@ st.markdown("""
         margin-bottom: 18px;
         position: relative;
         overflow: hidden;
-        box-shadow: 0 8px 28px rgba(0,0,0,0.25);
+        box-shadow:
+            0 8px 28px rgba(0,0,0,0.25),
+            0 0 24px rgba(255,215,0,0.15),
+            inset 0 1px 0 rgba(255,215,0,0.2);
         display: grid;
         grid-template-columns: 1fr auto;
         grid-template-areas:
@@ -338,6 +364,35 @@ st.markdown("""
             "stats stats"
             "live live";
         gap: 14px 18px;
+    }
+    /* Animated glow border */
+    .hero-header::after {
+        content: "";
+        position: absolute;
+        inset: -2px;
+        border-radius: 16px;
+        background: linear-gradient(
+            45deg,
+            transparent 0%,
+            rgba(255,215,0,0.4) 25%,
+            rgba(255,215,0,0.8) 50%,
+            rgba(255,215,0,0.4) 75%,
+            transparent 100%
+        );
+        background-size: 300% 300%;
+        animation: borderGlow 4s linear infinite;
+        z-index: 0;
+        pointer-events: none;
+        -webkit-mask:
+            linear-gradient(#000 0 0) content-box,
+            linear-gradient(#000 0 0);
+        -webkit-mask-composite: xor;
+        mask-composite: exclude;
+        padding: 2px;
+    }
+    @keyframes borderGlow {
+        0%   { background-position: 0% 50%; }
+        100% { background-position: 300% 50%; }
     }
     .hero-header::before {
         content: "";
@@ -595,9 +650,27 @@ st.markdown("""
         justify-content: space-between;
     }
     .kpi-container:hover {
-        transform: translateY(-6px);
-        box-shadow: 0 16px 40px rgba(0,0,0,0.15);
+        transform: translateY(-8px) scale(1.02);
+        box-shadow:
+            0 20px 50px rgba(0,0,0,0.2),
+            0 0 0 2px rgba(255,215,0,0.3);
     }
+    /* Shimmer effect on hover */
+    .kpi-container::after {
+        content: "";
+        position: absolute;
+        top: 0; left: -100%;
+        width: 100%; height: 100%;
+        background: linear-gradient(
+            90deg,
+            transparent 0%,
+            rgba(255,215,0,0.15) 50%,
+            transparent 100%
+        );
+        transition: left 0.6s ease;
+        pointer-events: none;
+    }
+    .kpi-container:hover::after { left: 100%; }
     /* Top accent bar - thin and clean */
     .kpi-container::before {
         content: ""; position: absolute; top: 0; left: 0;
@@ -676,8 +749,13 @@ st.markdown("""
         border-left: 6px solid currentColor;
         box-shadow: 0 4px 14px rgba(0,0,0,0.08);
         transition: transform 0.2s ease;
+        animation: slideInBanner 0.5s ease-out;
     }
-    .insight-banner:hover { transform: translateX(2px); }
+    @keyframes slideInBanner {
+        from { opacity: 0; transform: translateX(-20px); }
+        to   { opacity: 1; transform: translateX(0); }
+    }
+    .insight-banner:hover { transform: translateX(4px); }
     .insight-banner-icon {
         font-size: 28px;
         flex-shrink: 0;
@@ -712,6 +790,11 @@ st.markdown("""
     .insight-critical .insight-banner-icon {
         background: rgba(183,28,28,0.15);
         color: #B71C1C;
+        animation: criticalPulse 2s ease-in-out infinite;
+    }
+    @keyframes criticalPulse {
+        0%, 100% { box-shadow: 0 0 0 0 rgba(183,28,28,0.3); }
+        50%      { box-shadow: 0 0 0 8px rgba(183,28,28,0); }
     }
     .insight-warning {
         color: #E65100;
@@ -2025,7 +2108,28 @@ with st.sidebar:
     ]
     for full_label, icon, gradient, text_color in nav_items:
         is_active = (st.session_state.current_page == full_label)
-        active_border = "3px solid #FFD700" if is_active else "2px solid transparent"
+        # Per-button CSS injection for active state + hover
+        safe_key = f"nav_{full_label}".replace(" ", "_").replace(".", "")
+        st.markdown(
+            f"<style>"
+            f"div[data-testid='stSidebar'] button[key='{safe_key}'] {{"
+            f"  background: {'linear-gradient(135deg, #FFD700 0%, #FFA500 100%)' if is_active else 'rgba(255,255,255,0.05)'} !important;"
+            f"  color: {'#000' if is_active else '#FFD700'} !important;"
+            f"  border: 2px solid {'#FFD700' if is_active else 'rgba(255,215,0,0.2)'} !important;"
+            f"  border-left: {'6px solid #000' if is_active else '6px solid transparent'} !important;"
+            f"  font-weight: {'900' if is_active else '700'} !important;"
+            f"  box-shadow: {'0 4px 12px rgba(255,215,0,0.4)' if is_active else 'none'} !important;"
+            f"  letter-spacing: 1px !important;"
+            f"  transition: all 0.2s ease !important;"
+            f"}}"
+            f"div[data-testid='stSidebar'] button[key='{safe_key}']:hover {{"
+            f"  background: linear-gradient(135deg, rgba(255,215,0,0.15) 0%, rgba(255,215,0,0.05) 100%) !important;"
+            f"  border-color: #FFD700 !important;"
+            f"  transform: translateX(4px) !important;"
+            f"}}"
+            f"</style>",
+            unsafe_allow_html=True
+        )
         if st.button(
             f"{icon}  {full_label.replace(icon + ' ', '')}",
             key=f"nav_{full_label}",
