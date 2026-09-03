@@ -326,6 +326,10 @@ st.set_page_config(
 st.markdown("""
 <style>
     /* === GLOBAL === */
+    html, body, .stApp {
+        font-size: 17px !important;
+        line-height: 1.55;
+    }
     .stApp { background: linear-gradient(135deg, #fafafa 0%, #f5f5f5 100%); }
     [data-testid="stSidebarNav"] { display: none; }
     footer { visibility: hidden; }
