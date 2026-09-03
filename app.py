@@ -24,6 +24,40 @@ def check_password():
         # Brand renamed from "3K BATTERY QA" to "3K BATTERY SQA" (Supplier Quality Assurance).
         _login_css = """
 <style>
+    /* === GOOGLE FONTS (Inter — executive standard) === */
+    @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap');
+
+    /* === DESIGN TOKENS === */
+    :root {
+        --font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+        --fs-hero: 56px;
+        --fs-h1: 32px;
+        --fs-h2: 22px;
+        --fs-kpi: 36px;
+        --fs-label: 12px;
+        --fs-body: 14px;
+        --fs-caption: 11px;
+        --space-1: 4px;
+        --space-2: 8px;
+        --space-3: 12px;
+        --space-4: 16px;
+        --space-5: 24px;
+        --space-6: 32px;
+        --radius-sm: 4px;
+        --radius-md: 8px;
+        --radius-lg: 12px;
+        --radius-xl: 20px;
+        --radius-pill: 999px;
+        --brand-primary: #FFD700;
+        --status-good: #1B5E20;
+        --status-warn: #E65100;
+        --status-bad: #B71C1C;
+        --shadow-sm: 0 1px 3px rgba(0,0,0,0.08), 0 4px 12px rgba(0,0,0,0.04);
+        --shadow-md: 0 4px 8px rgba(0,0,0,0.12), 0 12px 24px rgba(0,0,0,0.06);
+        --shadow-glow: 0 0 0 1px rgba(255,215,0,0.15), 0 8px 32px rgba(255,215,0,0.18);
+    }
+    * { font-family: var(--font-family) !important; }
+
     /* Page background — radial vignette with subtle gold tint */
     .stApp { background: radial-gradient(ellipse at top, #1a1a1a 0%, #050505 80%) !important; }
     .login-bg-layer {
