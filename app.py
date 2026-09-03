@@ -1251,12 +1251,7 @@ st.markdown("""
     }
 
     /* Section headers: shimmer background */
-    .section-header {
-        position: relative; overflow: hidden;
-        background: linear-gradient(90deg, #FFD700 0%, #FFC107 50%, #FFD700 100%) !important;
-        background-size: 200% 100% !important;
-        animation: shimmer 4s linear infinite;
-    }
+
     .section-header > * {
         position: relative; z-index: 1;
     }
