@@ -451,21 +451,24 @@ st.markdown("""
     .hero-header {
         background:
             linear-gradient(135deg, #000000 0%, #1a1a1a 50%, #000000 100%),
-            radial-gradient(circle at 80% 20%, rgba(255,215,0,0.18) 0%, transparent 60%);
+            radial-gradient(circle at 80% 20%, rgba(255,215,0,0.2) 0%, transparent 60%);
         border: 2px solid #FFD700;
-        border-radius: 16px;
-        padding: 20px 22px;
+        border-radius: 20px;
+        padding: 18px 22px;
         margin-bottom: 18px;
         position: relative;
         overflow: hidden;
-        box-shadow: 0 8px 28px rgba(0,0,0,0.25);
+        box-shadow:
+            0 10px 32px rgba(0,0,0,0.28),
+            0 0 24px rgba(255,215,0,0.18),
+            inset 0 1px 0 rgba(255,215,0,0.25);
         display: grid;
         grid-template-columns: 1fr auto;
         grid-template-areas:
             "left right"
             "stats stats"
             "live live";
-        gap: 14px 18px;
+        gap: 12px 16px;
     }
     .hero-header::before {
         content: "";
@@ -481,15 +484,15 @@ st.markdown("""
     }
     .hero-title {
         color: #FFD700;
-        font-size: 22px;
+        font-size: 24px;
         font-weight: 900;
-        letter-spacing: 2px;
+        letter-spacing: 2.5px;
         line-height: 1.15;
-        text-shadow: 0 2px 12px rgba(255,215,0,0.4);
+        text-shadow: 0 2px 14px rgba(255,215,0,0.5);
     }
     .hero-subtitle {
         color: #cccccc;
-        font-size: 10px;
+        font-size: 11px;
         letter-spacing: 1.5px;
         text-transform: uppercase;
         margin-top: 6px;
@@ -499,49 +502,50 @@ st.markdown("""
         display: inline-block;
         background: linear-gradient(135deg, #FFD700 0%, #FFA500 100%);
         color: #000;
-        padding: 5px 12px;
-        border-radius: 12px;
-        font-size: 9px;
+        padding: 6px 14px;
+        border-radius: 14px;
+        font-size: 10px;
         font-weight: 900;
         letter-spacing: 1.5px;
         margin-top: 10px;
-        box-shadow: 0 4px 12px rgba(255,215,0,0.35);
+        box-shadow: 0 4px 14px rgba(255,215,0,0.4);
     }
     .hero-right {
         grid-area: right;
-        background: rgba(255,215,0,0.08);
-        border: 1px solid rgba(255,215,0,0.25);
-        border-radius: 10px;
-        padding: 8px 12px;
+        background: rgba(255,215,0,0.1);
+        border: 1.5px solid rgba(255,215,0,0.35);
+        border-radius: 12px;
+        padding: 10px 14px;
         text-align: right;
         position: relative; z-index: 1;
-        min-width: 120px;
+        min-width: 130px;
+        box-shadow: inset 0 1px 0 rgba(255,215,0,0.15);
     }
     .hero-date-row {
         display: flex;
         flex-direction: column;
         align-items: flex-end;
-        gap: 1px;
+        gap: 2px;
     }
     .hero-date-label {
         color: #FFD700;
-        font-size: 8px;
+        font-size: 9px;
         font-weight: 800;
         letter-spacing: 2px;
         text-transform: uppercase;
     }
     .hero-date-val {
         color: #ffffff;
-        font-size: 13px;
+        font-size: 14px;
         font-weight: 800;
         font-family: 'Courier New', monospace;
         letter-spacing: 0.5px;
     }
     .hero-date-divider {
-        color: rgba(255,215,0,0.5);
-        font-size: 9px;
+        color: rgba(255,215,0,0.6);
+        font-size: 10px;
         letter-spacing: 1px;
-        margin: 2px 0;
+        margin: 3px 0;
         text-align: right;
     }
     .hero-stats {
@@ -568,18 +572,18 @@ st.markdown("""
         box-shadow: 0 4px 12px rgba(255,215,0,0.2);
     }
     .hero-stat-icon {
-        font-size: 14px;
+        font-size: 15px;
     }
     .hero-stat-value {
         color: #FFD700;
-        font-size: 16px;
+        font-size: 17px;
         font-weight: 900;
         line-height: 1;
         font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
     }
     .hero-stat-label {
         color: #ffffff;
-        font-size: 8px;
+        font-size: 9px;
         font-weight: 700;
         letter-spacing: 1px;
         text-transform: uppercase;
@@ -1659,7 +1663,7 @@ st.markdown("""
         .hero-header {
             padding: 16px 16px !important;
             margin-bottom: 12px !important;
-            border-radius: 12px !important;
+            border-radius: 14px !important;
             grid-template-columns: 1fr !important;
             grid-template-areas:
                 "left"
@@ -1669,14 +1673,14 @@ st.markdown("""
             gap: 12px !important;
         }
         .hero-title {
-            font-size: 18px !important;
-            letter-spacing: 1.5px !important;
+            font-size: 20px !important;
+            letter-spacing: 1.8px !important;
         }
         .hero-subtitle {
-            font-size: 9px !important;
+            font-size: 10px !important;
         }
         .hero-badge {
-            font-size: 8px !important;
+            font-size: 9px !important;
             padding: 4px 10px !important;
             margin-top: 8px !important;
         }
@@ -1703,13 +1707,13 @@ st.markdown("""
             padding: 6px 4px !important;
             gap: 1px !important;
         }
-        .hero-stat-icon { font-size: 12px !important; }
-        .hero-stat-value { font-size: 13px !important; }
-        .hero-stat-label { font-size: 7px !important; letter-spacing: 0.5px !important; }
-        .hero-stat-clock-val { font-size: 10px !important; }
+        .hero-stat-icon { font-size: 13px !important; }
+        .hero-stat-value { font-size: 14px !important; }
+        .hero-stat-label { font-size: 8px !important; letter-spacing: 0.6px !important; }
+        .hero-stat-clock-val { font-size: 11px !important; }
         .hero-live {
-            font-size: 9px !important;
-            padding: 5px 10px !important;
+            font-size: 10px !important;
+            padding: 6px 10px !important;
             letter-spacing: 1px !important;
         }
 
