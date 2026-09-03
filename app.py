@@ -862,31 +862,101 @@ st.markdown("""
     /* === SEARCH BAR === */
     .search-container {
         position: relative;
-        margin-bottom: 20px;
+        margin: 24px 0 20px 0;
+    }
+    .search-wrapper {
+        background: white;
+        border: 2px solid rgba(255,215,0,0.5);
+        border-radius: 14px;
+        padding: 6px;
+        box-shadow: 0 4px 14px rgba(0,0,0,0.06);
+        transition: all 0.3s ease;
+    }
+    .search-wrapper:focus-within {
+        border-color: #FFD700;
+        box-shadow: 0 4px 14px rgba(0,0,0,0.08), 0 0 0 4px rgba(255,215,0,0.15);
     }
     .search-input {
-        background: white;
-        border: 2px solid #FFD700;
-        border-radius: 12px;
-        padding: 14px 20px 14px 48px;
+        background: #fafafa;
+        border: 1.5px solid rgba(255,215,0,0.4);
+        border-radius: 10px;
+        padding: 12px 16px 12px 44px;
         font-size: 14px;
         font-weight: 600;
         width: 100%;
         transition: all 0.3s ease;
-        box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+        color: #000;
     }
     .search-input:focus {
         outline: none;
-        border-color: #FFC107;
-        box-shadow: 0 0 0 4px rgba(255,215,0,0.25);
+        background: white;
+        border-color: #FFD700;
+        box-shadow: 0 0 0 3px rgba(255,215,0,0.2);
     }
     .search-icon {
         position: absolute;
-        left: 16px;
+        left: 14px;
         top: 50%;
         transform: translateY(-50%);
         color: #FFD700;
-        font-size: 18px;
+        font-size: 16px;
+        pointer-events: none;
+    }
+    .search-header {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        margin-bottom: 8px;
+        padding: 0 4px;
+    }
+    .search-header-icon {
+        background: linear-gradient(135deg, #FFD700 0%, #FFA500 100%);
+        color: #000;
+        width: 28px; height: 28px;
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 13px;
+        box-shadow: 0 2px 6px rgba(255,215,0,0.3);
+    }
+    .search-header-label {
+        color: #555;
+        font-size: 11px;
+        font-weight: 800;
+        letter-spacing: 1.5px;
+        text-transform: uppercase;
+    }
+
+    /* === SYNC INDICATOR === */
+    .sync-indicator {
+        background: white;
+        border: 2px solid #4CAF50;
+        border-radius: 10px;
+        padding: 14px;
+        text-align: center;
+        min-height: 50px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: 8px;
+        font-weight: 800;
+        font-size: 12px;
+        letter-spacing: 1px;
+        color: #1B5E20;
+        margin-bottom: 6px;
+    }
+    .sync-dot {
+        width: 10px; height: 10px;
+        background: #4CAF50;
+        border-radius: 50%;
+        box-shadow: 0 0 8px #4CAF50;
+        animation: syncPulse 2s ease-in-out infinite;
+        flex-shrink: 0;
+    }
+    @keyframes syncPulse {
+        0%, 100% { box-shadow: 0 0 8px #4CAF50; transform: scale(1); }
+        50%      { box-shadow: 0 0 14px #4CAF50; transform: scale(1.15); }
     }
 
     /* === GLASSMORPHISM CARD === */
@@ -2542,23 +2612,29 @@ if "14 Days" in page:
         )
         # Sync status indicator
         st.markdown(
-            f'<div style="background:white; border:2px solid #4CAF50; border-radius:10px; '
-            f'padding:14px; text-align:center; min-height:50px; display:flex; '
-            f'align-items:center; justify-content:center; gap:8px; font-weight:800; '
-            f'letter-spacing:1px; color:#1B5E20;">'
-            f'<span style="width:10px; height:10px; background:#4CAF50; border-radius:50%; '
-            f'box-shadow:0 0 8px #4CAF50;"></span>'
+            f'<div class="sync-indicator">'
+            f'<span class="sync-dot"></span>'
             f'<span>SYNCED · GITHUB</span>'
             f'</div>',
             unsafe_allow_html=True
         )
 
     # === SEARCH BAR ===
-    search_query = st.text_input(
-        "🔍 Search Part No / Supplier / Comment",
-        placeholder="Type to search... (e.g., VE101, KSV, scratch)",
-        key="search_14d"
+    st.markdown(
+        '<div class="search-header">'
+        '<div class="search-header-icon">🔍</div>'
+        '<div class="search-header-label">Search Records</div>'
+        '</div>',
+        unsafe_allow_html=True
     )
+    st.markdown('<div class="search-wrapper">', unsafe_allow_html=True)
+    search_query = st.text_input(
+        "Search Part No / Supplier / Comment",
+        placeholder="Type to search... (e.g., VE101, KSV, scratch)",
+        key="search_14d",
+        label_visibility="collapsed"
+    )
+    st.markdown('</div>', unsafe_allow_html=True)
     if search_query:
         mask = (
             filtered["Part No"].astype(str).str.contains(search_query, case=False, na=False) |
