@@ -24,40 +24,6 @@ def check_password():
         # Brand renamed from "3K BATTERY QA" to "3K BATTERY SQA" (Supplier Quality Assurance).
         _login_css = """
 <style>
-    /* === GOOGLE FONTS (Inter — executive standard) === */
-    @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap');
-
-    /* === DESIGN TOKENS === */
-    :root {
-        --font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
-        --fs-hero: 56px;
-        --fs-h1: 32px;
-        --fs-h2: 22px;
-        --fs-kpi: 36px;
-        --fs-label: 12px;
-        --fs-body: 14px;
-        --fs-caption: 11px;
-        --space-1: 4px;
-        --space-2: 8px;
-        --space-3: 12px;
-        --space-4: 16px;
-        --space-5: 24px;
-        --space-6: 32px;
-        --radius-sm: 4px;
-        --radius-md: 8px;
-        --radius-lg: 12px;
-        --radius-xl: 20px;
-        --radius-pill: 999px;
-        --brand-primary: #FFD700;
-        --status-good: #1B5E20;
-        --status-warn: #E65100;
-        --status-bad: #B71C1C;
-        --shadow-sm: 0 1px 3px rgba(0,0,0,0.08), 0 4px 12px rgba(0,0,0,0.04);
-        --shadow-md: 0 4px 8px rgba(0,0,0,0.12), 0 12px 24px rgba(0,0,0,0.06);
-        --shadow-glow: 0 0 0 1px rgba(255,215,0,0.15), 0 8px 32px rgba(255,215,0,0.18);
-    }
-    * { font-family: var(--font-family) !important; }
-
     /* Page background — radial vignette with subtle gold tint */
     .stApp { background: radial-gradient(ellipse at top, #1a1a1a 0%, #050505 80%) !important; }
     .login-bg-layer {
@@ -669,36 +635,6 @@ st.markdown("""
         50%      { box-shadow: 0 0 0 8px rgba(76,175,80,0); transform: scale(1.1); }
     }
 
-    /* === STATUS LEGEND (color coding reference) === */
-    .status-legend {
-        display: flex;
-        gap: 12px;
-        padding: 8px 12px;
-        background: rgba(255,255,255,0.04);
-        border: 1px solid rgba(255,255,255,0.08);
-        border-radius: 8px;
-        font-size: 10px;
-        font-weight: 700;
-        letter-spacing: 0.5px;
-        align-items: center;
-        flex-wrap: wrap;
-        grid-area: live;
-    }
-    .status-legend-item {
-        display: inline-flex;
-        align-items: center;
-        gap: 4px;
-        white-space: nowrap;
-    }
-    .status-dot {
-        width: 8px; height: 8px;
-        border-radius: 50%;
-        display: inline-block;
-    }
-    .status-dot-good { background: var(--status-good); }
-    .status-dot-warn { background: var(--status-warn); }
-    .status-dot-bad  { background: var(--status-bad); }
-
     /* === DATE RANGE CHIP === */
     .date-chip {
         background: linear-gradient(135deg, #FFD700 0%, #FFA500 100%);
@@ -810,9 +746,58 @@ st.markdown("""
     .kpi-black::before {
         background: linear-gradient(90deg, #000000 0%, #333333 100%);
     }
+/* === DECISION BANNER (top-of-dashboard status) === */
+    .decision-banner {
+        display: flex; align-items: center; gap: 18px;
+        padding: 18px 22px; margin: 18px 0 22px 0;
+        border-radius: 16px; border: 1.5px solid;
+        box-shadow: 0 8px 22px rgba(0,0,0,0.18), inset 0 1px 0 rgba(255,255,255,0.4);
+        position: relative; overflow: hidden;
+    }
+    .decision-banner::before {
+        content: ""; position: absolute; top: -50%; right: -15%;
+        width: 280px; height: 280px;
+        background: radial-gradient(circle, currentColor 0%, transparent 60%);
+        opacity: 0.10; pointer-events: none;
+    }
+    .decision-icon {
+        flex-shrink: 0; width: 56px; height: 56px;
+        border-radius: 14px;
+        display: flex; align-items: center; justify-content: center;
+        font-size: 30px;
+        background: rgba(255,255,255,0.35);
+        backdrop-filter: blur(8px);
+        box-shadow: inset 0 1px 0 rgba(255,255,255,0.6);
+    }
+    .decision-body { flex: 1; min-width: 0; position: relative; z-index: 1; }
+    .decision-title {
+        font-size: 17px; font-weight: 900; letter-spacing: 1.5px;
+        text-transform: uppercase; margin-bottom: 4px;
+    }
+    .decision-msg { font-size: 13px; line-height: 1.45; opacity: 0.92; }
+    .decision-safe, .decision-great {
+        background: linear-gradient(135deg, #1a3d1f 0%, #0a1f0f 100%);
+        color: #4ade80; border-color: #4ade80;
+    }
+    .decision-watch {
+        background: linear-gradient(135deg, #3d2f1a 0%, #1f170a 100%);
+        color: #fbbf24; border-color: #fbbf24;
+    }
+    .decision-critical {
+        background: linear-gradient(135deg, #3d1a1a 0%, #1f0a0a 100%);
+        color: #f87171; border-color: #f87171;
+        animation: criticalPulse 2s ease-in-out infinite;
+    }
+    @keyframes criticalPulse {
+        0%, 100% { box-shadow: 0 8px 22px rgba(248,113,113,0.18), inset 0 1px 0 rgba(255,255,255,0.4); }
+        50%      { box-shadow: 0 12px 32px rgba(248,113,113,0.40), inset 0 1px 0 rgba(255,255,255,0.4); }
+    }
+
     .kpi-icon {
         position: absolute; top: 18px; right: 18px;
-        font-size: 28px; opacity: 0.12;
+        font-size: 28px; opacity: 0.35;
+        color: #FFD700 !important;
+        text-shadow: 0 0 10px rgba(255,215,0,0.4);
         transition: opacity 0.3s;
     }
     .kpi-container:hover .kpi-icon { opacity: 0.25; }
@@ -822,13 +807,21 @@ st.markdown("""
         margin-bottom: 10px; margin-top: 4px;
     }
     .kpi-value {
-        color: #FFD700; font-size: 32px; font-weight: 900;
+        color: #FFE234; font-size: 32px; font-weight: 900;
         line-height: 1; margin: 4px 0 8px 0;
         font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
         white-space: nowrap;
         display: flex;
         align-items: center;
         gap: 6px;
+        /* Crisp gold digits: brighter colour (#FFE234) + minimal stroke for
+           solid edge. The previous 3-layer text-shadow made the numbers
+           look fuzzy/blurry — now we use a single 1px dark shadow only,
+           which keeps the digits sharp. */
+        -webkit-font-smoothing: antialiased;
+        -moz-osx-font-smoothing: grayscale;
+        text-rendering: geometricPrecision;
+        text-shadow: 0 1px 0 rgba(0,0,0,0.7);
     }
     .kpi-unit {
         font-size: 13px; color: #000; margin-left: 6px;
@@ -848,17 +841,17 @@ st.markdown("""
         letter-spacing: 0.3px;
     }
     .trend-up {
-        color: var(--status-bad); background: rgba(183,28,28,0.12);
-        border: 1px solid rgba(183,28,28,0.25);
+        color: #B71C1C; background: rgba(255,107,107,0.12);
+        border: 1px solid rgba(255,107,107,0.2);
         animation: trendPulseRed 2s ease-in-out infinite;
     }
     @keyframes trendPulseRed {
-        0%, 100% { box-shadow: 0 0 0 0 rgba(183,28,28,0); }
-        50%      { box-shadow: 0 0 0 6px rgba(183,28,28,0.15); }
+        0%, 100% { box-shadow: 0 0 0 0 rgba(255,107,107,0); }
+        50%      { box-shadow: 0 0 0 6px rgba(255,107,107,0.15); }
     }
     .trend-down {
-        color: var(--status-good); background: rgba(76,175,80,0.12);
-        border: 1px solid rgba(76,175,80,0.25);
+        color: #1B5E20; background: rgba(76,175,80,0.12);
+        border: 1px solid rgba(76,175,80,0.2);
         animation: trendPulseGreen 2s ease-in-out infinite;
     }
     @keyframes trendPulseGreen {
@@ -906,37 +899,38 @@ st.markdown("""
         line-height: 1.55;
         opacity: 1;
         font-weight: 500;
+        color: #333 !important;
     }
-    .insight-banner-detail b { font-weight: 800; opacity: 1; }
+    .insight-banner-detail b { font-weight: 800; opacity: 1; color: #000 !important; }
     .insight-banner-detail b { font-weight: 800; }
 
     /* Severity color variants */
     .insight-critical {
-        color: var(--status-bad);
-        background: linear-gradient(135deg, rgba(183,28,28,0.12) 0%, rgba(183,28,28,0.04) 100%);
-        border-left-color: var(--status-bad);
+        color: #B71C1C;
+        background: linear-gradient(135deg, rgba(255,107,107,0.12) 0%, rgba(255,107,107,0.04) 100%);
+        border-left-color: #B71C1C;
     }
     .insight-critical .insight-banner-icon {
         background: rgba(183,28,28,0.15);
-        color: var(--status-bad);
+        color: #B71C1C;
     }
     .insight-warning {
-        color: var(--status-warn);
-        background: linear-gradient(135deg, rgba(230,81,0,0.12) 0%, rgba(230,81,0,0.04) 100%);
-        border-left-color: var(--status-warn);
+        color: #E65100;
+        background: linear-gradient(135deg, rgba(255,152,0,0.12) 0%, rgba(255,152,0,0.04) 100%);
+        border-left-color: #E65100;
     }
     .insight-warning .insight-banner-icon {
         background: rgba(230,81,0,0.15);
-        color: var(--status-warn);
+        color: #E65100;
     }
     .insight-good {
-        color: var(--status-good);
-        background: linear-gradient(135deg, rgba(27,94,32,0.12) 0%, rgba(27,94,32,0.04) 100%);
-        border-left-color: var(--status-good);
+        color: #1B5E20;
+        background: linear-gradient(135deg, rgba(76,175,80,0.12) 0%, rgba(76,175,80,0.04) 100%);
+        border-left-color: #1B5E20;
     }
     .insight-good .insight-banner-icon {
         background: rgba(27,94,32,0.15);
-        color: var(--status-good);
+        color: #1B5E20;
     }
     .insight-info {
         color: #555;
@@ -1297,30 +1291,19 @@ st.markdown("""
         display: inline-block;
     }
 
-    /* KPI value: gradient text + glow */
+    /* KPI value: solid gold text. Previous gradient version used
+       -webkit-text-fill-color:transparent which made the digits appear dark
+       because the background was clipped through the text. Use solid #FFE234
+       so every digit reads as solid bright gold against the dark card. */
     .kpi-value {
         font-size: 32px !important;
         font-weight: 900 !important;
         letter-spacing: -1px;
-        background: linear-gradient(135deg, #C79000 0%, #8a6300 100%);
-        -webkit-background-clip: text;
-        -webkit-text-fill-color: transparent;
-        background-clip: text;
+        color: #FFE234 !important;
+        -webkit-text-fill-color: #FFE234 !important;
         animation: countUp 0.6s cubic-bezier(0.16, 1, 0.3, 1);
         display: flex; align-items: baseline; justify-content: flex-start;
         gap: 6px;
-    }
-    .kpi-container.kpi-black .kpi-value,
-    .kpi-card.kpi-black .kpi-value {
-        color: #FFEB3B !important;
-        background: none !important;
-        -webkit-background-clip: unset !important;
-        background-clip: unset !important;
-        -webkit-text-fill-color: #FFEB3B !important;
-        font-weight: 950 !important;
-        text-shadow:
-            0 0 12px rgba(255,235,59,0.6),
-            0 0 4px rgba(255,215,0,0.4);
     }
     /* The unit badge lives INSIDE .kpi-value, so it inherits the transparent
        text fill used for the gradient number and renders as a solid dark bar.
@@ -2508,6 +2491,38 @@ if "14 Days" in page:
     labels = daily["Date"].dt.strftime("%m/%d").tolist()
     qty_data = daily["Qty"].tolist()
     case_data = daily["Case"].tolist()
+
+    # === DECISION BANNER — top-of-dashboard status in 1 second ===
+    if qty_pct > 20:
+        decision_level = "critical"
+        decision_icon = "🔴"
+        decision_title = "CRITICAL — Action Required"
+        decision_msg = f"Defects spiked {qty_pct:.1f}% vs last week. Supplier {worst_supplier} needs immediate review."
+    elif qty_pct > 5:
+        decision_level = "watch"
+        decision_icon = "🟡"
+        decision_title = "WATCH — Monitor Closely"
+        decision_msg = f"Defects up {qty_pct:.1f}% vs last week. Investigate {worst_mode} trend."
+    elif qty_pct < -10:
+        decision_level = "great"
+        decision_icon = "🟢"
+        decision_title = "GREAT IMPROVEMENT"
+        decision_msg = f"Defects down {abs(qty_pct):.1f}% vs last week. Keep up the momentum."
+    else:
+        decision_level = "safe"
+        decision_icon = "🟢"
+        decision_title = "SAFE TO SHIP"
+        decision_msg = "Defect rate within normal range. No action required."
+
+    st.markdown(f'''
+    <div class="decision-banner decision-{decision_level}">
+        <div class="decision-icon">{decision_icon}</div>
+        <div class="decision-body">
+            <div class="decision-title">{decision_title}</div>
+            <div class="decision-msg">{decision_msg}</div>
+        </div>
+    </div>
+    ''', unsafe_allow_html=True)
 
     # === KPI ROW (2x2 on mobile, 4-across on desktop via CSS) ===
     kpi_row1_left, kpi_row1_right = st.columns(2, gap="small")
