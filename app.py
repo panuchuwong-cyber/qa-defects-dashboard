@@ -1248,11 +1248,15 @@ st.markdown("""
     }
     .kpi-container.kpi-black .kpi-value,
     .kpi-card.kpi-black .kpi-value {
-        color: #FFD700 !important;
+        color: #FFEB3B !important;
         background: none !important;
         -webkit-background-clip: unset !important;
         background-clip: unset !important;
-        -webkit-text-fill-color: #FFD700 !important;
+        -webkit-text-fill-color: #FFEB3B !important;
+        font-weight: 950 !important;
+        text-shadow:
+            0 0 12px rgba(255,235,59,0.6),
+            0 0 4px rgba(255,215,0,0.4);
     }
     /* The unit badge lives INSIDE .kpi-value, so it inherits the transparent
        text fill used for the gradient number and renders as a solid dark bar.
