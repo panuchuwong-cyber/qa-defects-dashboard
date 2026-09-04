@@ -2995,12 +2995,28 @@ if "14 Days" in page:
         )
 
     
-    # === SUPPLY CHAIN METRICS (Phase 2: Mock data) ===
+    # === SUPPLY CHAIN METRICS (real data derived from defect log + supplier master) ===
     try:
-        from utils.mock_supply import mock_otif, mock_scars, get_supplier_scores
+        from utils.real_supply import real_otif, real_scars
 
-        otif = mock_otif(window_days=14)
-        scars = mock_scars()
+        otif = real_otif(df, window_days=14)
+        scars = real_scars(df)
+
+        # Disclaimer banner — OTIF/SCAR are proxies until delivery tracking is wired
+        st.markdown(
+            '<div style="background:#FFF8E1;border-left:6px solid #FFA000;'
+            'padding:14px 20px;border-radius:10px;margin:14px 0 18px 0;'
+            'font-size:14px;color:#5D4037;box-shadow:0 2px 8px rgba(0,0,0,0.08);">'
+            '<div style="font-weight:900;font-size:15px;margin-bottom:6px;">'
+            '🧪 Derived Metrics — Pending Real Delivery Tracking</div>'
+            '<div style="line-height:1.5;">'
+            'OTIF & SCAR below are computed from defect log + supplier master '
+            '(Monthly Received Qty). They will become accurate once delivery '
+            'tracking columns (delivery_date, qty_ordered, qty_received, '
+            'scar_status) are added to the Excel template.'
+            '</div></div>',
+            unsafe_allow_html=True
+        )
 
         st.markdown(
             '<div class="section-header">'
@@ -3016,7 +3032,7 @@ if "14 Days" in page:
             <div class="kpi-container kpi-yellow kpi-card">
                 <div class="kpi-label">📦 OTIF</div>
                 <div class="kpi-value">{otif["otif_pct"]}<span class="kpi-unit">%</span></div>
-                <div class="kpi-trend trend-down">✓ On-Time In-Full ({otif["total_orders"]} orders)</div>
+                <div class="kpi-trend trend-down">✓ On-Time In-Full ({otif["supplier_count"]} suppliers)</div>
             </div>
             ''', unsafe_allow_html=True)
         with col_o2:
@@ -3024,7 +3040,7 @@ if "14 Days" in page:
             <div class="kpi-container kpi-black kpi-card">
                 <div class="kpi-label">⏰ ON-TIME</div>
                 <div class="kpi-value">{otif["on_time_pct"]}<span class="kpi-unit">%</span></div>
-                <div class="kpi-trend trend-down">{otif["total_orders"]-otif["late_orders"]}/{otif["total_orders"]} delivered on-time</div>
+                <div class="kpi-trend trend-down">{otif["total_orders"]-otif["late_orders"]} / {otif["total_orders"]} units defect-free</div>
             </div>
             ''', unsafe_allow_html=True)
         with col_o3:
@@ -3032,7 +3048,7 @@ if "14 Days" in page:
             <div class="kpi-container kpi-black kpi-card">
                 <div class="kpi-label">📊 IN-FULL</div>
                 <div class="kpi-value">{otif["in_full_pct"]}<span class="kpi-unit">%</span></div>
-                <div class="kpi-trend trend-down">{otif["total_orders"]-otif["short_orders"]}/{otif["total_orders"]} full qty</div>
+                <div class="kpi-trend trend-down">Across {otif["supplier_count"]} suppliers</div>
             </div>
             ''', unsafe_allow_html=True)
 
@@ -3045,17 +3061,20 @@ if "14 Days" in page:
             unsafe_allow_html=True
         )
 
-        scar_df = pd.DataFrame(scars)
-        st.dataframe(
-            scar_df,
-            use_container_width=True, hide_index=True, height=200,
-            column_config={
-                "priority": st.column_config.TextColumn("Priority", help="High/Medium/Low"),
-                "status": st.column_config.TextColumn("Status"),
-                "open_date": st.column_config.DateColumn("Opened"),
-                "due_date": st.column_config.DateColumn("Due"),
-            }
-        )
+        if scars:
+            scar_df = pd.DataFrame(scars)
+            st.dataframe(
+                scar_df,
+                use_container_width=True, hide_index=True, height=min(420, 60 + len(scars)*40),
+                column_config={
+                    "priority": st.column_config.TextColumn("Priority", help="High/Medium/Low"),
+                    "status": st.column_config.TextColumn("Status"),
+                    "open_date": st.column_config.DateColumn("Opened"),
+                    "due_date": st.column_config.DateColumn("Due"),
+                }
+            )
+        else:
+            st.info("No SCARs open — all defect groups within tolerance.")
     except Exception as e:
         st.warning(f"Supply chain metrics unavailable: {e}")
 
