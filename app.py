@@ -946,16 +946,16 @@ st.markdown("""
     .section-header {
         position: relative; overflow: hidden;
         background: linear-gradient(135deg, #0e0e0e 0%, #1f1f1f 60%, #2a2a2a 100%);
-        color: #FFD700;
+        color: var(--brand-primary);
         padding: 14px 22px;
         border-radius: 14px;
-        font-weight: 900; font-size: 16px; letter-spacing: 2.5px;
+        font-weight: 900; font-size: 15px; letter-spacing: 2.5px;
         margin: 28px 0 16px 0; text-transform: uppercase;
         border: 1.5px solid rgba(255,215,0,0.45);
-        border-left: 5px solid #FFD700;
+        border-left: 5px solid var(--brand-primary);
         box-shadow:
             0 8px 22px rgba(0,0,0,0.25),
-            inset 0 1px 0 rgba(255,215,0,0.18);
+            inset 0 1px 0 rgba(255,215,0,0.15);
         display: flex; align-items: center; gap: 12px;
     }
     .section-header::after {
@@ -1709,7 +1709,12 @@ st.markdown("""
         border: 2px solid #000;
         border-radius: 12px;
         padding: 14px;
-        box-shadow: 0 4px 12px rgba(0,0,0,0.08);
+        box-shadow: var(--shadow-md);
+        transition: transform 0.2s ease, box-shadow 0.2s ease;
+    }
+    .trend-card:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 8px 16px rgba(0,0,0,0.12), 0 16px 32px rgba(0,0,0,0.06);
     }
     .trend-card-head {
         display: flex;
