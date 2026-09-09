@@ -1,4 +1,5 @@
 """Create professional Excel template for QA Defects data"""
+# pyright: reportAttributeAccessIssue=false, reportOptionalMemberAccess=false, reportCallIssue=false, reportArgumentType=false, reportMissingImports=false
 from openpyxl import Workbook
 from openpyxl.styles import Font, Alignment, PatternFill, Border, Side
 from openpyxl.worksheet.datavalidation import DataValidation
@@ -106,6 +107,28 @@ mode_dv.promptTitle = "Problem Mode"
 ws.add_data_validation(mode_dv)
 mode_dv.add(f"D5:D10000")
 
+# Supplier dropdown — canonical names from utils.supplier_aliases.
+# Including both short codes (KSV) and long forms (NISSEN CHEMITEC) reduces
+# typo risk and aligns with the alias map in app.py so the join key resolves
+# cleanly when the file is uploaded back.
+SUPPLIER_OPTIONS = ",".join([
+    "KSV", "AKUSAN", "NISSEN CHEMITEC", "PARADISE", "BTD",
+    "C.G.", "TTS PLASTIC", "SAMBO", "DEM", "APT (Thailand)",
+    "SUPERFAST", "SAM NEO", "TECHNO ASSOCIATE",
+])
+supplier_dv = DataValidation(
+    type="list",
+    formula1=f'"{SUPPLIER_OPTIONS}"',
+    allow_blank=True,
+    showDropDown=False
+)
+supplier_dv.error = "Please select a valid Supplier from the dropdown"
+supplier_dv.errorTitle = "Invalid Supplier"
+supplier_dv.prompt = "Select Supplier from dropdown (typing a value not in list will fail validation)"
+supplier_dv.promptTitle = "Supplier"
+ws.add_data_validation(supplier_dv)
+supplier_dv.add(f"B5:B10000")
+
 # Date format validation
 date_dv = DataValidation(
     type="date",
@@ -199,7 +222,7 @@ instructions = [
     ("1. Fill in defect records on the 'Defects Data' sheet", False, 11),
     ("2. Required columns: Date, Supplier, Group Part, Problem Mode, Part No, Qty", False, 11),
     ("3. Optional: Part Name, Comment", False, 11),
-    ("4. Use dropdowns for Group Part and Problem Mode", False, 11),
+    ("4. Use dropdowns for Group Part, Problem Mode, and Supplier", False, 11),
     ("5. Date format: YYYY-MM-DD (e.g., 2026-08-31)", False, 11),
     ("6. Qty must be a positive integer", False, 11),
     ("", False, 11),
@@ -297,4 +320,4 @@ wb.save(output_path)
 print(f"✅ Excel template created: {output_path}")
 print(f"   Sheets: {wb.sheetnames}")
 print(f"   Sample data rows: 5")
-print(f"   Data validations: Group Part, Problem Mode, Date, Qty")
+print(f"   Data validations: Supplier, Group Part, Problem Mode, Date, Qty")

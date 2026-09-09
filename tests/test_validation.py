@@ -261,6 +261,47 @@ if legacy.exists():
 
 
 # =====================================================================
+# Regression: QA_Defects_Template.xlsx has a Supplier data-validation dropdown
+# (Phase 4a). If a future agent removes the supplier_dv block in
+# build_template.py, this test will fail and surface the regression loudly.
+# =====================================================================
+print("\n[14] QA_Defects_Template.xlsx has Supplier data-validation dropdown")
+if legacy.exists():
+    try:
+        import openpyxl  # local import — keeps test optional if openpyxl missing
+        wb = openpyxl.load_workbook(legacy)
+        ws = wb["Defects Data"]
+        supplier_dvs = [
+            dv for dv in ws.data_validations.dataValidation
+            if "B5" in str(dv.sqref) and dv.type == "list"
+        ]
+        check(
+            "Supplier dropdown (B5:B10000) attached",
+            len(supplier_dvs) >= 1,
+            f"got {len(supplier_dvs)}",
+        )
+        if supplier_dvs:
+            formula = supplier_dvs[0].formula1 or ""
+            check(
+                "Supplier dropdown includes KSV",
+                "KSV" in formula,
+                f"formula={formula[:80]}",
+            )
+            check(
+                "Supplier dropdown includes NISSEN CHEMITEC (canonical long form)",
+                "NISSEN CHEMITEC" in formula,
+                f"formula={formula[:80]}",
+            )
+            check(
+                "Supplier dropdown includes APT (Thailand) (canonical long form)",
+                "APT (Thailand)" in formula,
+                f"formula={formula[:80]}",
+            )
+    except ImportError:
+        print("  (skipped — openpyxl not available)")
+
+
+# =====================================================================
 print(f"\n{'=' * 60}")
 print(f"PASSED: {passed}   FAILED: {failed}")
 print(f"{'=' * 60}")
