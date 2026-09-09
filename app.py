@@ -238,7 +238,7 @@ def check_password():
                 label_visibility="collapsed",
                 placeholder="Enter access password",
             )
-            if st.button("⚡ ACCESS DASHBOARD", use_container_width=True, type="primary"):
+            if st.button("⚡ ACCESS DASHBOARD", width='stretch', type="primary"):
                 try:
                     correct = st.secrets["password"]
                 except Exception:
@@ -2280,7 +2280,7 @@ with st.sidebar:
         if st.button(
             f"{icon}  {full_label.replace(icon + ' ', '')}",
             key=f"nav_{full_label}",
-            use_container_width=True
+            width='stretch'
         ):
             st.session_state.current_page = full_label
             st.rerun()
@@ -2321,7 +2321,7 @@ with st.sidebar:
     )
 
     # Reset button
-    if st.button("🗑️ RESET ALL FILTERS", use_container_width=True):
+    if st.button("🗑️ RESET ALL FILTERS", width='stretch'):
         st.session_state.selected_group = None
         st.rerun()
 
@@ -2705,11 +2705,11 @@ if "14 Days" in page:
 
     qa1, qa2 = st.columns(2)
     with qa1:
-        if st.button("🔄 REFRESH DATA", use_container_width=True, key="qa_refresh",
+        if st.button("🔄 REFRESH DATA", width='stretch', key="qa_refresh",
                      type="secondary"):
             st.cache_data.clear()
             st.rerun()
-        if st.button("📋 COPY SUMMARY", use_container_width=True, key="qa_copy",
+        if st.button("📋 COPY SUMMARY", width='stretch', key="qa_copy",
                      type="secondary"):
             summary = (
                 f"3K Battery QA Defects Summary\n"
@@ -2728,7 +2728,7 @@ if "14 Days" in page:
             data=csv,
             file_name=f"QA_Defects_{datetime.now().strftime('%Y%m%d_%H%M')}.csv",
             mime="text/csv",
-            use_container_width=True,
+            width='stretch',
             key="qa_dl_csv"
         )
         # Sync status indicator
@@ -2956,7 +2956,7 @@ if "14 Days" in page:
 
         st.dataframe(
             mode_summary.style.map(color_mode, subset=["Problem Mode"]),
-            use_container_width=True, hide_index=True, height=280
+            width='stretch', hide_index=True, height=280
         )
 
     with col_r:
@@ -2991,7 +2991,7 @@ if "14 Days" in page:
         st.dataframe(
             top5.style.map(color_rank, subset=["Rank"]),
             column_order=["Rank", "Supplier", "Qty", "Case", "% Share"],
-            use_container_width=True, hide_index=True, height=280
+            width='stretch', hide_index=True, height=280
         )
 
     
@@ -3065,7 +3065,7 @@ if "14 Days" in page:
             scar_df = pd.DataFrame(scars)
             st.dataframe(
                 scar_df,
-                use_container_width=True, hide_index=True, height=min(420, 60 + len(scars)*40),
+                width='stretch', hide_index=True, height=min(420, 60 + len(scars)*40),
                 column_config={
                     "priority": st.column_config.TextColumn("Priority", help="High/Medium/Low"),
                     "status": st.column_config.TextColumn("Status"),
@@ -3226,13 +3226,13 @@ if "14 Days" in page:
                     )
                     st.markdown(btn_html, unsafe_allow_html=True)
                     if st.button(btn_label, key=f"grp_{g}",
-                                use_container_width=True, type="primary"):
+                                width='stretch', type="primary"):
                         st.session_state.selected_group = None
                         st.rerun()
                 else:
                     # Unselected: just the styled gradient button
                     if st.button(btn_label, key=f"grp_{g}",
-                                use_container_width=True, type="secondary"):
+                                width='stretch', type="secondary"):
                         st.session_state.selected_group = g
                         st.rerun()
                 st.markdown('</div>', unsafe_allow_html=True)
@@ -3240,7 +3240,7 @@ if "14 Days" in page:
     if st.session_state.selected_group:
         _, _, col_c = st.columns([2, 2, 1])
         with col_c:
-            if st.button("❌ CLEAR", use_container_width=True, type="secondary"):
+            if st.button("❌ CLEAR", width='stretch', type="secondary"):
                 st.session_state.selected_group = None
                 st.rerun()
 
@@ -3260,7 +3260,7 @@ if "14 Days" in page:
             key="detail_search_input"
         )
     with col_clear:
-        if st.button("✖ Clear", use_container_width=True):
+        if st.button("✖ Clear", width='stretch'):
             st.session_state.detail_search = ""
             st.rerun()
 
@@ -3283,7 +3283,7 @@ if "14 Days" in page:
             f'</div>',
             unsafe_allow_html=True
         )
-    st.dataframe(detail, use_container_width=True, hide_index=True, height=400)
+    st.dataframe(detail, width='stretch', hide_index=True, height=400)
 
     # === QUICK STATS ===
     f_df = filtered if isinstance(filtered, pd.DataFrame) else pd.DataFrame(filtered)
@@ -3416,7 +3416,7 @@ elif "Data Entry" in page:
                     data=f.read(),
                     file_name="QA_Defects_Template_14days.xlsx",
                     mime="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
-                    use_container_width=True,
+                    width='stretch',
                     key="dl_14d"
                 )
         except FileNotFoundError:
@@ -3429,7 +3429,7 @@ elif "Data Entry" in page:
                     data=f.read(),
                     file_name="QA_Defects_Template_FullYear.xlsx",
                     mime="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
-                    use_container_width=True,
+                    width='stretch',
                     key="dl_fy"
                 )
         except FileNotFoundError:
@@ -3442,7 +3442,7 @@ elif "Data Entry" in page:
                     data=f.read(),
                     file_name="QA_Defects_Template.xlsx",
                     mime="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
-                    use_container_width=True,
+                    width='stretch',
                     key="dl_blank"
                 )
         except FileNotFoundError:
@@ -3596,7 +3596,7 @@ elif "Data Entry" in page:
                         preview_df = pd.DataFrame(valid_records)
                         st.dataframe(
                             preview_df[["Date", "Supplier", "Group Part", "Problem Mode", "Part No", "Qty"]],
-                            use_container_width=True, hide_index=True,
+                            width='stretch', hide_index=True,
                             height=300
                         )
                         st.session_state.uploaded_data = valid_records
@@ -3624,7 +3624,7 @@ elif "Data Entry" in page:
                                 csv_data,
                                 f"defects_upload_{datetime.now().strftime('%Y%m%d_%H%M%S')}.csv",
                                 "text/csv",
-                                use_container_width=True,
+                                width='stretch',
                                 type="primary"
                             )
                         with col_dl2:
@@ -3651,7 +3651,7 @@ elif "Data Entry" in page:
 
                         if st.button(
                             "📤 SYNC TO GITHUB (1-CLICK)",
-                            use_container_width=True,
+                            width='stretch',
                             type="primary",
                             key="sync_github_btn",
                             help="Push data directly to GitHub repo - dashboard refreshes in 1 min"
@@ -3890,13 +3890,13 @@ elif "Data Entry" in page:
             with btn_c1:
                 add_clicked = st.button(
                     "✅ ADD RECORD",
-                    use_container_width=True,
+                    width='stretch',
                     type="primary"
                 )
             with btn_c2:
                 clear_clicked = st.button(
                     "🗑️ CLEAR FORM",
-                    use_container_width=True,
+                    width='stretch',
                     type="secondary"
                 )
 
@@ -3954,7 +3954,7 @@ elif "Data Entry" in page:
                 pending_df = pd.DataFrame(st.session_state.new_entries)
                 st.dataframe(
                     pending_df[["Date", "Supplier", "Group Part", "Qty"]],
-                    use_container_width=True, hide_index=True,
+                    width='stretch', hide_index=True,
                     height=300
                 )
 
@@ -3979,7 +3979,7 @@ elif "Data Entry" in page:
                         csv_data,
                         "defects_pending.csv",
                         "text/csv",
-                        use_container_width=True,
+                        width='stretch',
                         type="secondary"
                     )
                 with exp_c2:
@@ -4003,12 +4003,12 @@ td {{ padding: 6px 8px; border-bottom: 1px solid #eee; }}
                         html_report.encode("utf-8"),
                         f"defects_report_{datetime.now().strftime('%Y%m%d_%H%M')}.html",
                         "text/html",
-                        use_container_width=True,
+                        width='stretch',
                         type="secondary",
                         help="Open in browser → Print → Save as PDF"
                     )
 
-                if st.button("🗑️ CLEAR ALL PENDING", use_container_width=True):
+                if st.button("🗑️ CLEAR ALL PENDING", width='stretch'):
                     st.session_state.new_entries = []
                     st.rerun()
             else:
@@ -4056,7 +4056,7 @@ td {{ padding: 6px 8px; border-bottom: 1px solid #eee; }}
             if st.button(
                 "📤 SYNC TO GITHUB (1-CLICK)",
                 key="sync_pending_to_github",
-                use_container_width=True,
+                width='stretch',
                 type="primary",
                 help="Push pending records directly to GitHub - no Telegram needed"
             ):
@@ -4303,7 +4303,7 @@ else:
 
         st.dataframe(
             fy_df.style.map(color_pct, subset=["% Change"]),
-            use_container_width=True, hide_index=True, height=280
+            width='stretch', hide_index=True, height=280
         )
 
     with col_r:
@@ -4332,7 +4332,7 @@ else:
         sup_df = pd.DataFrame(sup_rows)
         st.dataframe(
             sup_df.style.map(color_pct, subset=["Change"]),
-            use_container_width=True, hide_index=True, height=280
+            width='stretch', hide_index=True, height=280
         )
 
     # === SUPPLIER SCORE (kanom-qa algorithm v5) ===
@@ -4394,7 +4394,7 @@ else:
 
         st.dataframe(
             display_df.style.map(color_score_rank, subset=["Rank"]),
-            use_container_width=True, hide_index=True, height=320
+            width='stretch', hide_index=True, height=320
         )
         st.caption(
             "**Score formula:** 0.35 × QTY + 0.45 × CASE + 0.20 × Frequency  ·  "
@@ -4418,7 +4418,7 @@ else:
     detail["Qty"] = detail["Qty"].astype(int)
     detail = detail[["Date", "Supplier", "Group Part", "Problem Mode",
                      "Part Name", "Part No", "Comment"]]
-    st.dataframe(detail, use_container_width=True, hide_index=True, height=400)
+    st.dataframe(detail, width='stretch', hide_index=True, height=400)
 
     # === FOOTER INFO ===
     st.markdown("""
