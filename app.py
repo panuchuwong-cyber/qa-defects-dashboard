@@ -805,6 +805,7 @@ st.markdown("""
         color: #FFD700; font-size: 12px; font-weight: 800;
         letter-spacing: 2.5px; text-transform: uppercase;
         margin-bottom: 10px; margin-top: 4px;
+        text-shadow: 0 1px 2px rgba(0,0,0,0.55);
     }
     .kpi-value {
         color: #FFE234; font-size: 32px; font-weight: 900;
@@ -942,25 +943,25 @@ st.markdown("""
         color: #555;
     }
 
-    /* === SECTION HEADER — dark premium (matches hero/KPI cards) === */
+    /* === SECTION HEADER — high contrast (yellow bg + black text) === */
     .section-header {
         position: relative; overflow: hidden;
-        background: #111111;
-        color: #FFFFFF !important;
-        text-shadow: none;
-        padding: 12px 18px;
-        border-radius: 10px;
-        font-weight: 800; font-size: 14px; letter-spacing: 1.5px;
-        line-height: 1.3;
-        margin: 24px 0 14px 0; text-transform: uppercase;
-        border: 1px solid #333333;
-        border-left: 6px solid #FFD700;
-        box-shadow: 0 3px 10px rgba(0,0,0,0.18);
-        display: flex; align-items: center; gap: 10px;
+        background: linear-gradient(135deg, #FFD700 0%, #FFC107 100%);
+        color: #000000;
+        padding: 14px 22px;
+        border-radius: 14px;
+        font-weight: 900; font-size: 15px; letter-spacing: 2.5px;
+        margin: 28px 0 16px 0; text-transform: uppercase;
+        border: 2px solid #000000;
+        border-left: 6px solid #000000;
+        box-shadow:
+            0 4px 14px rgba(0,0,0,0.18),
+            inset 0 1px 0 rgba(255,255,255,0.35);
+        display: flex; align-items: center; gap: 12px;
     }
     .section-header::after {
         content: ""; position: absolute; inset: 0;
-        background: radial-gradient(circle at top right, rgba(255,215,0,0.10) 0%, transparent 60%);
+        background: radial-gradient(circle at top right, rgba(255,255,255,0.18) 0%, transparent 60%);
         pointer-events: none;
     }
     .section-header > * { position: relative; z-index: 1; }
