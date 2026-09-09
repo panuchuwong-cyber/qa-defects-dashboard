@@ -18,6 +18,8 @@ from pathlib import Path
 
 import pandas as pd
 
+from utils.supplier_aliases import canonical_supplier, normalize_series
+
 
 SCAR_QTY_THRESHOLD = 50    # defect qty that opens a SCAR
 SCAR_CASE_THRESHOLD = 3    # defect cases that open a SCAR
@@ -44,9 +46,16 @@ def get_supplier_scores(df: pd.DataFrame) -> pd.DataFrame:
         return pd.DataFrame()
 
     master = _load_supplier_master()
+    # Alias-normalize so "NISSEN CHEMITEC" (defect log) matches "NISSEN" (master).
+    master["Supplier Code"] = master["Supplier Code"].astype(str).map(canonical_supplier)
     monthly = dict(zip(master["Supplier Code"], master["Monthly Received Qty"]))
 
-    agg = (df.groupby("Supplier")
+    # Normalize the Supplier column on the defect side BEFORE groupby so
+    # "NISSEN" and "NISSEN CHEMITEC" merge into a single row.
+    df_norm = df.copy()
+    df_norm["Supplier"] = normalize_series(df_norm["Supplier"])
+
+    agg = (df_norm.groupby("Supplier")
              .agg(Qty=("Qty", "sum"),
                   Cases=("Qty", "count"),
                   UniqueParts=("Part No", "nunique"))
@@ -87,12 +96,19 @@ def real_otif(df: pd.DataFrame, window_days: int = 14) -> dict:
     master = _load_supplier_master()
     if master.empty:
         return _empty_otif(window_days)
+    # Normalize master "Supplier Code" → canonical so alias "NISSEN CHEMITEC"
+    # in defect log resolves to "NISSEN".
+    master["Supplier Code"] = master["Supplier Code"].astype(str).map(canonical_supplier)
 
-    # Filter to last N days
     cutoff = pd.Timestamp.now().normalize() - pd.Timedelta(days=window_days)
+    df["Date"] = pd.to_datetime(df["Date"], format="mixed", errors="coerce")
+    df = df.dropna(subset=["Date"]).copy()
     recent = df[df["Date"] >= cutoff].copy()
     if recent.empty:
         recent = df.copy()  # fallback to all data if window too narrow
+
+    # Normalize Supplier BEFORE groupby so "NISSEN" and "NISSEN CHEMITEC" merge.
+    recent["Supplier"] = normalize_series(recent["Supplier"])
 
     defect_qty = recent.groupby("Supplier")["Qty"].sum().reset_index()
     defect_qty.columns = ["Supplier", "DefectQty"]
@@ -147,7 +163,12 @@ def real_scars(df: pd.DataFrame) -> list:
     today = pd.Timestamp.now().normalize()
     year = today.year
 
-    grouped = (df.groupby(["Supplier", "Problem Mode"])
+    # Alias-normalize so "NISSEN CHEMITEC" in defect log doesn't show up as a
+    # separate SCAR row from "NISSEN" — they are the same supplier.
+    df_norm = df.copy()
+    df_norm["Supplier"] = normalize_series(df_norm["Supplier"])
+
+    grouped = (df_norm.groupby(["Supplier", "Problem Mode"])
                  .agg(Cases=("Qty", "count"),
                       Qty=("Qty", "sum"),
                       FirstSeen=("Date", "min"),

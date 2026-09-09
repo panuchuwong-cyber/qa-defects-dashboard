@@ -2399,22 +2399,46 @@ st.markdown("""
 # ============================================================
 @st.cache_data(ttl=30)
 def load_data():
-    """Read from .xlsx file - cache expires every 30s so updates appear quickly."""
+    """Read from .xlsx file - cache expires every 30s so updates appear quickly.
+
+    Backwards-compatible: returns the same 8-column schema. Adds tolerance
+    for legacy templates whose header sits on row 4 instead of row 1
+    (detected via utils.validation.detect_header_row).
+    """
+    from utils.validation import (
+        detect_header_row, normalize_columns, coerce_types, validate_dataframe,
+    )  # noqa: PLC0415
+
     xlsx_path = Path(__file__).parent / "QA_Defects_Data.xlsx"
     csv_path  = Path(__file__).parent / "QA_Defects_Data.csv"
 
     # Try .xlsx first (current source of truth)
     if xlsx_path.exists():
-        df = pd.read_excel(xlsx_path)
+        # Auto-detect header row: most files have header on row 1, but a
+        # user may drop a legacy QA_Defects_Template.xlsx (title in row 1,
+        # header in row 4) onto the live path.
+        try:
+            header = detect_header_row(xlsx_path)
+        except Exception:
+            header = 0
+        df = pd.read_excel(xlsx_path, header=header)
     elif csv_path.exists():
         df = pd.read_csv(csv_path)
     else:
         return pd.DataFrame(columns=["Date","Found","Supplier","Group Part","Problem Mode","Part Name","Part No","Qty","Severity","Comment"])
 
+    df = normalize_columns(df)
+    df = coerce_types(df)
+
     # Normalize Date column - handle mixed formats ('2026-08-31' and '2026-08-31 00:00:00')
-    df["Date"] = pd.to_datetime(df["Date"], format="mixed", errors="coerce")
-    # Drop rows where Date couldn't be parsed
+    if "Date" in df.columns:
+        df["Date"] = pd.to_datetime(df["Date"], format="mixed", errors="coerce")
+    # Drop rows where Date couldn't be parsed and validate required fields.
     df = df.dropna(subset=["Date"]).reset_index(drop=True)
+    df, validation_errors, _invalid_rows = validate_dataframe(df)
+    if validation_errors:
+        # Keep the dashboard available while making bad input visible.
+        st.warning(f"พบข้อมูลไม่สมบูรณ์ {len(validation_errors)} แถว จึงไม่นำมาคำนวณ")
     return df
 
 df = load_data()
