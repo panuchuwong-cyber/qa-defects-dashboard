@@ -10,41 +10,106 @@ from datetime import datetime, timedelta
 import pandas as pd
 
 
-def get_supplier_scores(df: pd.DataFrame) -> pd.DataFrame:
-    """Calculate supplier quality score from defect data.
+def get_supplier_scores(df: pd.DataFrame, window_days: int = 14) -> pd.DataFrame:
+    """Calculate supplier composite quality score from defect data.
 
-    Score = PPM (parts per million) — lower is better.
-    Returns DataFrame sorted by defect qty desc (worst first).
+    Score formula (higher = worse supplier):
+        score = (0.45 * case_norm) + (0.35 * qty_norm) + (0.20 * freq_norm)
+
+    Each dimension is normalized by max across all suppliers in the window:
+        - qty_norm:   total defect Q'TY
+        - case_norm:  count of rows where Comment contains CASE or REJECT
+        - freq_norm:  fraction of days in window that had at least one defect
+
+    Weights rationale:
+        - 0.45 case:  one CASE may reject an entire lot (severity-weighted)
+        - 0.35 qty:   small-issue aggregation volume
+        - 0.20 freq:  captures chronicity (defects every day = worse than one bad batch)
+
+    Status thresholds (on score_pct, 0-100 scale):
+        - critical:  >= 70
+        - warning:   40-69
+        - good:      < 40
+
+    Returns DataFrame sorted by score desc (worst first):
+        Rank / Supplier / Qty / Case / Days / Freq / Score / ScorePct / Status
     """
     if df is None or df.empty:
-        return pd.DataFrame()
+        return pd.DataFrame(
+            columns=["Rank", "Supplier", "Qty", "Case", "Days",
+                     "Freq", "Score", "ScorePct", "Status"]
+        )
 
-    # Aggregate by supplier
-    agg = (df.groupby("Supplier")
-             .agg(Qty=("Qty", "sum"),
-                  Cases=("Qty", "count"),
-                  UniqueParts=("Part No", "nunique"))
-             .reset_index())
+    # Ensure Date is datetime
+    work = df.copy()
+    if not pd.api.types.is_datetime64_any_dtype(work["Date"]):
+        work["Date"] = pd.to_datetime(work["Date"], format="mixed", errors="coerce")
+    work = work.dropna(subset=["Date"]).reset_index(drop=True)
+    if work.empty:
+        return pd.DataFrame(
+            columns=["Rank", "Supplier", "Qty", "Case", "Days",
+                     "Freq", "Score", "ScorePct", "Status"]
+        )
 
-    # PPM (proxy): assume total units received = Qty * 100 (mock)
-    agg["TotalUnits"] = (agg["Qty"] * 100).astype(int)
-    agg["PPM"] = ((agg["Qty"] / agg["TotalUnits"]) * 1_000_000).round(1)
+    # Slice to window
+    max_date = work["Date"].max()
+    cutoff = max_date - pd.Timedelta(days=window_days - 1)
+    recent = work[work["Date"] >= cutoff].copy()
 
-    # Status based on PPM
-    def status(ppm):
-        if ppm > 30_000:
+    if recent.empty:
+        return pd.DataFrame(
+            columns=["Rank", "Supplier", "Qty", "Case", "Days",
+                     "Freq", "Score", "ScorePct", "Status"]
+        )
+
+    # Detect CASE/REJECT from Comment
+    recent["is_case"] = (
+        recent["Comment"].astype(str)
+        .str.contains("CASE|REJECT", case=False, na=False)
+        .astype(int)
+    )
+
+    # Aggregate per supplier
+    agg = (recent.groupby("Supplier")
+                  .agg(Qty=("Qty", "sum"),
+                       Case=("is_case", "sum"),
+                       Days=("Date", lambda x: x.dt.date.nunique()))
+                  .reset_index())
+
+    agg["Freq"] = (agg["Days"] / window_days).round(3)
+
+    # Normalize each dimension by max across all suppliers
+    for col in ["Qty", "Case", "Freq"]:
+        max_val = agg[col].max()
+        agg[f"{col.lower()}_norm"] = (
+            (agg[col] / max_val).round(3) if max_val > 0 else 0.0
+        )
+
+    # Composite score (0-1) → scale to 0-100 for readability
+    agg["Score"] = (
+        0.45 * agg["case_norm"]
+        + 0.35 * agg["qty_norm"]
+        + 0.20 * agg["freq_norm"]
+    ).round(4)
+    agg["ScorePct"] = (agg["Score"] * 100).round(1)
+
+    # Status based on ScorePct
+    def status(pct: float) -> str:
+        if pct >= 70:
             return "critical"
-        if ppm > 15_000:
+        if pct >= 40:
             return "warning"
         return "good"
 
-    agg["Status"] = agg["PPM"].apply(status)
+    agg["Status"] = agg["ScorePct"].apply(status)
 
-    # Sort by defect qty (worst first)
-    agg = agg.sort_values("Qty", ascending=False).reset_index(drop=True)
+    # Sort worst first, add rank
+    agg = agg.sort_values("Score", ascending=False).reset_index(drop=True)
     agg.insert(0, "Rank", range(1, len(agg) + 1))
 
-    return agg
+    # Final column order
+    return agg[["Rank", "Supplier", "Qty", "Case", "Days", "Freq",
+                "Score", "ScorePct", "Status"]]
 
 
 def mock_otif(window_days: int = 14) -> dict:
