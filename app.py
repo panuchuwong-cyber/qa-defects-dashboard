@@ -2409,7 +2409,7 @@ def load_data():
     elif csv_path.exists():
         df = pd.read_csv(csv_path)
     else:
-        return pd.DataFrame(columns=["Date","Supplier","Group Part","Problem Mode","Part Name","Part No","Qty","Comment"])
+        return pd.DataFrame(columns=["Date","Found","Supplier","Group Part","Problem Mode","Part Name","Part No","Qty","Severity","Comment"])
 
     # Normalize Date column - handle mixed formats ('2026-08-31' and '2026-08-31 00:00:00')
     df["Date"] = pd.to_datetime(df["Date"], format="mixed", errors="coerce")
@@ -2497,6 +2497,13 @@ with st.sidebar:
         unsafe_allow_html=True
     )
 
+    # Found stage filter — only show if column exists and has non-empty values
+    found_options = ["All"]
+    if "Found" in df.columns:
+        found_values = sorted([str(x) for x in df["Found"].dropna().unique() if str(x).strip()])
+        found_options += found_values
+    found_f = st.selectbox("Found Stage", found_options)
+
     supplier_f = st.selectbox(
         "Supplier", ["All"] + sorted(df["Supplier"].unique().tolist())
     )
@@ -2506,6 +2513,12 @@ with st.sidebar:
     mode_f = st.selectbox(
         "Problem Mode", ["All"] + sorted(df["Problem Mode"].unique().tolist())
     )
+    # Severity filter — only show if column exists
+    sev_options = ["All"]
+    if "Severity" in df.columns:
+        sev_values = sorted([str(x) for x in df["Severity"].dropna().unique() if str(x).strip()])
+        sev_options += sev_values
+    sev_f = st.selectbox("Severity", sev_options)
 
     # Divider
     st.markdown(
@@ -2537,6 +2550,10 @@ with st.sidebar:
 
 # Apply filters
 filtered = df.copy()
+if found_f != "All" and "Found" in filtered.columns:
+    filtered = filtered[filtered["Found"].astype(str).str.strip() == found_f]
+if sev_f != "All" and "Severity" in filtered.columns:
+    filtered = filtered[filtered["Severity"].astype(str).str.strip() == sev_f]
 if supplier_f != "All":
     filtered = filtered[filtered["Supplier"] == supplier_f]
 if group_f != "All":

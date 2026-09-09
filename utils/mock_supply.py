@@ -62,12 +62,24 @@ def get_supplier_scores(df: pd.DataFrame, window_days: int = 14) -> pd.DataFrame
                      "Freq", "Score", "ScorePct", "Status"]
         )
 
-    # Detect CASE/REJECT from Comment
-    recent["is_case"] = (
-        recent["Comment"].astype(str)
-        .str.contains("CASE|REJECT", case=False, na=False)
-        .astype(int)
-    )
+    # Severity weight (higher = worse): CRITICAL=1.0, MAJOR=0.5, MINOR=0.1
+    SEVERITY_WEIGHT = {"CRITICAL": 1.0, "MAJOR": 0.5, "MINOR": 0.1}
+
+    if "Severity" in recent.columns:
+        # Use Severity column for weighted severity score
+        recent["severity_w"] = (
+            recent["Severity"].astype(str).str.strip().str.upper()
+            .map(SEVERITY_WEIGHT).fillna(0.0)
+        )
+        # Case = count of CRITICAL + MAJOR rows (proxy for severity cases)
+        recent["is_case"] = (recent["severity_w"] >= 0.5).astype(int)
+    else:
+        # Fallback: detect CASE/REJECT from Comment
+        recent["is_case"] = (
+            recent["Comment"].astype(str)
+            .str.contains("CASE|REJECT", case=False, na=False)
+            .astype(int)
+        )
 
     # Aggregate per supplier
     agg = (recent.groupby("Supplier")
