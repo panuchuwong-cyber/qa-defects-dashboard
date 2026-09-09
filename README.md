@@ -50,6 +50,52 @@ Push to GitHub main branch → Streamlit Cloud auto-rebuilds (after manual reboo
 https://panuchuwong-cyber-test-defects.streamlit.app
 
 ## Changelog
+- **2026-09-09**: Added Found + Severity columns (schema v2, 10 columns). Severity-based scoring replaces CASE/REJECT keyword detection. New sidebar filters for Found Stage + Severity. Data Entry form updated with Found Stage + Severity dropdowns. Template regenerated with data validation dropdowns.
 - **2026-09-03**: Sidebar nav converted from radio to gradient buttons; brand updated to 3K Battery; added "Auto-sync from GitHub" subtitle
 - **2026-08-31**: Original v1 deploy with TEST branding, password gate, 3 pages
+
+## Data Schema (v2 — 10 columns)
+
+QA_Defects_Data.xlsx uses this schema. **All 10 columns required** for new records.
+
+| Column | Type | Required | Description |
+|---|---|---|---|
+| Date | date (YYYY-MM-DD) | YES | Date defect was found/reported |
+| Found | string | YES | Inspection stage — see below |
+| Supplier | string | YES | Supplier code (must match supplier_master.csv) |
+| Group Part | string | YES | Material group (dropdown in template) |
+| Problem Mode | string | YES | Defect type (dropdown in template) |
+| Part Name | string | YES | Human-readable part name |
+| Part No | string | YES | Part number / drawing number |
+| Qty | int > 0 | YES | Defective quantity (pieces) |
+| Severity | string | YES | CRITICAL / MAJOR / MINOR — see below |
+| Comment | string | optional | Free text describing the defect (Thai or English) |
+
+### Found Stage (Inspection Point)
+
+- **IN LINE** = detected during production (in-line QC)
+- **FINAL** = detected at final inspection before shipping
+- **INCOMING** = detected at goods receiving (from supplier)
+- **OQA** = detected at outgoing quality audit
+- **CUSTOMER** = detected at customer site (field failure)
+
+### Severity Guide
+
+- **CRITICAL** (weight 1.0): lot reject / safety issue / line stop / customer return
+- **MAJOR** (weight 0.5): dimension out of spec / wrong part shipped / function failure
+- **MINOR** (weight 0.1): appearance (scratch, color, surface defect) / cosmetic
+
+### Scoring Impact
+
+Worst Supplier Score formula: `Score = (0.45 × Case_norm) + (0.35 × Qty_norm) + (0.20 × Frequency_norm)` × 100
+
+Where **Case = count of rows with Severity >= MAJOR** (i.e., CRITICAL or MAJOR).
+MINOR defects count toward Qty but not toward Case.
+
+### Backfill for Old Data
+
+When loading older xlsx files without these columns, dashboard will:
+- Treat missing Found/Severity as empty (no filter applied)
+- Fall back to CASE/REJECT keyword detection for Case count
+- Show warning if Severity column missing
 

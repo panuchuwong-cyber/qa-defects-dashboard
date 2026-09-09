@@ -4199,6 +4199,19 @@ elif "Data Entry" in page:
                 )
 
             with c2:
+                entry_found = st.selectbox(
+                    "🔍 Found Stage",
+                    ["-- Select Found --",
+                     "IN LINE", "FINAL", "INCOMING", "OQA", "CUSTOMER"],
+                    key=f"found_{rc}",
+                    help="Where was the defect first detected?"
+                )
+                entry_severity = st.selectbox(
+                    "⚠️ Severity",
+                    ["-- Select Severity --", "CRITICAL", "MAJOR", "MINOR"],
+                    key=f"sev_{rc}",
+                    help="CRITICAL: lot reject / safety · MAJOR: dimension / wrong part · MINOR: appearance"
+                )
                 entry_part_name = st.text_input(
                     "⚙️ Part Name",
                     placeholder="e.g., ELBOW PIPE 1/2",
@@ -4251,6 +4264,10 @@ elif "Data Entry" in page:
                     errors.append("Group Part")
                 if entry_mode in ["-- Select Mode --", None, ""]:
                     errors.append("Problem Mode")
+                if entry_found in ["-- Select Found --", None, ""]:
+                    errors.append("Found Stage")
+                if entry_severity in ["-- Select Severity --", None, ""]:
+                    errors.append("Severity")
                 if not entry_part_no.strip():
                     errors.append("Part No.")
 
@@ -4259,12 +4276,14 @@ elif "Data Entry" in page:
                 else:
                     new_record = {
                         "Date": entry_date.strftime("%Y-%m-%d"),
+                        "Found": entry_found,
                         "Supplier": entry_supplier,
                         "Group Part": entry_group,
                         "Problem Mode": entry_mode,
                         "Part Name": entry_part_name.strip() or "—",
                         "Part No": entry_part_no.strip(),
                         "Qty": int(entry_qty),
+                        "Severity": entry_severity,
                         "Comment": entry_comment.strip() or "—"
                     }
                     st.session_state.new_entries.append(new_record)
