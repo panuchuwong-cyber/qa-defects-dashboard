@@ -964,6 +964,200 @@ st.markdown("""
         pointer-events: none;
     }
     .section-header > * { position: relative; z-index: 1; }
+
+    /* ============================================
+       WORST SUPPLIER SCORE — 14-DAY COMPOSITE
+       ============================================ */
+    .worst-supplier-section { margin: 24px 0; }
+    .wss-title {
+        background: linear-gradient(135deg, #FFD700 0%, #FFC107 100%);
+        color: #000;
+        padding: 14px 20px;
+        font-weight: 800;
+        font-size: 17px;
+        letter-spacing: 0.6px;
+        text-transform: uppercase;
+        border-left: 6px solid #000;
+        border-radius: 6px;
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        box-shadow: 0 4px 12px rgba(255, 215, 0, 0.25);
+    }
+    .wss-formula {
+        background: rgba(255, 215, 0, 0.08);
+        border: 1px solid rgba(255, 215, 0, 0.3);
+        border-left: 4px solid #FFD700;
+        border-radius: 6px;
+        padding: 10px 16px;
+        margin: 10px 0 18px 0;
+        color: #FFD700;
+        font-size: 12px;
+        font-family: 'SF Mono', 'Consolas', 'Monaco', monospace;
+        letter-spacing: 0.3px;
+        line-height: 1.6;
+    }
+    .wss-formula b { color: #FFC107; font-weight: 700; }
+    .wss-formula .wss-hint { color: #888; font-family: inherit; }
+    .wss-table {
+        width: 100%;
+        border-collapse: collapse;
+        background: #1a1a1a;
+        border-radius: 8px;
+        overflow: hidden;
+        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.4);
+        border: 1px solid rgba(255, 215, 0, 0.15);
+    }
+    .wss-table thead {
+        background: linear-gradient(90deg, #000 0%, #1a1a1a 100%);
+    }
+    .wss-table th {
+        color: #FFD700;
+        padding: 12px 14px;
+        text-align: left;
+        font-size: 11px;
+        font-weight: 700;
+        text-transform: uppercase;
+        letter-spacing: 0.6px;
+        border-bottom: 2px solid #FFD700;
+        white-space: nowrap;
+    }
+    .wss-table td {
+        padding: 12px 14px;
+        color: #f5f5f5;
+        font-size: 13px;
+        border-bottom: 1px solid rgba(255, 215, 0, 0.08);
+        vertical-align: middle;
+    }
+    .wss-table tbody tr { transition: background 0.15s ease; }
+    .wss-table tbody tr:hover { background: rgba(255, 215, 0, 0.05); }
+    .wss-table tbody tr:last-child td { border-bottom: none; }
+    .wss-rank {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        width: 30px;
+        height: 30px;
+        border-radius: 50%;
+        background: #000;
+        color: #FFD700;
+        font-weight: 800;
+        font-size: 13px;
+        border: 1.5px solid #FFD700;
+    }
+    .wss-rank.rank-1 {
+        background: linear-gradient(135deg, #B71C1C 0%, #E65100 100%);
+        color: #fff;
+        border-color: #FFD700;
+        box-shadow: 0 0 12px rgba(183, 28, 28, 0.55);
+    }
+    .wss-rank.rank-2,
+    .wss-rank.rank-3 { border-color: #E65100; color: #FF9800; }
+    .wss-supplier { font-weight: 600; color: #f5f5f5; }
+    .wss-score-cell { min-width: 140px; }
+    .wss-score {
+        font-weight: 800;
+        font-size: 16px;
+        font-family: 'SF Mono', 'Consolas', 'Monaco', monospace;
+        line-height: 1.1;
+    }
+    .wss-score-bar {
+        position: relative;
+        background: rgba(255, 255, 255, 0.06);
+        height: 6px;
+        border-radius: 3px;
+        margin-top: 6px;
+        overflow: hidden;
+    }
+    .wss-score-fill {
+        position: absolute;
+        top: 0; left: 0;
+        height: 100%;
+        border-radius: 3px;
+        transition: width 0.4s ease;
+    }
+    .wss-badge {
+        display: inline-block;
+        padding: 4px 12px;
+        border-radius: 12px;
+        font-size: 10px;
+        font-weight: 800;
+        text-transform: uppercase;
+        letter-spacing: 0.6px;
+        border: 1px solid;
+        white-space: nowrap;
+    }
+    .wss-badge.critical {
+        background: rgba(183, 28, 28, 0.18);
+        color: #FF5252;
+        border-color: #B71C1C;
+    }
+    .wss-badge.warning {
+        background: rgba(230, 81, 0, 0.18);
+        color: #FFB74D;
+        border-color: #E65100;
+    }
+    .wss-badge.good {
+        background: rgba(27, 94, 32, 0.20);
+        color: #81C784;
+        border-color: #1B5E20;
+    }
+    .wss-legend {
+        display: flex;
+        gap: 16px;
+        flex-wrap: wrap;
+        margin-top: 12px;
+        font-size: 11px;
+        color: #aaa;
+        padding: 0 4px;
+    }
+    .wss-legend-item { display: inline-flex; align-items: center; gap: 6px; }
+    .wss-legend-dot {
+        width: 10px;
+        height: 10px;
+        border-radius: 50%;
+        display: inline-block;
+    }
+    @media (max-width: 768px) {
+        .wss-title { font-size: 13px; padding: 10px 14px; letter-spacing: 0.3px; }
+        .wss-formula { font-size: 10px; padding: 8px 10px; }
+        .wss-table thead { display: none; }
+        .wss-table, .wss-table tbody, .wss-table tr, .wss-table td {
+            display: block;
+            width: 100%;
+        }
+        .wss-table tr {
+            margin-bottom: 10px;
+            background: #1a1a1a;
+            border: 1px solid rgba(255, 215, 0, 0.20);
+            border-radius: 8px;
+            padding: 10px 12px;
+            box-shadow: 0 2px 6px rgba(0, 0, 0, 0.3);
+        }
+        .wss-table td {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 8px 0;
+            border-bottom: 1px solid rgba(255, 215, 0, 0.08);
+            gap: 10px;
+        }
+        .wss-table td:last-child { border-bottom: none; }
+        .wss-table td::before {
+            content: attr(data-label);
+            font-weight: 700;
+            color: #FFD700;
+            font-size: 10px;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            flex-shrink: 0;
+        }
+        .wss-rank { width: 26px; height: 26px; font-size: 12px; }
+        .wss-score { font-size: 14px; }
+        .wss-badge { font-size: 9px; padding: 3px 9px; }
+        .wss-legend { font-size: 10px; gap: 10px; }
+    }
+
     .section-header .section-icon {
         font-size: 18px;
         background: linear-gradient(135deg, #FFD700 0%, #FFA500 100%);
@@ -2994,7 +3188,110 @@ if "14 Days" in page:
             width='stretch', hide_index=True, height=280
         )
 
-    
+    # === WORST SUPPLIER SCORE — 14-DAY COMPOSITE ===
+    try:
+        from utils.mock_supply import get_supplier_scores
+
+        st.markdown(
+            '<div class="section-header">'
+            '<div class="section-icon">🏆</div>'
+            'WORST SUPPLIER SCORE — 14-DAY COMPOSITE'
+            '</div>',
+            unsafe_allow_html=True
+        )
+
+        scores = get_supplier_scores(filtered, window_days=14)
+
+        if scores.empty:
+            st.info("No supplier defect data in the 14-day window.")
+        else:
+            score_color = {
+                "critical": "#FF5252",
+                "warning":  "#FFB74D",
+                "good":     "#81C784",
+            }
+
+            rows_html = ""
+            for _, r in scores.iterrows():
+                status_class = r["Status"].lower()
+                rank_num = int(r["Rank"])
+                rank_class = (
+                    "rank-1" if rank_num == 1 else
+                    "rank-2" if rank_num == 2 else
+                    "rank-3" if rank_num == 3 else ""
+                )
+                color = score_color[status_class]
+                score_val = float(r["ScorePct"])
+                rows_html += (
+                    '<tr>'
+                    f'<td data-label="Rank"><span class="wss-rank {rank_class}">{rank_num}</span></td>'
+                    f'<td data-label="Supplier" class="wss-supplier">{r["Supplier"]}</td>'
+                    '<td data-label="Score" class="wss-score-cell">'
+                    f'<div class="wss-score" style="color:{color}">{score_val:.1f}</div>'
+                    '<div class="wss-score-bar">'
+                    f'<div class="wss-score-fill" style="width:{min(score_val, 100):.1f}%; background:{color}"></div>'
+                    '</div>'
+                    '</td>'
+                    f'<td data-label="Status"><span class="wss-badge {status_class}">{r["Status"].upper()}</span></td>'
+                    '</tr>'
+                )
+
+            html_block = (
+                '<div class="worst-supplier-section">'
+                '<div class="wss-formula">'
+                '📊 <b>Formula:</b> '
+                'Score = (0.45 × Case_norm) + (0.35 × Qty_norm) + (0.20 × Frequency_norm)'
+                ' &nbsp;·&nbsp; <span class="wss-hint">Higher score = worse quality</span>'
+                '</div>'
+                '<table class="wss-table"><thead><tr>'
+                '<th style="width:80px">Rank</th>'
+                '<th>Supplier</th>'
+                '<th style="width:170px">Score (0–100)</th>'
+                '<th style="width:120px">Status</th>'
+                '</tr></thead><tbody>'
+                f'{rows_html}'
+                '</tbody></table>'
+                '<div class="wss-legend">'
+                '<span class="wss-legend-item"><span class="wss-legend-dot" style="background:#B71C1C"></span> ≥70 = CRITICAL</span>'
+                '<span class="wss-legend-item"><span class="wss-legend-dot" style="background:#E65100"></span> 40–69 = WARNING</span>'
+                '<span class="wss-legend-item"><span class="wss-legend-dot" style="background:#1B5E20"></span> &lt; 40 = GOOD</span>'
+                '</div>'
+                '</div>'
+            )
+            st.markdown(html_block, unsafe_allow_html=True)
+
+            # Top-5 worst chart (Chart.js horizontal bar)
+            top5_worst = scores.head(5).copy()
+            labels_js = top5_worst["Supplier"].tolist()
+            scores_js = [round(float(s), 1) for s in top5_worst["ScorePct"].tolist()]
+            colors_js = [
+                "#B71C1C" if float(s) >= 70 else "#E65100" if float(s) >= 40 else "#1B5E20"
+                for s in top5_worst["ScorePct"]
+            ]
+            import json as _json
+            chart_html = (
+                '<div style="background:#1a1a1a; padding:16px 18px; border-radius:8px; '
+                'border:1px solid rgba(255,215,0,0.20); margin-top:16px; '
+                'box-shadow:0 4px 12px rgba(0,0,0,0.35);">'
+                '<div style="color:#FFD700; font-weight:800; font-size:13px; '
+                'margin-bottom:14px; text-transform:uppercase; letter-spacing:0.5px;">'
+                '📊 TOP 5 WORST SUPPLIERS — 14-DAY COMPOSITE SCORE</div>'
+                '<canvas id="top5worst" height="240"></canvas>'
+                '</div>'
+                '<script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>'
+                '<script>new Chart(document.getElementById("top5worst"), {type:"bar", indexAxis:"y", data:{labels:'
+                + _json.dumps(labels_js)
+                + ', datasets:[{label:"Score", data:'
+                + _json.dumps(scores_js)
+                + ', backgroundColor:'
+                + _json.dumps(colors_js)
+                + ', borderColor:"#FFD700", borderWidth:1.5, borderRadius:4}]}, options:{responsive:true, maintainAspectRatio:false, plugins:{legend:{display:false}, tooltip:{backgroundColor:"#000", titleColor:"#FFD700", bodyColor:"#fff", borderColor:"#FFD700", borderWidth:1, callbacks:{label: ctx => " Score: " + ctx.parsed.x.toFixed(1) + " / 100"}}}, scales:{x:{min:0,max:100,grid:{color:"rgba(255,215,0,0.10)"},ticks:{color:"#FFD700",font:{weight:"600",size:11}}}, y:{grid:{display:false},ticks:{color:"#fff",font:{weight:"600",size:12}}}}}}});</script>'
+            )
+            st.components.v1.html(chart_html, height=340)
+    except Exception as e:
+        st.warning(f"Worst supplier score unavailable: {e}")
+
+
     # === SUPPLY CHAIN METRICS (real data derived from defect log + supplier master) ===
     try:
         from utils.real_supply import real_otif, real_scars
