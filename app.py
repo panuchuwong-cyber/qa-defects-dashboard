@@ -946,8 +946,8 @@ st.markdown("""
     .section-header {
         position: relative; overflow: hidden;
         background: linear-gradient(135deg, #0e0e0e 0%, #1f1f1f 60%, #2a2a2a 100%);
-        color: var(--brand-primary);
-        padding: 14px 22px;
+        color: #FFFFFF;
+        text-shadow: 0 1px 2px rgba(0,0,0,0.85);
         border-radius: 14px;
         font-weight: 900; font-size: 15px; letter-spacing: 2.5px;
         margin: 28px 0 16px 0; text-transform: uppercase;
